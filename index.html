@@ -1626,11 +1626,11 @@
         />
 
         <label class="toggle-label" for="pauseRedditRefresh">
-          Pause Reddit List Refresh
+          Pause Reddit Auto Match
         </label>
 
         <span class="reddit-status" id="redditStatus">
-          Reddit comments load once · sort from cache
+          Reddit auto-match active · comments load once
         </span>
       </div>
     </div>
@@ -1803,7 +1803,7 @@
       redditStatusEl.textContent =
         redditRefreshPaused
           ? "Reddit list refresh paused"
-          : "Reddit comments load once · sort from cache";
+          : "Reddit auto-match active · comments load once";
     });
 
     scoreSpacingEl.addEventListener("input", () => {
@@ -2209,8 +2209,8 @@
           <div class="reddit-panel">
             <div class="reddit-header">
               <div>
-                <div class="reddit-title">r/nba Threads</div>
-                <div class="reddit-subtitle">Choose from recent r/nba thread candidates</div>
+                <div class="reddit-title">r/nba Auto Match</div>
+                <div class="reddit-subtitle">Matches recent thread titles to the teams playing</div>
               </div>
 
               <div class="reddit-controls">
@@ -2220,44 +2220,22 @@
                 </select>
 
                 <button class="reddit-link-button" type="button">
-                  Refresh list
+                  Refresh threads
                 </button>
 
                 <button class="reddit-clear-links-button" type="button" hidden>
-                  Clear picks
+                  Reset match
                 </button>
 
                 <button class="reddit-retry-button" type="button">
-                  Reload
+                  Reload comments
                 </button>
               </div>
             </div>
 
             <div class="reddit-picker">
-              <div class="reddit-picker-row">
-                <label for="reddit-game-thread-${gameId}">Game Thread</label>
-                <select
-                  class="reddit-game-thread-select"
-                  id="reddit-game-thread-${gameId}"
-                  aria-label="Choose r/nba Game Thread"
-                >
-                  <option value="">Loading recent Game Threads...</option>
-                </select>
-              </div>
-
-              <div class="reddit-picker-row">
-                <label for="reddit-postgame-thread-${gameId}">Postgame Thread</label>
-                <select
-                  class="reddit-postgame-thread-select"
-                  id="reddit-postgame-thread-${gameId}"
-                  aria-label="Choose r/nba Post Game Thread"
-                >
-                  <option value="">Loading recent Post Game Threads...</option>
-                </select>
-              </div>
-
               <div class="reddit-picker-note">
-                Thread options come from recent r/nba posts whose titles contain Game Thread or Post Game Thread. Pick the matching thread once; comments load once and then sort from cache.
+                The tracker scans recent r/nba posts, looks for Game Thread / Post Game Thread titles, and automatically embeds the strongest title match for this matchup. Comments load once and then sort from cache.
               </div>
 
               <div class="reddit-feed-status">
@@ -2266,7 +2244,7 @@
             </div>
 
             <div class="reddit-game-thread">
-              Choose a Game Thread candidate above to embed comments.
+              Looking for a matching Game Thread...
             </div>
 
             <div class="postgame">
@@ -2292,31 +2270,11 @@
         });
 
       card
-        .querySelector(".reddit-game-thread-select")
-        .addEventListener("change", event => {
-          handleRedditThreadSelection(
-            gameId,
-            "game",
-            event.target.value
-          );
-        });
-
-      card
-        .querySelector(".reddit-postgame-thread-select")
-        .addEventListener("change", event => {
-          handleRedditThreadSelection(
-            gameId,
-            "postgame",
-            event.target.value
-          );
-        });
-
-      card
         .querySelector(".reddit-link-button")
         .addEventListener("click", async () => {
           await refreshRedditThreadPickerList(true);
-          updateAllRedditThreadPickers();
-          refreshRedditForGame(gameId, false);
+          resetRedditThreadState(gameId);
+          refreshRedditForGame(gameId, true);
         });
 
       card
@@ -2865,7 +2823,7 @@
     const REDDIT_COMMENT_MAX_DEPTH = 1;
     const REDDIT_IGNORE_STICKY_COMMENTS = true;
     const REDDIT_REFRESH_INTERVAL_MS = 30000;
-    const REDDIT_THREAD_OVERRIDE_STORAGE_KEY = "nbaRedditThreadSelectionsV4CandidatePicker";
+    const REDDIT_THREAD_OVERRIDE_STORAGE_KEY = "nbaRedditThreadSelectionsV5AutoMatch";
     const REDDIT_THREAD_LIST_CACHE_STORAGE_KEY = "nbaRedditCandidateThreadCacheV1";
     const REDDIT_THREAD_LIST_CACHE_MS = 120000;
     const REDDIT_THREAD_LIST_BACKGROUND_REFRESH_MS = 10 * 60 * 1000;
@@ -3270,6 +3228,277 @@
       return /(^|\s)(post\s+game|postgame)\s+thread(\s|$)/.test(title);
     }
 
+    const NBA_TEAM_ALIASES = {
+      ATL: ["hawks"],
+      BOS: ["celtics"],
+      BKN: ["nets", "brooklyn nets"],
+      CHA: ["hornets"],
+      CHI: ["bulls"],
+      CLE: ["cavaliers", "cavs"],
+      DAL: ["mavericks", "mavs"],
+      DEN: ["nuggets"],
+      DET: ["pistons"],
+      GSW: ["warriors", "golden state warriors", "golden state"],
+      HOU: ["rockets"],
+      IND: ["pacers"],
+      LAC: ["clippers", "la clippers", "los angeles clippers"],
+      LAL: ["lakers", "la lakers", "los angeles lakers"],
+      MEM: ["grizzlies", "grizz"],
+      MIA: ["heat", "miami heat"],
+      MIL: ["bucks"],
+      MIN: ["timberwolves", "wolves", "t wolves"],
+      NOP: ["pelicans", "pels"],
+      NYK: ["knicks", "new york knicks"],
+      OKC: ["thunder", "oklahoma city thunder"],
+      ORL: ["magic"],
+      PHI: ["76ers", "sixers", "philadelphia 76ers", "philadelphia sixers"],
+      PHX: ["suns", "phoenix suns"],
+      POR: ["trail blazers", "blazers"],
+      SAC: ["kings", "sacramento kings"],
+      SAS: ["spurs", "san antonio spurs"],
+      TOR: ["raptors"],
+      UTA: ["jazz", "utah jazz"],
+      WAS: ["wizards"]
+    };
+
+    const WEAK_TEAM_WORDS = new Set([
+      "the",
+      "new",
+      "york",
+      "los",
+      "angeles",
+      "san",
+      "antonio",
+      "golden",
+      "state",
+      "oklahoma",
+      "city",
+      "trail",
+      "portland"
+    ]);
+
+    function wordBoundaryIncludes(text, token) {
+      const normalizedToken =
+        normalizeText(token);
+
+      if (!normalizedToken) return false;
+
+      return new RegExp(`(^|\\s)${normalizedToken.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(\\s|$)`).test(text);
+    }
+
+    function getTeamMatchAliases(teamName, abbr) {
+      const normalizedAbbr =
+        normalizeText(abbr);
+
+      const normalizedName =
+        normalizeText(teamName);
+
+      const nameParts =
+        normalizedName
+          .split(" ")
+          .filter(part => part && !WEAK_TEAM_WORDS.has(part));
+
+      const nickname =
+        nameParts[nameParts.length - 1];
+
+      return uniqueValues([
+        normalizedName,
+        normalizedAbbr,
+        nickname,
+        ...(NBA_TEAM_ALIASES[String(abbr || "").toUpperCase()] || [])
+      ].map(normalizeText));
+    }
+
+    function getTeamTitleMatch(title, aliases) {
+      let bestAlias = "";
+      let score = 0;
+
+      aliases.forEach(alias => {
+        if (!alias) return;
+
+        const isMatched =
+          alias.includes(" ")
+            ? title.includes(alias)
+            : wordBoundaryIncludes(title, alias);
+
+        if (!isMatched) return;
+
+        const aliasScore =
+          alias.includes(" ")
+            ? 10 + alias.length / 3
+            : alias.length >= 4
+              ? 8
+              : 5;
+
+        if (aliasScore > score) {
+          score = aliasScore;
+          bestAlias = alias;
+        }
+      });
+
+      return {
+        matched: score > 0,
+        alias: bestAlias,
+        score
+      };
+    }
+
+    function getThreadTitleMatchScore(thread, gameState, type) {
+      if (!thread || !gameState) return null;
+
+      if (type === "postgame") {
+        if (!postTitleHasPostGameThread(thread)) return null;
+      } else if (!postTitleHasGameThread(thread)) {
+        return null;
+      }
+
+      const title =
+        normalizeText(thread.title);
+
+      if (!title) return null;
+
+      const threadNbaDate =
+        getNbaDateKeyFromUtcSeconds(thread.created_utc);
+
+      const scoreboardDate =
+        currentScoreboardDate || getNbaScoreboardDate();
+
+      if (
+        threadNbaDate &&
+        scoreboardDate &&
+        threadNbaDate !== scoreboardDate
+      ) {
+        return null;
+      }
+
+      const awayAliases =
+        getTeamMatchAliases(
+          gameState.awayName,
+          gameState.awayAbbr
+        );
+
+      const homeAliases =
+        getTeamMatchAliases(
+          gameState.homeName,
+          gameState.homeAbbr
+        );
+
+      const awayMatch =
+        getTeamTitleMatch(
+          title,
+          awayAliases
+        );
+
+      const homeMatch =
+        getTeamTitleMatch(
+          title,
+          homeAliases
+        );
+
+      if (!awayMatch.matched || !homeMatch.matched) {
+        return null;
+      }
+
+      let score =
+        awayMatch.score +
+        homeMatch.score +
+        30;
+
+      if (type === "postgame") {
+        if (/^(post\s+game|postgame)\s+thread/.test(title)) {
+          score += 10;
+        }
+      } else if (/^game\s+thread/.test(title)) {
+        score += 10;
+      }
+
+      if (title.includes(" vs ") || title.includes(" at ")) {
+        score += 3;
+      }
+
+      if (thread.created_utc) {
+        const ageHours =
+          (Date.now() / 1000 - Number(thread.created_utc)) / 3600;
+
+        if (ageHours <= 12) score += 5;
+        else if (ageHours <= 36) score += 2;
+      }
+
+      return {
+        score,
+        awayAlias: awayMatch.alias,
+        homeAlias: homeMatch.alias,
+        confidence: score >= 55 ? "high" : "medium"
+      };
+    }
+
+    function findBestRedditThreadForGame(gameState, type) {
+      const candidates =
+        type === "postgame"
+          ? redditThreadPickerState.postgameThreads
+          : redditThreadPickerState.gameThreads;
+
+      let best = null;
+      let bestMatch = null;
+
+      candidates.forEach(thread => {
+        const match =
+          getThreadTitleMatchScore(
+            thread,
+            gameState,
+            type
+          );
+
+        if (!match) return;
+
+        if (!bestMatch || match.score > bestMatch.score) {
+          best = thread;
+          bestMatch = match;
+        }
+      });
+
+      if (!best || !bestMatch) return null;
+
+      return {
+        ...best,
+        _confidence: bestMatch.confidence,
+        _matchedTeams: 2,
+        _matchScore: bestMatch.score,
+        _matchSummary: `${bestMatch.awayAlias} + ${bestMatch.homeAlias}`,
+        _source: best._source || "auto-title-match"
+      };
+    }
+
+    function redditTeamSearchPageUrl(gameState, type) {
+      const label =
+        type === "postgame"
+          ? "Post Game Thread"
+          : "Game Thread";
+
+      const query =
+        [
+          label,
+          gameState?.awayName,
+          gameState?.homeName
+        ]
+          .filter(Boolean)
+          .join(" ");
+
+      return redditSearchPageUrl(query || label);
+    }
+
+    function normalizeAutoMatchedRedditThread(post) {
+      return {
+        ...post,
+        permalink: extractRedditPermalink(post?.permalink || post?.url),
+        _confidence: post?._confidence || "medium",
+        _matchedTeams: post?._matchedTeams || 2,
+        _matchScore: post?._matchScore || 0,
+        _matchSummary: post?._matchSummary || "Team title match",
+        _source: post?._source || "auto-title-match"
+      };
+    }
+
     function isRecentRedditThreadPost(post) {
       if (!post?.created_utc) return true;
 
@@ -3321,10 +3550,17 @@
         postgameThreads: new Map()
       };
 
-      const [newPosts, hotPosts] =
+      const searchUrls = [
+        redditSearchUrl('"Game Thread"', "new", "day"),
+        redditSearchUrl('"Post Game Thread"', "new", "day"),
+        redditSearchUrl('"Postgame Thread"', "new", "day")
+      ];
+
+      const [newPosts, hotPosts, ...searchPostGroups] =
         await Promise.all([
-          fetchRedditListingPosts("new", 2),
-          fetchRedditListingPosts("hot", 1)
+          fetchRedditListingPosts("new", 3),
+          fetchRedditListingPosts("hot", 1),
+          ...searchUrls.map(fetchRedditPosts)
         ]);
 
       newPosts.forEach(post => {
@@ -3333,6 +3569,10 @@
 
       hotPosts.forEach(post => {
         addThreadCandidate(groups, post, "hot-listing");
+      });
+
+      searchPostGroups.flat().forEach(post => {
+        addThreadCandidate(groups, post, "title-search");
       });
 
       return {
@@ -3522,7 +3762,7 @@
           : "r/nba";
 
       statusEl.textContent =
-        `${sourceLabel}: ${redditThreadPickerState.gameThreads.length} Game Thread candidates and ${redditThreadPickerState.postgameThreads.length} Post Game Thread candidates from the last ${REDDIT_THREAD_LOOKBACK_HOURS} hours.`;
+        `${sourceLabel}: scanned ${redditThreadPickerState.gameThreads.length} Game Thread candidates and ${redditThreadPickerState.postgameThreads.length} Post Game Thread candidates from the last ${REDDIT_THREAD_LOOKBACK_HOURS} hours.`;
     }
 
     function updateRedditThreadPicker(gameId) {
@@ -3905,16 +4145,7 @@
           ".reddit-postgame-thread"
         );
 
-      const gamePermalink =
-        getStoredThreadPermalink(
-          gameId,
-          "game"
-        );
-
-      if (
-        gamePermalink &&
-        state.gameThread
-      ) {
+      if (state.gameThread) {
         const comments =
           await getCachedOrLoadRedditComments(
             state.gameThread.permalink,
@@ -3925,23 +4156,14 @@
           gameThreadEl,
           state.gameThread,
           comments,
-          "Choose a Game Thread candidate above.",
-          redditFlairedSearchPageUrl("game")
+          "No strong Game Thread title match found yet.",
+          redditTeamSearchPageUrl(state, "game")
         );
-      } else if (gamePermalink) {
+      } else {
         await refreshRedditForGame(gameId, false);
       }
 
-      const postgamePermalink =
-        getStoredThreadPermalink(
-          gameId,
-          "postgame"
-        );
-
-      if (
-        postgamePermalink &&
-        state.postgameThread
-      ) {
+      if (state.postgameThread) {
         const postgameComments =
           await getCachedOrLoadRedditComments(
             state.postgameThread.permalink,
@@ -3952,10 +4174,10 @@
           postgameThreadEl,
           state.postgameThread,
           postgameComments,
-          "Choose a Post Game Thread candidate above.",
-          redditFlairedSearchPageUrl("postgame")
+          "No strong Post Game Thread title match found yet.",
+          redditTeamSearchPageUrl(state, "postgame")
         );
-      } else if (postgamePermalink) {
+      } else if (state.isFinal) {
         await refreshRedditForGame(gameId, false);
       }
     }
@@ -4038,9 +4260,9 @@
         confidence === "manual"
           ? "Linked thread"
           : confidence === "high"
-            ? "High match"
+            ? "Auto high match"
             : confidence === "medium"
-              ? "Medium match"
+              ? "Auto match"
               : "Low match";
 
       const commentsHTML =
@@ -4085,6 +4307,7 @@
             <span class="reddit-status-pill ${confidence}">
               ${confidenceLabel}
             </span>
+            ${thread._matchSummary ? `<span>${escapeHTML(thread._matchSummary)}</span>` : ""}
             <span>${Number(thread.num_comments || 0).toLocaleString()} comments</span>
             <span>${formatRedditAge(thread.created_utc)}</span>
           </div>
@@ -4157,27 +4380,29 @@
         await refreshRedditThreadPickerList();
         updateRedditThreadPicker(gameId);
 
-        const gamePermalink =
-          getStoredThreadPermalink(
-            gameId,
+        const gameMatch =
+          findBestRedditThreadForGame(
+            state,
             "game"
           );
 
-        if (gamePermalink) {
+        if (gameMatch) {
+          const gamePermalink =
+            extractRedditPermalink(gameMatch.permalink || gameMatch.url);
+
           if (
             state.gameThreadOverrideUrl !== gamePermalink ||
             !state.gameThread
           ) {
             gameThreadEl.innerHTML = `
               <div class="reddit-fallback">
-                Loading selected r/nba Game Thread...
+                Loading matched r/nba Game Thread...
               </div>
             `;
 
             state.gameThread =
-              await fetchRedditThreadFromUrl(
-                gamePermalink,
-                "game"
+              normalizeAutoMatchedRedditThread(
+                gameMatch
               );
 
             state.gameThreadOverrideUrl =
@@ -4199,8 +4424,8 @@
             gameThreadEl,
             state.gameThread,
             comments,
-            "Choose a Game Thread candidate above.",
-            redditFlairedSearchPageUrl("game")
+            "No strong Game Thread title match found yet.",
+            redditTeamSearchPageUrl(state, "game")
           );
         } else {
           state.gameThread = null;
@@ -4210,32 +4435,34 @@
             gameThreadEl,
             null,
             [],
-            "Choose a Game Thread candidate above to embed comments.",
-            redditFlairedSearchPageUrl("game")
+            "No strong Game Thread title match found yet. The tracker only auto-embeds when both teams are clearly present in the Reddit title.",
+            redditTeamSearchPageUrl(state, "game")
           );
         }
 
-        const postgamePermalink =
-          getStoredThreadPermalink(
-            gameId,
+        const postgameMatch =
+          findBestRedditThreadForGame(
+            state,
             "postgame"
           );
 
-        if (postgamePermalink) {
+        if (postgameMatch) {
+          const postgamePermalink =
+            extractRedditPermalink(postgameMatch.permalink || postgameMatch.url);
+
           if (
             state.postgameThreadOverrideUrl !== postgamePermalink ||
             !state.postgameThread
           ) {
             postgameThreadEl.innerHTML = `
               <div class="reddit-fallback">
-                Loading selected r/nba Post Game Thread...
+                Loading matched r/nba Post Game Thread...
               </div>
             `;
 
             state.postgameThread =
-              await fetchRedditThreadFromUrl(
-                postgamePermalink,
-                "postgame"
+              normalizeAutoMatchedRedditThread(
+                postgameMatch
               );
 
             state.postgameThreadOverrideUrl =
@@ -4257,8 +4484,8 @@
             postgameThreadEl,
             state.postgameThread,
             postgameComments,
-            "Choose a Post Game Thread candidate above.",
-            redditFlairedSearchPageUrl("postgame")
+            "No strong Post Game Thread title match found yet.",
+            redditTeamSearchPageUrl(state, "postgame")
           );
         } else {
           state.postgameThread = null;
@@ -4269,9 +4496,9 @@
             null,
             [],
             state.isFinal
-              ? "Choose a Post Game Thread candidate above to embed comments."
-              : "Postgame comments can be embedded once you choose a Post Game Thread candidate above.",
-            redditFlairedSearchPageUrl("postgame")
+              ? "No strong Post Game Thread title match found yet. The tracker will keep checking recent r/nba titles."
+              : "Postgame thread will auto-match here once a matching title appears.",
+            redditTeamSearchPageUrl(state, "postgame")
           );
         }
 
@@ -4286,7 +4513,7 @@
           null,
           [],
           "Could not load Reddit candidates or embedded comments directly. Use the search link instead.",
-          redditFlairedSearchPageUrl("game")
+          redditTeamSearchPageUrl(state, "game")
         );
       } finally {
         state.redditRefreshInFlight = false;
@@ -4309,8 +4536,11 @@
 
       setTimeout(async () => {
         await refreshRedditThreadPickerList(true);
-        updateAllRedditThreadPickers();
+        state.postgameThread = null;
+        state.postgameThreadOverrideUrl = null;
+        state.lastRefresh = 0;
         state.postgameStopped = true;
+        await refreshRedditForGame(gameId, true);
       }, 10 * 60 * 1000);
     }
 
