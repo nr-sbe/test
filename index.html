@@ -537,7 +537,7 @@
       border: 1px solid var(--border);
       border-radius: 22px;
       display: grid;
-      grid-template-columns: minmax(240px, 1fr) auto;
+      grid-template-columns: minmax(220px, 1fr) minmax(310px, auto) auto;
       gap: 16px;
       box-shadow: var(--shadow-soft);
       backdrop-filter: blur(18px);
@@ -603,6 +603,69 @@
     .reddit-status {
       color: var(--muted);
       font-size: 12px;
+    }
+
+    .date-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .date-nav-button {
+      min-height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel-soft);
+      color: var(--muted-strong);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 820;
+      padding: 8px 12px;
+      transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+
+    .date-nav-button:hover:not(:disabled) {
+      border-color: var(--border-strong);
+      color: var(--text);
+      background: color-mix(in srgb, var(--panel-soft) 88%, var(--accent) 12%);
+      transform: translateY(-1px);
+    }
+
+    .date-nav-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.42;
+      transform: none;
+    }
+
+    .date-readout {
+      min-height: 36px;
+      display: grid;
+      align-content: center;
+      gap: 1px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--panel-muted) 86%, transparent);
+      min-width: 145px;
+      text-align: center;
+    }
+
+    .date-readout-label {
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    #scoreboardDateLabel {
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
     }
 
     #hiddenGames {
@@ -1619,6 +1682,40 @@
         />
       </div>
 
+      <div
+        class="date-controls"
+        aria-label="Scoreboard date controls"
+      >
+        <button
+          class="date-nav-button"
+          id="previousNbaDate"
+          type="button"
+        >
+          ← Previous day
+        </button>
+
+        <div class="date-readout">
+          <span class="date-readout-label">Viewing</span>
+          <span id="scoreboardDateLabel">Today</span>
+        </div>
+
+        <button
+          class="date-nav-button"
+          id="nextNbaDate"
+          type="button"
+        >
+          Next day →
+        </button>
+
+        <button
+          class="date-nav-button"
+          id="todayNbaDate"
+          type="button"
+        >
+          Today
+        </button>
+      </div>
+
       <div class="reddit-toggle">
         <input
           type="checkbox"
@@ -1653,6 +1750,10 @@
     const scoresEl = document.getElementById("scores");
     const updatedEl = document.getElementById("updated");
     const scoreSpacingEl = document.getElementById("scoreSpacing");
+    const previousNbaDateButton = document.getElementById("previousNbaDate");
+    const nextNbaDateButton = document.getElementById("nextNbaDate");
+    const todayNbaDateButton = document.getElementById("todayNbaDate");
+    const scoreboardDateLabelEl = document.getElementById("scoreboardDateLabel");
     const pauseRedditRefreshEl = document.getElementById("pauseRedditRefresh");
     const redditStatusEl = document.getElementById("redditStatus");
     const hiddenGamesEl = document.getElementById("hiddenGames");
@@ -1740,6 +1841,7 @@
       );
 
     let redditRefreshPaused = false;
+    let scoreboardDateOffsetDays = 0;
     let currentScoreboardDate = null;
     let currentLoadStartedAt = 0;
 
@@ -1813,6 +1915,23 @@
       );
     });
 
+
+    previousNbaDateButton.addEventListener("click", () => {
+      setScoreboardDateOffset(
+        scoreboardDateOffsetDays - 1
+      );
+    });
+
+    nextNbaDateButton.addEventListener("click", () => {
+      setScoreboardDateOffset(
+        scoreboardDateOffsetDays + 1
+      );
+    });
+
+    todayNbaDateButton.addEventListener("click", () => {
+      setScoreboardDateOffset(0);
+    });
+
     function getEasternDateParts(date = new Date()) {
       const parts =
         new Intl.DateTimeFormat(
@@ -1849,7 +1968,34 @@
       );
     }
 
-    function getNbaScoreboardDate() {
+    function parseDateYYYYMMDD(value) {
+      const text = String(value || "");
+
+      return new Date(
+        Date.UTC(
+          Number(text.slice(0, 4)),
+          Number(text.slice(4, 6)) - 1,
+          Number(text.slice(6, 8))
+        )
+      );
+    }
+
+    function addDaysToYYYYMMDD(value, days) {
+      const date =
+        parseDateYYYYMMDD(value);
+
+      date.setUTCDate(
+        date.getUTCDate() + days
+      );
+
+      return formatDateYYYYMMDD(
+        date.getUTCFullYear(),
+        date.getUTCMonth() + 1,
+        date.getUTCDate()
+      );
+    }
+
+    function getBaseNbaScoreboardDate() {
       const eastern =
         getEasternDateParts();
 
@@ -1875,6 +2021,59 @@
         previousDate.getUTCMonth() + 1,
         previousDate.getUTCDate()
       );
+    }
+
+    function getNbaScoreboardDate(offsetDays = scoreboardDateOffsetDays) {
+      return addDaysToYYYYMMDD(
+        getBaseNbaScoreboardDate(),
+        offsetDays
+      );
+    }
+
+    function formatScoreboardDateForDisplay(scoreboardDate) {
+      const date =
+        parseDateYYYYMMDD(scoreboardDate);
+
+      return date.toLocaleDateString(
+        [],
+        {
+          weekday: "short",
+          month: "short",
+          day: "numeric"
+        }
+      );
+    }
+
+    function updateScoreboardDateControls(scoreboardDate = getNbaScoreboardDate()) {
+      if (!scoreboardDateLabelEl) return;
+
+      const relativeLabel =
+        scoreboardDateOffsetDays === 0
+          ? "Today"
+          : scoreboardDateOffsetDays === -1
+            ? "Yesterday"
+            : `${Math.abs(scoreboardDateOffsetDays)} days back`;
+
+      scoreboardDateLabelEl.textContent =
+        `${relativeLabel} · ${formatScoreboardDateForDisplay(scoreboardDate)}`;
+
+      if (nextNbaDateButton) {
+        nextNbaDateButton.disabled =
+          scoreboardDateOffsetDays >= 0;
+      }
+
+      if (todayNbaDateButton) {
+        todayNbaDateButton.disabled =
+          scoreboardDateOffsetDays === 0;
+      }
+    }
+
+    function setScoreboardDateOffset(offsetDays) {
+      scoreboardDateOffsetDays =
+        Math.min(0, offsetDays);
+
+      updateScoreboardDateControls();
+      loadScores();
     }
 
     function saveHiddenGames() {
@@ -2829,7 +3028,7 @@
     const REDDIT_THREAD_LIST_BACKGROUND_REFRESH_MS = 10 * 60 * 1000;
     const REDDIT_COMMENT_SORTS = ["new", "top"];
     const REDDIT_COMMENT_CACHE_MS = Infinity;
-    const REDDIT_THREAD_LOOKBACK_HOURS = 48;
+    const REDDIT_THREAD_LOOKBACK_HOURS = 72;
 
     const redditCommentsCache = new Map();
     let redditThreadListRefreshPromise = null;
@@ -3551,9 +3750,9 @@
       };
 
       const searchUrls = [
-        redditSearchUrl('"Game Thread"', "new", "day"),
-        redditSearchUrl('"Post Game Thread"', "new", "day"),
-        redditSearchUrl('"Postgame Thread"', "new", "day")
+        redditSearchUrl('"Game Thread"', "new", "week"),
+        redditSearchUrl('"Post Game Thread"', "new", "week"),
+        redditSearchUrl('"Postgame Thread"', "new", "week")
       ];
 
       const [newPosts, hotPosts, ...searchPostGroups] =
@@ -4552,6 +4751,8 @@
         const scoreboardDate =
           getNbaScoreboardDate();
 
+        updateScoreboardDateControls(scoreboardDate);
+
         if (currentScoreboardDate !== scoreboardDate) {
           currentScoreboardDate = scoreboardDate;
           clearAllGameCards();
@@ -4582,7 +4783,8 @@
           updatedEl.textContent =
             "Updated " +
             new Date()
-              .toLocaleTimeString();
+              .toLocaleTimeString() +
+            ` · NBA date ${scoreboardDate}`;
 
           return;
         }
@@ -4866,6 +5068,8 @@
           "<p>Failed to load scores.</p>";
       }
     }
+
+    updateScoreboardDateControls();
 
     loadScores();
 
