@@ -1,0 +1,4649 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NBA Live Scores</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --score-column-width: 150px;
+      --bg: #050609;
+      --bg-elevated: #080b10;
+      --panel: #0d1117;
+      --panel-soft: #121821;
+      --panel-muted: #151b24;
+      --border: rgba(148, 163, 184, 0.18);
+      --border-strong: rgba(148, 163, 184, 0.32);
+      --text: #f4f7fb;
+      --muted: #8f9aaa;
+      --muted-strong: #b8c0cc;
+      --accent: #7dd3fc;
+      --accent-soft: rgba(125, 211, 252, 0.12);
+      --secondary: #34d399;
+      --secondary-soft: rgba(52, 211, 153, 0.12);
+      --gold: #f2c94c;
+      --danger: #fb7185;
+      --control-bg: rgba(13, 17, 23, 0.78);
+      --shadow: 0 22px 70px rgba(0, 0, 0, 0.34);
+      --shadow-soft: 0 10px 32px rgba(0, 0, 0, 0.22);
+      --radius-lg: 26px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      --momentum-away: #93c5fd;
+      --momentum-home: #34d399;
+    }
+
+    body[data-theme="executive"] {
+      --bg: #050609;
+      --bg-elevated: #080b10;
+      --panel: #0d1117;
+      --panel-soft: #121821;
+      --panel-muted: #151b24;
+      --border: rgba(148, 163, 184, 0.18);
+      --border-strong: rgba(148, 163, 184, 0.32);
+      --text: #f4f7fb;
+      --muted: #8f9aaa;
+      --muted-strong: #b8c0cc;
+      --accent: #7dd3fc;
+      --accent-soft: rgba(125, 211, 252, 0.12);
+      --secondary: #34d399;
+      --secondary-soft: rgba(52, 211, 153, 0.12);
+      --gold: #f2c94c;
+      --momentum-away: #93c5fd;
+      --momentum-home: #34d399;
+    }
+
+    body[data-theme="softblack"] {
+      --bg: #010101;
+      --bg-elevated: #060606;
+      --panel: #090909;
+      --panel-soft: #0f0f10;
+      --panel-muted: #151515;
+      --border: rgba(255, 255, 255, 0.11);
+      --border-strong: rgba(255, 255, 255, 0.18);
+      --text: #e7e7e7;
+      --muted: #767676;
+      --muted-strong: #aaa;
+      --accent: #a8a29e;
+      --accent-soft: rgba(168, 162, 158, 0.10);
+      --secondary: #8aa38f;
+      --secondary-soft: rgba(138, 163, 143, 0.12);
+      --gold: #b8a46a;
+      --momentum-away: #b68a45;
+      --momentum-home: #4f9f79;
+    }
+
+    body[data-theme="lowlightgreen"] {
+      --bg: #010403;
+      --bg-elevated: #030806;
+      --panel: #06100b;
+      --panel-soft: #0b1710;
+      --panel-muted: #0f2117;
+      --border: rgba(116, 143, 124, 0.20);
+      --border-strong: rgba(116, 143, 124, 0.33);
+      --text: #dce8df;
+      --muted: #7c9184;
+      --muted-strong: #a8baaF;
+      --accent: #78a887;
+      --accent-soft: rgba(120, 168, 135, 0.13);
+      --secondary: #68b482;
+      --secondary-soft: rgba(104, 180, 130, 0.12);
+      --gold: #b59b5a;
+      --momentum-away: #a69461;
+      --momentum-home: #46a163;
+    }
+
+    body[data-theme="oledred"] {
+      --bg: #000000;
+      --bg-elevated: #040202;
+      --panel: #080505;
+      --panel-soft: #100808;
+      --panel-muted: #180c0c;
+      --border: rgba(169, 93, 93, 0.20);
+      --border-strong: rgba(169, 93, 93, 0.34);
+      --text: #e8dddd;
+      --muted: #8f7272;
+      --muted-strong: #b89b9b;
+      --accent: #c06b6b;
+      --accent-soft: rgba(192, 107, 107, 0.12);
+      --secondary: #9b8a78;
+      --secondary-soft: rgba(155, 138, 120, 0.12);
+      --gold: #b8985f;
+      --momentum-away: #a86b58;
+      --momentum-home: #8f7870;
+    }
+
+    body[data-theme="dimslate"] {
+      --bg: #030405;
+      --bg-elevated: #070a0c;
+      --panel: #0b1013;
+      --panel-soft: #11181d;
+      --panel-muted: #172027;
+      --border: rgba(127, 151, 163, 0.22);
+      --border-strong: rgba(127, 151, 163, 0.36);
+      --text: #dfe8ec;
+      --muted: #84939b;
+      --muted-strong: #b0bdc4;
+      --accent: #85a9b8;
+      --accent-soft: rgba(133, 169, 184, 0.12);
+      --secondary: #8aa394;
+      --secondary-soft: rgba(138, 163, 148, 0.12);
+      --gold: #baa36b;
+      --momentum-away: #6f91a3;
+      --momentum-home: #79977f;
+    }
+
+    body[data-theme="nightsepia"] {
+      --bg: #050301;
+      --bg-elevated: #090602;
+      --panel: #100b05;
+      --panel-soft: #181108;
+      --panel-muted: #21170b;
+      --border: rgba(163, 125, 80, 0.23);
+      --border-strong: rgba(163, 125, 80, 0.36);
+      --text: #efe2cd;
+      --muted: #a08a6e;
+      --muted-strong: #c6ae8e;
+      --accent: #c18a55;
+      --accent-soft: rgba(193, 138, 85, 0.12);
+      --secondary: #9aa06f;
+      --secondary-soft: rgba(154, 160, 111, 0.12);
+      --gold: #d0aa61;
+      --momentum-away: #b07a49;
+      --momentum-home: #828a56;
+    }
+
+    body[data-theme="deepocean"] {
+      --bg: #000407;
+      --bg-elevated: #020a0f;
+      --panel: #061119;
+      --panel-soft: #0b1a25;
+      --panel-muted: #102536;
+      --border: rgba(91, 141, 160, 0.22);
+      --border-strong: rgba(91, 141, 160, 0.36);
+      --text: #ddebf1;
+      --muted: #7e99a6;
+      --muted-strong: #aac0ca;
+      --accent: #6eaec4;
+      --accent-soft: rgba(110, 174, 196, 0.13);
+      --secondary: #70b8aa;
+      --secondary-soft: rgba(112, 184, 170, 0.12);
+      --gold: #bca86d;
+      --momentum-away: #5f9eb8;
+      --momentum-home: #5cae9a;
+    }
+
+    body[data-theme="blackout"] {
+      --bg: #000;
+      --bg-elevated: #020202;
+      --panel: #080808;
+      --panel-soft: #101010;
+      --panel-muted: #151515;
+      --border: rgba(255, 255, 255, 0.10);
+      --border-strong: rgba(255, 255, 255, 0.18);
+      --text: #f7f7f7;
+      --muted: #777;
+      --muted-strong: #aaa;
+      --accent: #ff4d4d;
+      --accent-soft: rgba(255, 77, 77, 0.10);
+      --secondary: #22c55e;
+      --secondary-soft: rgba(34, 197, 94, 0.12);
+      --gold: #f5c542;
+    }
+
+    body[data-theme="midnight"] {
+      --bg: #030712;
+      --bg-elevated: #070c18;
+      --panel: #0b1020;
+      --panel-soft: #111827;
+      --panel-muted: #172033;
+      --border: rgba(148, 163, 184, 0.20);
+      --border-strong: rgba(148, 163, 184, 0.34);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --muted-strong: #c3cedd;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.14);
+      --secondary: #22c55e;
+      --secondary-soft: rgba(34, 197, 94, 0.12);
+      --gold: #facc15;
+    }
+
+    body[data-theme="purple"] {
+      --bg: #090512;
+      --bg-elevated: #0d0719;
+      --panel: #120b22;
+      --panel-soft: #1b1133;
+      --panel-muted: #251642;
+      --border: rgba(194, 150, 255, 0.20);
+      --border-strong: rgba(194, 150, 255, 0.34);
+      --text: #faf5ff;
+      --muted: #b9a8ce;
+      --muted-strong: #d8c7ee;
+      --accent: #a855f7;
+      --accent-soft: rgba(168, 85, 247, 0.16);
+      --secondary: #34d399;
+      --secondary-soft: rgba(52, 211, 153, 0.12);
+      --gold: #fbbf24;
+    }
+
+    body[data-theme="forest"] {
+      --bg: #020806;
+      --bg-elevated: #04100b;
+      --panel: #07110d;
+      --panel-soft: #0d1c16;
+      --panel-muted: #13271f;
+      --border: rgba(120, 178, 146, 0.20);
+      --border-strong: rgba(120, 178, 146, 0.34);
+      --text: #f0fdf4;
+      --muted: #8fb3a1;
+      --muted-strong: #bdd4c8;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.14);
+      --secondary: #38bdf8;
+      --secondary-soft: rgba(56, 189, 248, 0.12);
+      --gold: #eab308;
+    }
+
+    body[data-theme="amber"] {
+      --bg: #0a0601;
+      --bg-elevated: #110b03;
+      --panel: #120d05;
+      --panel-soft: #1f1608;
+      --panel-muted: #2a1d0b;
+      --border: rgba(245, 158, 11, 0.20);
+      --border-strong: rgba(245, 158, 11, 0.34);
+      --text: #fff7ed;
+      --muted: #bca98d;
+      --muted-strong: #dccab0;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.14);
+      --secondary: #22c55e;
+      --secondary-soft: rgba(34, 197, 94, 0.12);
+      --gold: #facc15;
+    }
+
+    html {
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), transparent 220px),
+        radial-gradient(circle at 18% -10%, var(--accent-soft), transparent 34%),
+        radial-gradient(circle at 88% -18%, var(--secondary-soft), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: -0.01em;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.014) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), transparent 70%);
+    }
+
+    .page {
+      width: min(1420px, 100%);
+      margin: 0 auto;
+    }
+
+    .hamburger-button {
+      position: fixed;
+      top: 22px;
+      left: 22px;
+      z-index: 1001;
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      color: var(--text);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+      transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+    }
+
+    .hamburger-button:hover {
+      border-color: var(--border-strong);
+      background: var(--panel-soft);
+      transform: translateY(-1px);
+    }
+
+    .hamburger-lines {
+      width: 18px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .hamburger-lines span {
+      display: block;
+      height: 2px;
+      background: var(--text);
+      border-radius: 999px;
+    }
+
+    .settings-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,0.58);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      backdrop-filter: blur(2px);
+    }
+
+    .settings-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .settings-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: min(390px, 90vw);
+      height: 100vh;
+      padding: 88px 22px 24px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.055), transparent 22%),
+        var(--panel);
+      border-right: 1px solid var(--border);
+      box-shadow: 30px 0 90px rgba(0,0,0,0.56);
+      transform: translateX(-100%);
+      transition: transform 0.24s ease;
+      overflow-y: auto;
+    }
+
+    .settings-panel.open {
+      transform: translateX(0);
+    }
+
+    .settings-title {
+      font-size: 23px;
+      font-weight: 850;
+      letter-spacing: -0.04em;
+      margin-bottom: 7px;
+    }
+
+    .settings-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .setting-group {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.025);
+      margin-bottom: 14px;
+    }
+
+    .setting-label,
+    .hidden-title,
+    .label,
+    .momentum-title,
+    .boxscore-title {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    .setting-label {
+      margin-bottom: 12px;
+    }
+
+    .theme-grid {
+      display: grid;
+      gap: 9px;
+    }
+
+    .theme-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 730;
+      transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+    }
+
+    .theme-button:hover,
+    .theme-button.active {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--panel-soft) 86%, var(--accent) 14%);
+      transform: translateY(-1px);
+    }
+
+    .theme-swatches {
+      display: flex;
+      gap: 5px;
+    }
+
+    .swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 22px;
+      margin-bottom: 20px;
+      padding: 8px 0 0 58px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--secondary);
+      box-shadow: 0 0 18px var(--secondary);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 850;
+      letter-spacing: -0.07em;
+      line-height: 0.92;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin-top: 13px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .hero-meta {
+      display: grid;
+      gap: 6px;
+      justify-items: end;
+      min-width: fit-content;
+    }
+
+    .update-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    #updated {
+      color: var(--muted-strong);
+      font-size: 13px;
+      background: color-mix(in srgb, var(--panel) 80%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 9px 12px;
+      white-space: nowrap;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+    }
+
+    .controls {
+      margin-bottom: 20px;
+      padding: 14px;
+      background: var(--control-bg);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto;
+      gap: 16px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px);
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .control-row label,
+    .toggle-label {
+      color: var(--muted-strong);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      min-width: 120px;
+      accent-color: var(--accent);
+    }
+
+    select {
+      min-height: 36px;
+      background: var(--panel-muted);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      accent-color: var(--accent);
+      outline: none;
+    }
+
+    select:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+      outline-offset: 2px;
+    }
+
+    .reddit-toggle {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      color: var(--muted-strong);
+      font-size: 13px;
+    }
+
+    .reddit-toggle input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .reddit-status {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    #hiddenGames {
+      margin-bottom: 18px;
+      display: none;
+      padding: 14px;
+      background: var(--control-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
+    }
+
+    #hiddenGames.active {
+      display: block;
+    }
+
+    .hidden-title {
+      margin-bottom: 10px;
+    }
+
+    .hidden-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .hidden-game-button,
+    .hide-game-button,
+    .spoiler-toggle-button,
+    .boxscore-toggle-button {
+      background: var(--panel-soft);
+      color: var(--muted-strong);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 760;
+      transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+    }
+
+    .hidden-game-button:hover,
+    .hide-game-button:hover,
+    .spoiler-toggle-button:hover,
+    .boxscore-toggle-button:hover {
+      border-color: var(--border-strong);
+      color: var(--text);
+      background: color-mix(in srgb, var(--panel-soft) 88%, var(--accent) 12%);
+      transform: translateY(-1px);
+    }
+
+    .boxscore-toggle-button {
+      color: var(--text);
+      border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+      background: color-mix(in srgb, var(--panel-soft) 78%, var(--accent) 22%);
+    }
+
+    #scores {
+      display: grid;
+      gap: 18px;
+    }
+
+    .game {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 410px);
+      gap: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), transparent 34%),
+        var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .game::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), transparent 62%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .game::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 0% 0%, var(--accent-soft), transparent 32%);
+      opacity: 0.55;
+    }
+
+    .game.hidden {
+      display: none;
+    }
+
+    .main-side,
+    .reddit-side,
+    .card-actions {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-actions {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 3;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .game.spoiler-hidden .score {
+      color: transparent !important;
+      text-shadow: none !important;
+      background: var(--panel-muted);
+      border-radius: 12px;
+      min-width: 58px;
+    }
+
+    .game.spoiler-hidden .score.flash {
+      animation: none !important;
+    }
+
+    .game.spoiler-hidden .score::after {
+      content: "••";
+      color: var(--muted);
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: var(--score-column-width) 1fr;
+      gap: 26px;
+      align-items: center;
+      padding-right: 285px;
+      margin-bottom: 18px;
+    }
+
+    .scores-left {
+      display: grid;
+      gap: 12px;
+      justify-items: start;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .score-label {
+      width: 44px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .score {
+      font-size: clamp(42px, 5vw, 62px);
+      line-height: 0.92;
+      font-weight: 860;
+      color: var(--text);
+      display: inline-block;
+      transform-origin: center;
+      min-width: 54px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.08em;
+    }
+
+    .score.flash {
+      animation: flashScore 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @keyframes flashScore {
+      0% {
+        transform: scale(1);
+        color: var(--text);
+        text-shadow: none;
+      }
+
+      20% {
+        transform: scale(1.35);
+        color: var(--accent);
+        text-shadow: 0 0 24px var(--accent);
+      }
+
+      100% {
+        transform: scale(1);
+        color: var(--text);
+        text-shadow: none;
+      }
+    }
+
+    .teams-right {
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .team-line {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .team-name {
+      font-size: clamp(20px, 2.2vw, 27px);
+      font-weight: 780;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .team-record {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0.02em;
+    }
+
+    .status {
+      display: inline-flex;
+      width: fit-content;
+      margin-top: 2px;
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted-strong);
+      background: var(--panel-soft);
+      font-size: 12px;
+      font-weight: 820;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+    }
+
+    .live {
+      color: var(--secondary);
+      border-color: color-mix(in srgb, var(--secondary) 36%, var(--border));
+      background: var(--secondary-soft);
+    }
+
+    .broadcast,
+    .plays,
+    .reddit-panel {
+      margin-top: 14px;
+      color: var(--muted-strong);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .broadcast {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .broadcast-links {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .broadcast-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 24px;
+      padding: 3px 8px;
+      border: 1px solid color-mix(in srgb, var(--border) 78%, var(--accent));
+      border-radius: 999px;
+      background: rgba(255,255,255,0.035);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1;
+      text-decoration: none;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .broadcast-chip[href]:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    .broadcast-chip:not([href]) {
+      color: var(--muted-strong);
+      cursor: default;
+    }
+
+    .broadcast-external {
+      color: var(--accent);
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .label {
+      margin-right: 2px;
+    }
+
+    .plays,
+    .momentum-section,
+    .boxscore-section,
+    .reddit-panel {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .plays {
+      padding: 14px;
+    }
+
+    .plays-list {
+      margin-top: 6px;
+    }
+
+    .play {
+      padding: 10px 0;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    }
+
+    .play:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .play-time {
+      display: inline-block;
+      color: var(--gold);
+      font-weight: 850;
+      margin-right: 8px;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-change {
+      color: var(--secondary);
+      font-weight: 820;
+      margin-left: 6px;
+    }
+
+    .momentum-section,
+    .boxscore-section {
+      margin-top: 16px;
+      padding: 14px;
+    }
+
+    .boxscore-section.hidden {
+      display: none;
+    }
+
+    .momentum-header,
+    .boxscore-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .momentum-run {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .momentum-bar {
+      position: relative;
+      height: 10px;
+      background: var(--panel-muted);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .momentum-away,
+    .momentum-home {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      transition: width 0.35s ease;
+    }
+
+    .momentum-away {
+      left: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0.10), transparent), var(--momentum-away, var(--accent));
+    }
+
+    .momentum-home {
+      right: 0;
+      background: linear-gradient(-90deg, rgba(255,255,255,0.10), transparent), var(--momentum-home, var(--secondary));
+    }
+
+    .momentum-labels {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 720;
+    }
+
+    .boxscore-content {
+      overflow-x: auto;
+    }
+
+    .player-boxscore-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .player-team-box {
+      overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+      border-radius: 16px;
+      background: rgba(0,0,0,0.12);
+    }
+
+    .player-team-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 10px;
+      background: color-mix(in srgb, var(--panel-soft) 84%, var(--accent) 16%);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .boxscore-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      color: var(--muted-strong);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .boxscore-table th,
+    .boxscore-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .boxscore-table tbody tr:hover {
+      background: rgba(255,255,255,0.035);
+    }
+
+    .boxscore-table th:first-child,
+    .boxscore-table td:first-child {
+      text-align: left;
+      color: var(--text);
+      font-weight: 760;
+      max-width: 190px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .boxscore-table th {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-weight: 850;
+    }
+
+    .boxscore-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .boxscore-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .reddit-side {
+      border-left: 1px solid var(--border);
+      padding-left: 22px;
+      min-width: 0;
+    }
+
+    .reddit-panel {
+      padding: 16px;
+      margin-top: 0;
+      min-height: 100%;
+    }
+
+    .reddit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .reddit-title {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .reddit-subtitle {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .reddit-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .reddit-picker {
+      display: grid;
+      gap: 9px;
+      margin: 12px 0 14px;
+      padding: 12px;
+      border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.10);
+    }
+
+    .reddit-picker-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .reddit-picker-row label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .reddit-picker-row select {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .reddit-picker-note {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .reddit-feed-status {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .reddit-link-button,
+    .reddit-clear-links-button,
+    .reddit-retry-button {
+      min-height: 35px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel-soft);
+      color: var(--muted-strong);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 820;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: 0.15s ease;
+    }
+
+    .reddit-link-button:hover,
+    .reddit-clear-links-button:hover,
+    .reddit-retry-button:hover {
+      border-color: var(--accent);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .reddit-clear-links-button[hidden] {
+      display: none;
+    }
+
+    .reddit-thread-card {
+      border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(0,0,0,0.12);
+    }
+
+    .reddit-thread-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 720;
+    }
+
+    .reddit-status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted-strong);
+      background: var(--panel-soft);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .reddit-status-pill.high {
+      color: var(--secondary);
+      border-color: color-mix(in srgb, var(--secondary) 42%, var(--border));
+      background: var(--secondary-soft);
+    }
+
+    .reddit-status-pill.medium {
+      color: var(--gold);
+      border-color: color-mix(in srgb, var(--gold) 38%, var(--border));
+      background: rgba(242, 201, 76, 0.09);
+    }
+
+    .reddit-status-pill.manual {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+      background: var(--accent-soft);
+    }
+
+    .reddit-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .reddit-action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel-soft);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .reddit-action-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .reddit-comments {
+      margin-top: 4px;
+    }
+
+    .reddit-thread-topline {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .reddit-thread-link {
+      display: inline-block;
+      margin: 6px 0 10px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 760;
+      text-decoration: none;
+      line-height: 1.4;
+    }
+
+    .reddit-thread-link:hover {
+      text-decoration: underline;
+    }
+
+    .reddit-fallback {
+      color: var(--muted-strong);
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+
+    .comment {
+      padding: 11px 0;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    }
+
+    .comment:last-child {
+      border-bottom: none;
+    }
+
+    .comment-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+      font-weight: 720;
+    }
+
+    .comment-body {
+      color: var(--muted-strong);
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .postgame {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 1100px) {
+      .game {
+        grid-template-columns: 1fr;
+      }
+
+      .reddit-side {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding-left: 0;
+        padding-top: 18px;
+      }
+    }
+
+    @media (max-width: 950px) {
+      body {
+        padding: 20px;
+      }
+
+      .hero {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-left: 54px;
+      }
+
+      .hero-meta {
+        justify-items: start;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .reddit-toggle {
+        justify-content: flex-start;
+      }
+
+      .scoreboard {
+        padding-right: 0;
+      }
+
+      .card-actions {
+        position: static;
+        margin-bottom: 14px;
+        justify-content: flex-start;
+      }
+
+      .team-name {
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 16px;
+      }
+
+      .hero {
+        padding-left: 50px;
+      }
+
+      .scoreboard {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .scores-left {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .game {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .control-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .reddit-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body data-theme="softblack">
+
+  <button
+    class="hamburger-button"
+    id="openSettings"
+    type="button"
+    aria-label="Open settings"
+  >
+    <span class="hamburger-lines">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+
+  <div
+    class="settings-overlay"
+    id="settingsOverlay"
+  ></div>
+
+  <aside
+    class="settings-panel"
+    id="settingsPanel"
+  >
+    <div class="settings-title">
+      Settings
+    </div>
+
+    <div class="settings-subtitle">
+      Select a restrained broadcast-style dark theme optimized for long viewing sessions.
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">
+        Night Mode Theme
+      </div>
+
+      <div class="theme-grid">
+        <button class="theme-button" data-theme-option="executive" type="button">
+          Executive Dark
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#050609"></span>
+            <span class="swatch" style="background:#7dd3fc"></span>
+            <span class="swatch" style="background:#34d399"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="softblack" type="button">
+          Soft Black
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#010101"></span>
+            <span class="swatch" style="background:#b68a45"></span>
+            <span class="swatch" style="background:#4f9f79"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="lowlightgreen" type="button">
+          Low Light Green
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#010403"></span>
+            <span class="swatch" style="background:#2d5f3f"></span>
+            <span class="swatch" style="background:#3f7f56"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="oledred" type="button">
+          OLED Red
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#000000"></span>
+            <span class="swatch" style="background:#8f1d1d"></span>
+            <span class="swatch" style="background:#7f4f4f"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="dimslate" type="button">
+          Dim Slate
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#030405"></span>
+            <span class="swatch" style="background:#4f6b7a"></span>
+            <span class="swatch" style="background:#64756a"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="nightsepia" type="button">
+          Night Sepia
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#050301"></span>
+            <span class="swatch" style="background:#7d5530"></span>
+            <span class="swatch" style="background:#6b7353"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="deepocean" type="button">
+          Deep Ocean
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#000407"></span>
+            <span class="swatch" style="background:#2b6072"></span>
+            <span class="swatch" style="background:#3c6b65"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="blackout" type="button">
+          Blackout
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#000"></span>
+            <span class="swatch" style="background:#ff2b2b"></span>
+            <span class="swatch" style="background:#22c55e"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="midnight" type="button">
+          Midnight Blue
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#030712"></span>
+            <span class="swatch" style="background:#38bdf8"></span>
+            <span class="swatch" style="background:#22c55e"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="purple" type="button">
+          Courtside Purple
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#090512"></span>
+            <span class="swatch" style="background:#a855f7"></span>
+            <span class="swatch" style="background:#34d399"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="forest" type="button">
+          Forest Night
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#020806"></span>
+            <span class="swatch" style="background:#22c55e"></span>
+            <span class="swatch" style="background:#38bdf8"></span>
+          </span>
+        </button>
+
+        <button class="theme-button" data-theme-option="amber" type="button">
+          Warm Amber
+          <span class="theme-swatches">
+            <span class="swatch" style="background:#0a0601"></span>
+            <span class="swatch" style="background:#f97316"></span>
+            <span class="swatch" style="background:#facc15"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="page">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Live Game Center</div>
+        <h1>NBA Scores</h1>
+        <div class="subtitle">
+          Real-time scoreboard, play context, player box lines, momentum, broadcasts, and Reddit game threads in one focused view.
+        </div>
+      </div>
+
+      <div class="hero-meta">
+        <div class="update-label">Data status</div>
+        <div id="updated">Loading...</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="control-row">
+        <label for="scoreSpacing">Score spacing</label>
+
+        <input
+          id="scoreSpacing"
+          type="range"
+          min="110"
+          max="260"
+          value="150"
+        />
+      </div>
+
+      <div class="reddit-toggle">
+        <input
+          type="checkbox"
+          id="pauseRedditRefresh"
+        />
+
+        <label class="toggle-label" for="pauseRedditRefresh">
+          Pause Reddit List Refresh
+        </label>
+
+        <span class="reddit-status" id="redditStatus">
+          Reddit comments load once · sort from cache
+        </span>
+      </div>
+    </div>
+
+    <div id="hiddenGames">
+      <div class="hidden-title">
+        Hidden games — click to unhide
+      </div>
+
+      <div
+        class="hidden-list"
+        id="hiddenGamesList"
+      ></div>
+    </div>
+
+    <div id="scores"></div>
+  </div>
+
+  <script>
+    const scoresEl = document.getElementById("scores");
+    const updatedEl = document.getElementById("updated");
+    const scoreSpacingEl = document.getElementById("scoreSpacing");
+    const pauseRedditRefreshEl = document.getElementById("pauseRedditRefresh");
+    const redditStatusEl = document.getElementById("redditStatus");
+    const hiddenGamesEl = document.getElementById("hiddenGames");
+    const hiddenGamesListEl = document.getElementById("hiddenGamesList");
+    const openSettingsButton = document.getElementById("openSettings");
+    const settingsPanel = document.getElementById("settingsPanel");
+    const settingsOverlay = document.getElementById("settingsOverlay");
+    const themeButtons = document.querySelectorAll("[data-theme-option]");
+
+    const previousScores = {};
+    const gameCards = {};
+    const redditState = {};
+    const gameLabels = {};
+    const summaryCache = {};
+    const boxScoreVisible = {};
+
+    const BROADCAST_STREAM_LINKS = [
+      {
+        pattern: /\bABC\b/i,
+        label: "ABC / ESPN",
+        url: "https://www.espn.com/watch/"
+      },
+      {
+        pattern: /\bESPN(?:2|3| U| Deportes| News)?\b|\bESPN\+\b/i,
+        label: "ESPN",
+        url: "https://www.espn.com/watch/"
+      },
+      {
+        pattern: /\bNBA TV\b|\bNBATV\b/i,
+        label: "NBA TV",
+        url: "https://www.nba.com/watch/league-pass-stream"
+      },
+      {
+        pattern: /\bLeague Pass\b/i,
+        label: "NBA League Pass",
+        url: "https://www.nba.com/watch/league-pass-stream"
+      },
+      {
+        pattern: /\bPrime Video\b|\bPrime\b/i,
+        label: "Prime Video",
+        url: "https://www.primevideo.com/sports"
+      },
+      {
+        pattern: /\bPeacock\b/i,
+        label: "Peacock",
+        url: "https://www.peacocktv.com/sports/nba"
+      },
+      {
+        pattern: /\bNBC\b/i,
+        label: "NBC",
+        url: "https://www.nbc.com/live"
+      },
+      {
+        pattern: /\bTNT\b/i,
+        label: "TNT",
+        url: "https://www.tntdrama.com/watchtnt"
+      },
+      {
+        pattern: /\btruTV\b/i,
+        label: "truTV",
+        url: "https://www.trutv.com/watchtrutv"
+      },
+      {
+        pattern: /\bFanDuel\b/i,
+        label: "FanDuel Sports Network",
+        url: "https://www.fanduelsportsnetwork.com/"
+      },
+      {
+        pattern: /\bMSG(?:SN| Network)?\b/i,
+        label: "MSG+",
+        url: "https://www.msgplus.tv/"
+      },
+      {
+        pattern: /\bYES\b/i,
+        label: "YES Network",
+        url: "https://watchyesnetwork.com/"
+      }
+    ];
+
+    const hiddenGames =
+      new Set(
+        JSON.parse(
+          localStorage.getItem("hiddenNbaGames") || "[]"
+        )
+      );
+
+    let redditRefreshPaused = false;
+    let currentScoreboardDate = null;
+    let currentLoadStartedAt = 0;
+
+    function openSettings() {
+      settingsPanel.classList.add("open");
+      settingsOverlay.classList.add("open");
+    }
+
+    function closeSettings() {
+      settingsPanel.classList.remove("open");
+      settingsOverlay.classList.remove("open");
+    }
+
+    openSettingsButton.addEventListener("click", openSettings);
+    settingsOverlay.addEventListener("click", closeSettings);
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeSettings();
+      }
+    });
+
+    function setTheme(themeName) {
+      document.body.dataset.theme = themeName;
+
+      localStorage.setItem(
+        "nbaDashboardTheme",
+        themeName
+      );
+
+      themeButtons.forEach(button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.themeOption === themeName
+        );
+      });
+    }
+
+    const availableThemes =
+      [...themeButtons].map(button => button.dataset.themeOption);
+
+    const savedTheme =
+      localStorage.getItem("nbaDashboardTheme") ||
+      "softblack";
+
+    setTheme(
+      availableThemes.includes(savedTheme)
+        ? savedTheme
+        : "softblack"
+    );
+
+    themeButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        setTheme(button.dataset.themeOption);
+      });
+    });
+
+    pauseRedditRefreshEl.addEventListener("change", () => {
+      redditRefreshPaused = pauseRedditRefreshEl.checked;
+
+      redditStatusEl.textContent =
+        redditRefreshPaused
+          ? "Reddit list refresh paused"
+          : "Reddit comments load once · sort from cache";
+    });
+
+    scoreSpacingEl.addEventListener("input", () => {
+      document.documentElement.style.setProperty(
+        "--score-column-width",
+        `${scoreSpacingEl.value}px`
+      );
+    });
+
+    function getEasternDateParts(date = new Date()) {
+      const parts =
+        new Intl.DateTimeFormat(
+          "en-US",
+          {
+            timeZone: "America/New_York",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            hourCycle: "h23"
+          }
+        ).formatToParts(date);
+
+      const values = {};
+
+      parts.forEach(part => {
+        values[part.type] = part.value;
+      });
+
+      return {
+        year: Number(values.year),
+        month: Number(values.month),
+        day: Number(values.day),
+        hour: Number(values.hour)
+      };
+    }
+
+    function formatDateYYYYMMDD(year, month, day) {
+      return (
+        String(year) +
+        String(month).padStart(2, "0") +
+        String(day).padStart(2, "0")
+      );
+    }
+
+    function getNbaScoreboardDate() {
+      const eastern =
+        getEasternDateParts();
+
+      if (eastern.hour >= 3) {
+        return formatDateYYYYMMDD(
+          eastern.year,
+          eastern.month,
+          eastern.day
+        );
+      }
+
+      const previousDate =
+        new Date(
+          Date.UTC(
+            eastern.year,
+            eastern.month - 1,
+            eastern.day - 1
+          )
+        );
+
+      return formatDateYYYYMMDD(
+        previousDate.getUTCFullYear(),
+        previousDate.getUTCMonth() + 1,
+        previousDate.getUTCDate()
+      );
+    }
+
+    function saveHiddenGames() {
+      localStorage.setItem(
+        "hiddenNbaGames",
+        JSON.stringify([...hiddenGames])
+      );
+    }
+
+    function updateHiddenGamesUI() {
+      hiddenGamesListEl.innerHTML = "";
+
+      if (hiddenGames.size === 0) {
+        hiddenGamesEl.classList.remove("active");
+        return;
+      }
+
+      hiddenGamesEl.classList.add("active");
+
+      [...hiddenGames].forEach(gameId => {
+        const button = document.createElement("button");
+
+        button.className = "hidden-game-button";
+        button.textContent = gameLabels[gameId] || `Game ${gameId}`;
+
+        button.addEventListener("click", () => {
+          unhideGame(gameId);
+        });
+
+        hiddenGamesListEl.appendChild(button);
+      });
+    }
+
+    function hideGame(gameId) {
+      hiddenGames.add(gameId);
+      saveHiddenGames();
+
+      if (gameCards[gameId]) {
+        gameCards[gameId].classList.add("hidden");
+      }
+
+      updateHiddenGamesUI();
+    }
+
+    function unhideGame(gameId) {
+      hiddenGames.delete(gameId);
+      saveHiddenGames();
+
+      if (gameCards[gameId]) {
+        gameCards[gameId].classList.remove("hidden");
+      }
+
+      updateHiddenGamesUI();
+    }
+
+    function removeStaleGameCards(activeGameIds) {
+      Object.keys(gameCards).forEach(gameId => {
+        if (!activeGameIds.has(gameId)) {
+          gameCards[gameId].remove();
+
+          delete gameCards[gameId];
+          delete previousScores[gameId];
+          delete redditState[gameId];
+          delete gameLabels[gameId];
+          delete summaryCache[gameId];
+          delete boxScoreVisible[gameId];
+
+          hiddenGames.delete(gameId);
+        }
+      });
+
+      saveHiddenGames();
+      updateHiddenGamesUI();
+    }
+
+    function clearAllGameCards() {
+      Object.keys(gameCards).forEach(gameId => {
+        gameCards[gameId].remove();
+
+        delete gameCards[gameId];
+        delete previousScores[gameId];
+        delete redditState[gameId];
+        delete gameLabels[gameId];
+        delete summaryCache[gameId];
+        delete boxScoreVisible[gameId];
+
+        hiddenGames.delete(gameId);
+      });
+
+      saveHiddenGames();
+      updateHiddenGamesUI();
+    }
+
+    function flash(el) {
+      el.classList.remove("flash");
+      void el.offsetWidth;
+      el.classList.add("flash");
+    }
+
+    function escapeHTML(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getBroadcastNames(comp) {
+      if (!comp?.broadcasts?.length) {
+        return [];
+      }
+
+      const names = [];
+
+      comp.broadcasts.forEach(broadcast => {
+        if (Array.isArray(broadcast.names) && broadcast.names.length) {
+          names.push(...broadcast.names);
+          return;
+        }
+
+        if (broadcast.name) {
+          names.push(broadcast.name);
+        }
+      });
+
+      return [...new Set(
+        names
+          .map(name => String(name || "").trim())
+          .filter(Boolean)
+      )];
+    }
+
+    function getBroadcastStreamLink(name) {
+      return BROADCAST_STREAM_LINKS.find(item =>
+        item.pattern.test(name)
+      ) || null;
+    }
+
+    function renderBroadcastLinks(card, broadcastNames) {
+      const broadcastEl =
+        card.querySelector(".broadcast");
+
+      const targetEl =
+        card.querySelector(".broadcast-text");
+
+      if (!broadcastEl || !targetEl) {
+        return;
+      }
+
+      if (!broadcastNames.length) {
+        broadcastEl.title = "No broadcast or streaming platform listed yet.";
+        targetEl.textContent = "TBD";
+        return;
+      }
+
+      const html =
+        broadcastNames.map(name => {
+          const stream =
+            getBroadcastStreamLink(name);
+
+          if (!stream) {
+            return `
+              <span
+                class="broadcast-chip"
+                title="No direct streaming link mapped for ${escapeHTML(name)}"
+              >
+                ${escapeHTML(name)}
+              </span>
+            `;
+          }
+
+          return `
+            <a
+              class="broadcast-chip"
+              href="${stream.url}"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open ${escapeHTML(stream.label)} streaming page for ${escapeHTML(name)}"
+              aria-label="Open ${escapeHTML(stream.label)} streaming page for ${escapeHTML(name)}"
+            >
+              ${escapeHTML(name)}
+              <span class="broadcast-external" aria-hidden="true">↗</span>
+            </a>
+          `;
+        }).join("");
+
+      broadcastEl.title =
+        "Click a linked broadcaster to open its streaming page. Availability may depend on your TV provider, subscription, location, or blackout rules.";
+
+      targetEl.innerHTML =
+        html;
+    }
+
+
+    function getTeamRecordText(competitor) {
+      const records = competitor?.records || [];
+
+      const preferred =
+        records.find(record =>
+          String(record.name || "").toLowerCase() === "overall"
+        ) ||
+        records[0];
+
+      const summary =
+        preferred?.summary ||
+        preferred?.displayValue ||
+        "";
+
+      return summary
+        ? `Record ${summary}`
+        : "";
+    }
+
+    function createGameCard(gameId) {
+      const card = document.createElement("div");
+
+      card.className = "game";
+      card.id = `game-${gameId}`;
+
+      card.innerHTML = `
+        <div class="card-actions">
+          <button
+            class="boxscore-toggle-button"
+            type="button"
+          >
+            Show box score
+          </button>
+
+          <button
+            class="spoiler-toggle-button"
+            type="button"
+          >
+            Hide scores
+          </button>
+
+          <button
+            class="hide-game-button"
+            type="button"
+          >
+            Hide game
+          </button>
+        </div>
+
+        <div class="main-side">
+          <div class="scoreboard">
+            <div class="scores-left">
+              <div class="score-row">
+                <div class="score-label away-abbr"></div>
+                <div class="score away-score">0</div>
+              </div>
+
+              <div class="score-row">
+                <div class="score-label home-abbr"></div>
+                <div class="score home-score">0</div>
+              </div>
+            </div>
+
+            <div class="teams-right">
+              <div class="team-line">
+                <div class="team-name away-name"></div>
+                <div class="team-record away-record"></div>
+              </div>
+
+              <div class="team-line">
+                <div class="team-name home-name"></div>
+                <div class="team-record home-record"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="status"></div>
+
+          <div class="broadcast">
+            <span class="label">Broadcast</span>
+            <span class="broadcast-links broadcast-text">TBD</span>
+          </div>
+
+          <div class="plays">
+            <span class="label">Latest Plays</span>
+            <div class="plays-list"></div>
+          </div>
+
+          <div class="momentum-section">
+            <div class="momentum-header">
+              <div class="momentum-title">
+                Momentum
+              </div>
+
+              <div class="momentum-run momentum-run-text">
+                Even
+              </div>
+            </div>
+
+            <div class="momentum-bar">
+              <div
+                class="momentum-away"
+                style="width:50%"
+              ></div>
+
+              <div
+                class="momentum-home"
+                style="width:50%"
+              ></div>
+            </div>
+
+            <div class="momentum-labels">
+              <span class="momentum-away-label">
+                Away
+              </span>
+
+              <span class="momentum-home-label">
+                Home
+              </span>
+            </div>
+          </div>
+
+          <div class="boxscore-section hidden">
+            <div class="boxscore-header">
+              <div class="boxscore-title">
+                Minimal Player Box Score
+              </div>
+            </div>
+
+            <div class="boxscore-content">
+              Box score hidden.
+            </div>
+          </div>
+        </div>
+
+        <div class="reddit-side">
+          <div class="reddit-panel">
+            <div class="reddit-header">
+              <div>
+                <div class="reddit-title">r/nba Threads</div>
+                <div class="reddit-subtitle">Choose from recent r/nba thread candidates</div>
+              </div>
+
+              <div class="reddit-controls">
+                <select class="reddit-sort" aria-label="Sort embedded Reddit comments">
+                  <option value="new">Newest</option>
+                  <option value="top">Most upvoted</option>
+                </select>
+
+                <button class="reddit-link-button" type="button">
+                  Refresh list
+                </button>
+
+                <button class="reddit-clear-links-button" type="button" hidden>
+                  Clear picks
+                </button>
+
+                <button class="reddit-retry-button" type="button">
+                  Reload
+                </button>
+              </div>
+            </div>
+
+            <div class="reddit-picker">
+              <div class="reddit-picker-row">
+                <label for="reddit-game-thread-${gameId}">Game Thread</label>
+                <select
+                  class="reddit-game-thread-select"
+                  id="reddit-game-thread-${gameId}"
+                  aria-label="Choose r/nba Game Thread"
+                >
+                  <option value="">Loading recent Game Threads...</option>
+                </select>
+              </div>
+
+              <div class="reddit-picker-row">
+                <label for="reddit-postgame-thread-${gameId}">Postgame Thread</label>
+                <select
+                  class="reddit-postgame-thread-select"
+                  id="reddit-postgame-thread-${gameId}"
+                  aria-label="Choose r/nba Post Game Thread"
+                >
+                  <option value="">Loading recent Post Game Threads...</option>
+                </select>
+              </div>
+
+              <div class="reddit-picker-note">
+                Thread options come from recent r/nba posts whose titles contain Game Thread or Post Game Thread. Pick the matching thread once; comments load once and then sort from cache.
+              </div>
+
+              <div class="reddit-feed-status">
+                Reddit candidate list not loaded yet.
+              </div>
+            </div>
+
+            <div class="reddit-game-thread">
+              Choose a Game Thread candidate above to embed comments.
+            </div>
+
+            <div class="postgame">
+              <div class="reddit-title">Postgame Thread</div>
+              <div class="reddit-postgame-thread">
+                Available after final.
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      card
+        .querySelector(".reddit-sort")
+        .addEventListener("change", () => {
+          renderRedditCommentsForCurrentSort(gameId)
+            .catch(err => {
+              console.error(
+                "Reddit sort render failed",
+                err
+              );
+            });
+        });
+
+      card
+        .querySelector(".reddit-game-thread-select")
+        .addEventListener("change", event => {
+          handleRedditThreadSelection(
+            gameId,
+            "game",
+            event.target.value
+          );
+        });
+
+      card
+        .querySelector(".reddit-postgame-thread-select")
+        .addEventListener("change", event => {
+          handleRedditThreadSelection(
+            gameId,
+            "postgame",
+            event.target.value
+          );
+        });
+
+      card
+        .querySelector(".reddit-link-button")
+        .addEventListener("click", async () => {
+          await refreshRedditThreadPickerList(true);
+          updateAllRedditThreadPickers();
+          refreshRedditForGame(gameId, false);
+        });
+
+      card
+        .querySelector(".reddit-clear-links-button")
+        .addEventListener("click", () => {
+          clearStoredRedditThreadOverride(gameId);
+        });
+
+      card
+        .querySelector(".reddit-retry-button")
+        .addEventListener("click", () => {
+          const state = redditState[gameId];
+
+          if (state) {
+            state.gameThread = null;
+            state.postgameThread = null;
+            state.gameThreadOverrideUrl = null;
+            state.postgameThreadOverrideUrl = null;
+            state.lastRefresh = 0;
+            state.postgameStopped = false;
+          }
+
+          refreshRedditForGame(gameId, true);
+        });
+
+      card
+        .querySelector(".hide-game-button")
+        .addEventListener("click", event => {
+          event.stopPropagation();
+          hideGame(gameId);
+        });
+
+      const boxscoreButton =
+        card.querySelector(".boxscore-toggle-button");
+
+      const boxscoreSection =
+        card.querySelector(".boxscore-section");
+
+      boxscoreButton.addEventListener("click", async event => {
+        event.stopPropagation();
+
+        const nowVisible =
+          boxscoreSection.classList.toggle("hidden") === false;
+
+        boxScoreVisible[gameId] =
+          nowVisible;
+
+        boxscoreButton.textContent =
+          nowVisible
+            ? "Hide box score"
+            : "Show box score";
+
+        if (nowVisible) {
+          await refreshBoxScoreForGame(gameId);
+        }
+      });
+
+      const spoilerButton =
+        card.querySelector(".spoiler-toggle-button");
+
+      spoilerButton.addEventListener("click", event => {
+        event.stopPropagation();
+
+        const hidden =
+          card.classList.toggle("spoiler-hidden");
+
+        spoilerButton.textContent =
+          hidden
+            ? "Show scores"
+            : "Hide scores";
+      });
+
+      if (hiddenGames.has(gameId)) {
+        card.classList.add("hidden");
+      }
+
+      scoresEl.appendChild(card);
+      gameCards[gameId] = card;
+      updateRedditThreadOverrideControls(gameId);
+
+      return card;
+    }
+
+    async function getGameSummary(gameId, force = false) {
+      const now = Date.now();
+      const cached = summaryCache[gameId];
+
+      if (
+        !force &&
+        cached &&
+        now - cached.fetchedAt < 1500
+      ) {
+        return cached.data;
+      }
+
+      const res =
+        await fetch(
+          `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${gameId}`
+        );
+
+      const data =
+        await res.json();
+
+      summaryCache[gameId] = {
+        fetchedAt: now,
+        data
+      };
+
+      return data;
+    }
+
+    function getPlayTimestamp(play) {
+      const period =
+        play.period?.number ||
+        play.period ||
+        "";
+
+      const clock =
+        play.clock?.displayValue ||
+        play.displayClock ||
+        play.clock ||
+        "";
+
+      if (period && clock) {
+        return `Q${period} ${clock}`;
+      }
+
+      if (clock) {
+        return clock;
+      }
+
+      return "Time unavailable";
+    }
+
+    async function getLatestPlays(
+      gameId,
+      awayAbbr,
+      homeAbbr
+    ) {
+      try {
+        const data =
+          await getGameSummary(gameId);
+
+        const latestThree =
+          (data?.plays || [])
+            .slice(-3)
+            .reverse();
+
+        if (!latestThree.length) {
+          return `
+            <div class="play">
+              No recent plays available
+            </div>
+          `;
+        }
+
+        return latestThree.map(play => {
+          const hasScore =
+            play.awayScore !== undefined &&
+            play.homeScore !== undefined;
+
+          const scoreText =
+            hasScore
+              ? `
+                <span class="score-change">
+                  (${awayAbbr} ${play.awayScore}
+                  - ${homeAbbr} ${play.homeScore})
+                </span>
+              `
+              : "";
+
+          const timestamp =
+            getPlayTimestamp(play);
+
+          return `
+            <div class="play">
+              <span class="play-time">
+                ${timestamp}
+              </span>
+
+              ${escapeHTML(
+                play.text ||
+                "Play unavailable"
+              )}
+
+              ${scoreText}
+            </div>
+          `;
+        }).join("");
+
+      } catch (err) {
+        console.error("Play-by-play fetch failed", err);
+
+        return `
+          <div class="play">
+            Play-by-play unavailable
+          </div>
+        `;
+      }
+    }
+
+    async function updateMomentum(
+      gameId,
+      awayTeam,
+      homeTeam
+    ) {
+      try {
+        const data =
+          await getGameSummary(gameId);
+
+        const plays =
+          data?.plays || [];
+
+        const recent =
+          plays
+            .filter(play =>
+              play.awayScore !== undefined &&
+              play.homeScore !== undefined
+            )
+            .slice(-12);
+
+        let awayDelta = 0;
+        let homeDelta = 0;
+
+        for (let i = 1; i < recent.length; i++) {
+          const prev =
+            recent[i - 1];
+
+          const curr =
+            recent[i];
+
+          const awayDiff =
+            Number(curr.awayScore || 0) -
+            Number(prev.awayScore || 0);
+
+          const homeDiff =
+            Number(curr.homeScore || 0) -
+            Number(prev.homeScore || 0);
+
+          awayDelta += Math.max(0, awayDiff);
+          homeDelta += Math.max(0, homeDiff);
+        }
+
+        const card =
+          gameCards[gameId];
+
+        if (!card) return;
+
+        const awayBar =
+          card.querySelector(".momentum-away");
+
+        const homeBar =
+          card.querySelector(".momentum-home");
+
+        const runText =
+          card.querySelector(".momentum-run-text");
+
+        const awayLabel =
+          card.querySelector(".momentum-away-label");
+
+        const homeLabel =
+          card.querySelector(".momentum-home-label");
+
+        awayLabel.textContent =
+          `${awayTeam} ${awayDelta}`;
+
+        homeLabel.textContent =
+          `${homeTeam} ${homeDelta}`;
+
+        if (recent.length < 2 || awayDelta + homeDelta === 0) {
+          awayBar.style.width = "50%";
+          homeBar.style.width = "50%";
+          runText.textContent = "Momentum even";
+          return;
+        }
+
+        const total =
+          awayDelta + homeDelta;
+
+        let awayPct =
+          (awayDelta / total) * 100;
+
+        let homePct =
+          (homeDelta / total) * 100;
+
+        awayPct =
+          Math.max(8, Math.min(92, awayPct));
+
+        homePct =
+          Math.max(8, Math.min(92, homePct));
+
+        awayBar.style.width =
+          `${awayPct}%`;
+
+        homeBar.style.width =
+          `${homePct}%`;
+
+        if (awayDelta > homeDelta) {
+          runText.textContent =
+            `${awayTeam} +${awayDelta - homeDelta} recent edge`;
+        } else if (homeDelta > awayDelta) {
+          runText.textContent =
+            `${homeTeam} +${homeDelta - awayDelta} recent edge`;
+        } else {
+          runText.textContent =
+            "Momentum even";
+        }
+
+      } catch (err) {
+        console.error(
+          "Momentum update failed",
+          err
+        );
+      }
+    }
+
+    function normalizeStatKey(label) {
+      return String(label || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9+-]/g, "");
+    }
+
+    function getMappedStat(statMap, possibleKeys) {
+      for (const key of possibleKeys) {
+        const normalized = normalizeStatKey(key);
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            statMap,
+            normalized
+          )
+        ) {
+          return statMap[normalized] || "—";
+        }
+      }
+
+      return "—";
+    }
+
+    function getPlayerDisplayName(entry) {
+      const athlete =
+        entry?.athlete || {};
+
+      return (
+        athlete.shortName ||
+        athlete.displayName ||
+        athlete.fullName ||
+        entry?.displayName ||
+        "Player"
+      );
+    }
+
+    function playerHasBoxLine(row) {
+      const minutes =
+        String(row.min || "").trim();
+
+      if (
+        minutes &&
+        minutes !== "—" &&
+        minutes !== "0" &&
+        minutes !== "0:00"
+      ) {
+        return true;
+      }
+
+      return [
+        row.pts,
+        row.reb,
+        row.ast,
+        row.plusMinus
+      ].some(value => {
+        const text =
+          String(value || "").trim();
+
+        return (
+          text &&
+          text !== "—" &&
+          text !== "0" &&
+          text !== "+0" &&
+          text !== "0.0"
+        );
+      });
+    }
+
+    function getPlayerBoxStats(summaryData, awayAbbr, homeAbbr) {
+      const teamBoxes =
+        summaryData?.boxscore?.players || [];
+
+      function getForTeam(abbr) {
+        const teamBox =
+          teamBoxes.find(item =>
+            item.team?.abbreviation === abbr
+          );
+
+        const rows = [];
+
+        (teamBox?.statistics || [])
+          .forEach(statGroup => {
+            const labels =
+              statGroup.labels ||
+              statGroup.names ||
+              [];
+
+            (statGroup.athletes || [])
+              .forEach(entry => {
+                const statMap = {};
+                const rawStats =
+                  entry.stats || [];
+
+                labels.forEach((label, index) => {
+                  statMap[normalizeStatKey(label)] =
+                    rawStats[index] ?? "—";
+                });
+
+                const row = {
+                  name: getPlayerDisplayName(entry),
+                  min: getMappedStat(statMap, ["MIN", "minutes"]),
+                  pts: getMappedStat(statMap, ["PTS", "points"]),
+                  reb: getMappedStat(statMap, ["REB", "rebounds"]),
+                  ast: getMappedStat(statMap, ["AST", "assists"]),
+                  plusMinus: getMappedStat(statMap, ["+/-", "+-", "plusMinus"])
+                };
+
+                if (playerHasBoxLine(row)) {
+                  rows.push(row);
+                }
+              });
+          });
+
+        return {
+          abbr,
+          rows
+        };
+      }
+
+      return [
+        getForTeam(awayAbbr),
+        getForTeam(homeAbbr)
+      ];
+    }
+
+    function renderMinimalBoxScore(summaryData, awayAbbr, homeAbbr) {
+      const teams =
+        getPlayerBoxStats(
+          summaryData,
+          awayAbbr,
+          homeAbbr
+        );
+
+      const hasPlayerStats =
+        teams.some(team =>
+          team.rows.length > 0
+        );
+
+      if (!hasPlayerStats) {
+        return `
+          <div class="boxscore-note">
+            Player box score is not available yet. It usually appears once ESPN starts publishing player stat lines for the game.
+          </div>
+        `;
+      }
+
+      return `
+        <div class="player-boxscore-list">
+          ${teams.map(team => `
+            <div class="player-team-box">
+              <div class="player-team-title">
+                ${escapeHTML(team.abbr)}
+              </div>
+
+              <table class="boxscore-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>MIN</th>
+                    <th>PTS</th>
+                    <th>REB</th>
+                    <th>AST</th>
+                    <th>+/-</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  ${team.rows.map(row => `
+                    <tr>
+                      <td title="${escapeHTML(row.name)}">
+                        ${escapeHTML(row.name)}
+                      </td>
+                      <td>${escapeHTML(row.min)}</td>
+                      <td>${escapeHTML(row.pts)}</td>
+                      <td>${escapeHTML(row.reb)}</td>
+                      <td>${escapeHTML(row.ast)}</td>
+                      <td>${escapeHTML(row.plusMinus)}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="boxscore-note">
+          ESPN player lines: MIN, PTS, REB, AST, and +/- only.
+        </div>
+      `;
+    }
+
+    async function refreshBoxScoreForGame(gameId) {
+      const state =
+        redditState[gameId];
+
+      const card =
+        gameCards[gameId];
+
+      if (!state || !card) return;
+
+      const boxscoreContent =
+        card.querySelector(".boxscore-content");
+
+      if (!boxscoreContent) return;
+
+      try {
+        const data =
+          await getGameSummary(gameId, true);
+
+        boxscoreContent.innerHTML =
+          renderMinimalBoxScore(
+            data,
+            state.awayAbbr,
+            state.homeAbbr
+          );
+
+      } catch (err) {
+        console.error(
+          "Box score fetch failed",
+          err
+        );
+
+        boxscoreContent.innerHTML =
+          "Box score unavailable.";
+      }
+    }
+
+    const REDDIT_COMMENT_LIMIT = 6;
+    const REDDIT_COMMENT_FETCH_LIMIT = 24;
+    const REDDIT_COMMENT_MAX_DEPTH = 1;
+    const REDDIT_IGNORE_STICKY_COMMENTS = true;
+    const REDDIT_REFRESH_INTERVAL_MS = 30000;
+    const REDDIT_THREAD_OVERRIDE_STORAGE_KEY = "nbaRedditThreadSelectionsV4CandidatePicker";
+    const REDDIT_THREAD_LIST_CACHE_STORAGE_KEY = "nbaRedditCandidateThreadCacheV1";
+    const REDDIT_THREAD_LIST_CACHE_MS = 120000;
+    const REDDIT_THREAD_LIST_BACKGROUND_REFRESH_MS = 10 * 60 * 1000;
+    const REDDIT_COMMENT_SORTS = ["new", "top"];
+    const REDDIT_COMMENT_CACHE_MS = Infinity;
+    const REDDIT_THREAD_LOOKBACK_HOURS = 48;
+
+    const redditCommentsCache = new Map();
+    let redditThreadListRefreshPromise = null;
+
+    const redditThreadPickerState = {
+      date: null,
+      fetchedAt: 0,
+      loading: false,
+      gameThreads: [],
+      postgameThreads: []
+    };
+
+    function loadRedditThreadOverrides() {
+      try {
+        return JSON.parse(
+          localStorage.getItem(REDDIT_THREAD_OVERRIDE_STORAGE_KEY) || "{}"
+        );
+      } catch (err) {
+        console.warn("Could not read Reddit thread selections", err);
+        return {};
+      }
+    }
+
+    const redditThreadOverrides =
+      loadRedditThreadOverrides();
+
+    function saveRedditThreadOverrides() {
+      localStorage.setItem(
+        REDDIT_THREAD_OVERRIDE_STORAGE_KEY,
+        JSON.stringify(redditThreadOverrides)
+      );
+    }
+
+    function loadRedditThreadListCache(scoreboardDate) {
+      try {
+        const cached =
+          JSON.parse(
+            localStorage.getItem(REDDIT_THREAD_LIST_CACHE_STORAGE_KEY) || "null"
+          );
+
+        if (!cached || cached.date !== scoreboardDate) {
+          return null;
+        }
+
+        return cached;
+      } catch (err) {
+        console.warn("Could not read Reddit candidate cache", err);
+        return null;
+      }
+    }
+
+    function saveRedditThreadListCache(scoreboardDate) {
+      try {
+        localStorage.setItem(
+          REDDIT_THREAD_LIST_CACHE_STORAGE_KEY,
+          JSON.stringify({
+            date: scoreboardDate,
+            fetchedAt: redditThreadPickerState.fetchedAt,
+            gameThreads: redditThreadPickerState.gameThreads,
+            postgameThreads: redditThreadPickerState.postgameThreads
+          })
+        );
+      } catch (err) {
+        console.warn("Could not save Reddit candidate cache", err);
+      }
+    }
+
+    function applyRedditThreadListCache(cached) {
+      if (!cached) return false;
+
+      redditThreadPickerState.date = cached.date;
+      redditThreadPickerState.fetchedAt = Number(cached.fetchedAt || 0);
+      redditThreadPickerState.gameThreads = Array.isArray(cached.gameThreads)
+        ? cached.gameThreads
+        : [];
+      redditThreadPickerState.postgameThreads = Array.isArray(cached.postgameThreads)
+        ? cached.postgameThreads
+        : [];
+
+      return true;
+    }
+
+    function findCachedCandidateThread(permalink) {
+      const cleanPermalink =
+        extractRedditPermalink(permalink);
+
+      if (!cleanPermalink) return null;
+
+      return [
+        ...redditThreadPickerState.gameThreads,
+        ...redditThreadPickerState.postgameThreads
+      ].find(thread => extractRedditPermalink(thread.permalink) === cleanPermalink) || null;
+    }
+
+    function getCommentCacheKey(permalink, sort) {
+      const cleanPermalink =
+        extractRedditPermalink(permalink) || String(permalink || "");
+
+      return `${cleanPermalink}::${sort}`;
+    }
+
+    function redditSearchUrl(query, sort = "new", timeWindow = "week") {
+      return (
+        "https://www.reddit.com/r/nba/search.json" +
+        `?q=${encodeURIComponent(query)}` +
+        "&restrict_sr=1" +
+        `&sort=${encodeURIComponent(sort)}` +
+        `&t=${encodeURIComponent(timeWindow)}` +
+        "&limit=100" +
+        "&raw_json=1"
+      );
+    }
+
+    function redditSearchPageUrl(query) {
+      return (
+        "https://www.reddit.com/r/nba/search/" +
+        `?q=${encodeURIComponent(query)}` +
+        "&restrict_sr=1" +
+        "&sort=new"
+      );
+    }
+
+    function redditFlairedSearchPageUrl(type) {
+      const query =
+        type === "postgame"
+          ? '"Post Game Thread" OR "Postgame Thread"'
+          : '"Game Thread"';
+
+      return redditSearchPageUrl(query);
+    }
+
+    function extractRedditPermalink(value) {
+      const raw =
+        String(value || "").trim();
+
+      if (!raw) return null;
+
+      let pathname = raw;
+
+      try {
+        pathname = new URL(raw).pathname;
+      } catch (err) {
+        pathname = raw;
+      }
+
+      const match =
+        pathname.match(/\/r\/nba\/comments\/([a-z0-9]+)(?:\/([^/?#]+))?\/?/i);
+
+      if (!match) return null;
+
+      const threadId =
+        match[1];
+
+      const slug =
+        match[2] || "thread";
+
+      return `/r/nba/comments/${threadId}/${slug}/`;
+    }
+
+    function redditThreadJsonUrl(permalink) {
+      const cleanPermalink =
+        extractRedditPermalink(permalink);
+
+      if (!cleanPermalink) {
+        throw new Error("Invalid Reddit thread permalink");
+      }
+
+      return (
+        `https://www.reddit.com${cleanPermalink}.json` +
+        "?limit=1" +
+        "&raw_json=1" +
+        `&cacheBust=${Date.now()}`
+      );
+    }
+
+    function redditThreadAboutUrl(permalink) {
+      const cleanPermalink =
+        extractRedditPermalink(permalink);
+
+      if (!cleanPermalink) {
+        throw new Error("Invalid Reddit thread permalink");
+      }
+
+      return (
+        `https://www.reddit.com${cleanPermalink.replace(/\/$/, "")}/about.json` +
+        "?raw_json=1" +
+        `&cacheBust=${Date.now()}`
+      );
+    }
+
+    function redditCommentsUrl(permalink, sort) {
+      const cleanPermalink =
+        extractRedditPermalink(permalink);
+
+      if (!cleanPermalink) {
+        throw new Error("Invalid Reddit comments permalink");
+      }
+
+      return (
+        `https://www.reddit.com${cleanPermalink}.json` +
+        `?sort=${encodeURIComponent(sort)}` +
+        `&limit=${REDDIT_COMMENT_FETCH_LIMIT}` +
+        "&depth=2" +
+        "&raw_json=1" +
+        `&cacheBust=${Date.now()}`
+      );
+    }
+
+    function redditListingUrl(sort, after = "") {
+      return (
+        `https://www.reddit.com/r/nba/${sort}.json` +
+        "?limit=100" +
+        "&raw_json=1" +
+        (after ? `&after=${encodeURIComponent(after)}` : "")
+      );
+    }
+
+    function normalizeText(value) {
+      return String(value || "")
+        .toLowerCase()
+        .replace(/&amp;/g, "and")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function uniqueValues(values) {
+      return [...new Set(values.filter(Boolean))];
+    }
+
+    function getNbaDateKeyFromUtcSeconds(createdUtc) {
+      if (!createdUtc) return "";
+
+      const eastern =
+        getEasternDateParts(
+          new Date(createdUtc * 1000)
+        );
+
+      if (eastern.hour >= 3) {
+        return formatDateYYYYMMDD(
+          eastern.year,
+          eastern.month,
+          eastern.day
+        );
+      }
+
+      const previousDate =
+        new Date(
+          Date.UTC(
+            eastern.year,
+            eastern.month - 1,
+            eastern.day - 1
+          )
+        );
+
+      return formatDateYYYYMMDD(
+        previousDate.getUTCFullYear(),
+        previousDate.getUTCMonth() + 1,
+        previousDate.getUTCDate()
+      );
+    }
+
+    function postHasThreadFlair(post, type) {
+      const flair =
+        normalizeText(post?.link_flair_text);
+
+      if (!flair) return false;
+
+      const hasGame = flair.includes("game");
+      const hasThread = flair.includes("thread");
+      const hasPost = flair.includes("post");
+
+      if (type === "postgame") {
+        return hasPost && hasGame && hasThread;
+      }
+
+      return hasGame && hasThread && !hasPost;
+    }
+
+    function postTitleHasGameThread(post) {
+      const title =
+        normalizeText(post?.title);
+
+      if (!title) return false;
+
+      const hasGameThread =
+        /(^|\s)game\s+thread(\s|$)/.test(title);
+
+      const isPostgame =
+        /(^|\s)(post\s+game|postgame)(\s|$)/.test(title);
+
+      return hasGameThread && !isPostgame;
+    }
+
+    function redditCandidateThreadSearchUrls(type) {
+      const queries =
+        type === "postgame"
+          ? [
+              '"Post Game Thread"',
+              '"Postgame Thread"',
+              'title:"Post Game Thread"',
+              'title:"Postgame Thread"'
+            ]
+          : [
+              '"Game Thread"',
+              'title:"Game Thread"'
+            ];
+
+      return uniqueValues(
+        queries.flatMap(query => [
+          redditSearchUrl(query, "new", "week"),
+          redditSearchUrl(query, "relevance", "week")
+        ])
+      );
+    }
+
+    async function fetchRedditPosts(url) {
+      try {
+        const separator =
+          url.includes("?")
+            ? "&"
+            : "?";
+
+        const res =
+          await fetch(
+            `${url}${separator}cacheBust=${Date.now()}`
+          );
+
+        if (!res.ok) {
+          throw new Error(`Reddit responded with ${res.status}`);
+        }
+
+        const data =
+          await res.json();
+
+        return data?.data?.children?.map(x => x.data) || [];
+
+      } catch (err) {
+        console.error("Reddit fetch failed", err);
+        return [];
+      }
+    }
+
+    async function fetchRedditListingPosts(sort, maxPages = 3) {
+      const posts = [];
+      let after = "";
+
+      for (let page = 0; page < maxPages; page++) {
+        try {
+          const url =
+            redditListingUrl(sort, after);
+
+          const separator =
+            url.includes("?")
+              ? "&"
+              : "?";
+
+          const res =
+            await fetch(
+              `${url}${separator}cacheBust=${Date.now()}`
+            );
+
+          if (!res.ok) {
+            throw new Error(`Reddit ${sort} listing responded with ${res.status}`);
+          }
+
+          const data =
+            await res.json();
+
+          const pagePosts =
+            data?.data?.children?.map(x => x.data) || [];
+
+          posts.push(...pagePosts);
+
+          after =
+            data?.data?.after || "";
+
+          if (!after || pagePosts.length === 0) {
+            break;
+          }
+        } catch (err) {
+          console.warn(`Reddit ${sort} listing fetch failed`, err);
+          break;
+        }
+      }
+
+      return posts;
+    }
+
+    function postTitleHasPostGameThread(post) {
+      const title =
+        normalizeText(post?.title);
+
+      if (!title) return false;
+
+      return /(^|\s)(post\s+game|postgame)\s+thread(\s|$)/.test(title);
+    }
+
+    function isRecentRedditThreadPost(post) {
+      if (!post?.created_utc) return true;
+
+      const ageHours =
+        (Date.now() / 1000 - Number(post.created_utc)) / 3600;
+
+      return ageHours >= -1 && ageHours <= REDDIT_THREAD_LOOKBACK_HOURS;
+    }
+
+    function postMatchesThreadType(post, type) {
+      if (type === "postgame") {
+        return postTitleHasPostGameThread(post);
+      }
+
+      return postTitleHasGameThread(post);
+    }
+
+    function addThreadCandidate(groups, post, source) {
+      const permalink =
+        extractRedditPermalink(post?.permalink || post?.url);
+
+      if (!permalink) return;
+      if (!isRecentRedditThreadPost(post)) return;
+
+      const candidate = {
+        ...post,
+        permalink,
+        _confidence: "manual",
+        _source: source
+      };
+
+      if (postTitleHasGameThread(post)) {
+        groups.gameThreads.set(permalink, candidate);
+      }
+
+      if (postTitleHasPostGameThread(post)) {
+        groups.postgameThreads.set(permalink, candidate);
+      }
+    }
+
+    function sortThreadCandidates(threads) {
+      return [...threads.values()]
+        .sort((a, b) => Number(b.created_utc || 0) - Number(a.created_utc || 0));
+    }
+
+    async function fetchCandidateThreadGroups() {
+      const groups = {
+        gameThreads: new Map(),
+        postgameThreads: new Map()
+      };
+
+      const [newPosts, hotPosts] =
+        await Promise.all([
+          fetchRedditListingPosts("new", 2),
+          fetchRedditListingPosts("hot", 1)
+        ]);
+
+      newPosts.forEach(post => {
+        addThreadCandidate(groups, post, "new-listing");
+      });
+
+      hotPosts.forEach(post => {
+        addThreadCandidate(groups, post, "hot-listing");
+      });
+
+      return {
+        gameThreads: sortThreadCandidates(groups.gameThreads),
+        postgameThreads: sortThreadCandidates(groups.postgameThreads)
+      };
+    }
+
+    function kickRedditThreadPickerBackgroundRefresh(scoreboardDate) {
+      if (redditThreadListRefreshPromise || redditThreadPickerState.loading) {
+        return;
+      }
+
+      redditThreadListRefreshPromise =
+        refreshRedditThreadPickerList(true)
+          .then(() => {
+            updateAllRedditThreadPickers();
+          })
+          .catch(err => {
+            console.warn("Background Reddit candidate refresh failed", err);
+          })
+          .finally(() => {
+            redditThreadListRefreshPromise = null;
+          });
+    }
+
+    async function refreshRedditThreadPickerList(force = false) {
+      const scoreboardDate =
+        currentScoreboardDate || getNbaScoreboardDate();
+
+      const now = Date.now();
+
+      if (
+        !force &&
+        redditThreadPickerState.date === scoreboardDate &&
+        redditThreadPickerState.fetchedAt &&
+        now - redditThreadPickerState.fetchedAt < REDDIT_THREAD_LIST_CACHE_MS
+      ) {
+        return redditThreadPickerState;
+      }
+
+      if (!force) {
+        const cached =
+          loadRedditThreadListCache(scoreboardDate);
+
+        if (cached && applyRedditThreadListCache(cached)) {
+          updateAllRedditThreadPickers();
+
+          if (
+            now - Number(cached.fetchedAt || 0) > REDDIT_THREAD_LIST_BACKGROUND_REFRESH_MS
+          ) {
+            kickRedditThreadPickerBackgroundRefresh(scoreboardDate);
+          }
+
+          return redditThreadPickerState;
+        }
+      }
+
+      if (redditThreadPickerState.loading) {
+        return redditThreadPickerState;
+      }
+
+      redditThreadPickerState.loading = true;
+
+      try {
+        const groups =
+          await fetchCandidateThreadGroups();
+
+        redditThreadPickerState.date = scoreboardDate;
+        redditThreadPickerState.fetchedAt = Date.now();
+        redditThreadPickerState.gameThreads = groups.gameThreads;
+        redditThreadPickerState.postgameThreads = groups.postgameThreads;
+
+        saveRedditThreadListCache(scoreboardDate);
+        updateAllRedditThreadPickers();
+      } finally {
+        redditThreadPickerState.loading = false;
+      }
+
+      return redditThreadPickerState;
+    }
+
+    function formatRedditPickerTime(createdUtc) {
+      if (!createdUtc) return "Time unknown";
+
+      return new Date(createdUtc * 1000)
+        .toLocaleString(
+          [],
+          {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+          }
+        );
+    }
+
+    function getStoredThreadPermalink(gameId, type) {
+      const stored =
+        redditThreadOverrides[String(gameId)] || {};
+
+      const raw =
+        type === "postgame"
+          ? stored.postgameThreadPermalink || stored.postgameThreadUrl
+          : stored.gameThreadPermalink || stored.gameThreadUrl;
+
+      return extractRedditPermalink(raw);
+    }
+
+    function populateThreadSelect(selectEl, threads, selectedPermalink, type) {
+      if (!selectEl) return;
+
+      const label =
+        type === "postgame"
+          ? "Post Game Thread"
+          : "Game Thread";
+
+      selectEl.innerHTML = "";
+
+      const placeholder =
+        document.createElement("option");
+
+      placeholder.value = "";
+      placeholder.textContent =
+        threads.length
+          ? `Choose ${label} (${threads.length} found)`
+          : type === "game"
+            ? "No recent Game Thread title candidates found"
+            : `No recent ${label} candidates found`;
+
+      selectEl.appendChild(placeholder);
+
+      threads.forEach(thread => {
+        const option =
+          document.createElement("option");
+
+        option.value = extractRedditPermalink(thread.permalink) || "";
+        const commentCount =
+          Number(thread.num_comments || 0);
+
+        const scoreCount =
+          Number(thread.score || 0);
+
+        option.textContent =
+          `${formatRedditPickerTime(thread.created_utc)} · ${thread.title} · ${commentCount.toLocaleString()} comments · ${scoreCount.toLocaleString()} pts`;
+
+        selectEl.appendChild(option);
+      });
+
+      if (
+        selectedPermalink &&
+        !threads.some(thread => extractRedditPermalink(thread.permalink) === selectedPermalink)
+      ) {
+        const selectedOption =
+          document.createElement("option");
+
+        selectedOption.value = selectedPermalink;
+        selectedOption.textContent =
+          `Selected thread · ${selectedPermalink}`;
+
+        selectEl.appendChild(selectedOption);
+      }
+
+      selectEl.value = selectedPermalink || "";
+    }
+
+    function updateRedditFeedStatus(gameId) {
+      const card =
+        gameCards[gameId];
+
+      if (!card) return;
+
+      const statusEl =
+        card.querySelector(".reddit-feed-status");
+
+      if (!statusEl) return;
+
+      const sourceNames =
+        uniqueValues([
+          ...redditThreadPickerState.gameThreads.map(thread => thread._source),
+          ...redditThreadPickerState.postgameThreads.map(thread => thread._source)
+        ]);
+
+      const sourceLabel =
+        sourceNames.length
+          ? sourceNames.join(" + ")
+          : "r/nba";
+
+      statusEl.textContent =
+        `${sourceLabel}: ${redditThreadPickerState.gameThreads.length} Game Thread candidates and ${redditThreadPickerState.postgameThreads.length} Post Game Thread candidates from the last ${REDDIT_THREAD_LOOKBACK_HOURS} hours.`;
+    }
+
+    function updateRedditThreadPicker(gameId) {
+      const card =
+        gameCards[gameId];
+
+      if (!card) return;
+
+      populateThreadSelect(
+        card.querySelector(".reddit-game-thread-select"),
+        redditThreadPickerState.gameThreads,
+        getStoredThreadPermalink(gameId, "game"),
+        "game"
+      );
+
+      populateThreadSelect(
+        card.querySelector(".reddit-postgame-thread-select"),
+        redditThreadPickerState.postgameThreads,
+        getStoredThreadPermalink(gameId, "postgame"),
+        "postgame"
+      );
+
+      updateRedditFeedStatus(gameId);
+    }
+
+    function updateAllRedditThreadPickers() {
+      Object.keys(gameCards).forEach(gameId => {
+        updateRedditThreadPicker(gameId);
+      });
+    }
+
+    function updateRedditThreadOverrideControls(gameId) {
+      const card =
+        gameCards[gameId];
+
+      if (!card) return;
+
+      const clearButton =
+        card.querySelector(".reddit-clear-links-button");
+
+      if (!clearButton) return;
+
+      const stored =
+        redditThreadOverrides[String(gameId)] || {};
+
+      const hasStoredOverride =
+        Boolean(
+          extractRedditPermalink(stored.gameThreadPermalink || stored.gameThreadUrl) ||
+          extractRedditPermalink(stored.postgameThreadPermalink || stored.postgameThreadUrl)
+        );
+
+      clearButton.hidden =
+        !hasStoredOverride;
+    }
+
+    function resetRedditThreadState(gameId) {
+      const state =
+        redditState[gameId];
+
+      if (!state) return;
+
+      state.gameThread = null;
+      state.postgameThread = null;
+      state.gameThreadOverrideUrl = null;
+      state.postgameThreadOverrideUrl = null;
+      state.lastRefresh = 0;
+      state.postgameStopped = false;
+    }
+
+    function handleRedditThreadSelection(gameId, type, permalink) {
+      const key = String(gameId);
+      const selectedPermalink = extractRedditPermalink(permalink);
+
+      const next = {
+        ...(redditThreadOverrides[key] || {})
+      };
+
+      if (type === "postgame") {
+        delete next.postgameThreadUrl;
+        next.postgameThreadPermalink = selectedPermalink || "";
+      } else {
+        delete next.gameThreadUrl;
+        next.gameThreadPermalink = selectedPermalink || "";
+      }
+
+      if (!next.gameThreadPermalink && !next.postgameThreadPermalink) {
+        delete redditThreadOverrides[key];
+      } else {
+        redditThreadOverrides[key] = next;
+      }
+
+      saveRedditThreadOverrides();
+      updateRedditThreadOverrideControls(gameId);
+      resetRedditThreadState(gameId);
+      refreshRedditForGame(gameId, true);
+    }
+
+    function clearStoredRedditThreadOverride(gameId) {
+      delete redditThreadOverrides[String(gameId)];
+      saveRedditThreadOverrides();
+      updateRedditThreadOverrideControls(gameId);
+      resetRedditThreadState(gameId);
+      updateRedditThreadPicker(gameId);
+      refreshRedditForGame(gameId, true);
+    }
+
+    function normalizeSelectedRedditThread(post, permalink) {
+      return {
+        ...post,
+        permalink: post?.permalink || permalink,
+        _confidence: "manual",
+        _matchedTeams: 2,
+        _matchScore: 999,
+        _source: "selected"
+      };
+    }
+
+    function getPostFromThreadJsonPayload(data) {
+      return data?.[0]?.data?.children?.[0]?.data || null;
+    }
+
+    async function fetchRedditThreadFromUrl(url, type) {
+      const permalink =
+        extractRedditPermalink(url);
+
+      if (!permalink) {
+        throw new Error("Invalid Reddit thread URL");
+      }
+
+      const cachedCandidate =
+        findCachedCandidateThread(permalink);
+
+      if (cachedCandidate) {
+        return normalizeSelectedRedditThread(
+          cachedCandidate,
+          permalink
+        );
+      }
+
+      try {
+        const aboutRes =
+          await fetch(
+            redditThreadAboutUrl(permalink)
+          );
+
+        if (aboutRes.ok) {
+          const aboutData =
+            await aboutRes.json();
+
+          if (aboutData?.data) {
+            return normalizeSelectedRedditThread(
+              aboutData.data,
+              permalink
+            );
+          }
+        }
+      } catch (err) {
+        console.warn("Reddit about.json hydration failed", err);
+      }
+
+      try {
+        const res =
+          await fetch(
+            redditThreadJsonUrl(permalink)
+          );
+
+        if (!res.ok) {
+          throw new Error(`Reddit thread responded with ${res.status}`);
+        }
+
+        const data =
+          await res.json();
+
+        const post =
+          getPostFromThreadJsonPayload(data);
+
+        if (post) {
+          return normalizeSelectedRedditThread(
+            post,
+            permalink
+          );
+        }
+      } catch (err) {
+        console.warn("Could not hydrate selected Reddit thread", err);
+      }
+
+      return {
+        title: type === "postgame"
+          ? "Selected Post Game Thread"
+          : "Selected Game Thread",
+        permalink,
+        num_comments: 0,
+        created_utc: null,
+        _confidence: "manual",
+        _matchedTeams: 2,
+        _matchScore: 999,
+        _source: "selected"
+      };
+    }
+
+    function getCachedRedditComments(permalink, sort) {
+      const cacheKey =
+        getCommentCacheKey(permalink, sort);
+
+      const cached =
+        redditCommentsCache.get(cacheKey);
+
+      return cached
+        ? cached.comments
+        : null;
+    }
+
+    function isDisplayableRedditComment(comment) {
+      if (!comment) return false;
+      if (!comment.body) return false;
+      if (comment.body === "[deleted]") return false;
+      if (comment.body === "[removed]") return false;
+
+      if (
+        REDDIT_IGNORE_STICKY_COMMENTS &&
+        comment.stickied
+      ) {
+        return false;
+      }
+
+      return true;
+    }
+
+    function collectRedditComments(children, depth = 0, output = []) {
+      if (!Array.isArray(children)) {
+        return output;
+      }
+
+      for (const item of children) {
+        if (output.length >= REDDIT_COMMENT_LIMIT) {
+          break;
+        }
+
+        if (item?.kind !== "t1") {
+          continue;
+        }
+
+        const comment =
+          item.data;
+
+        if (!isDisplayableRedditComment(comment)) {
+          continue;
+        }
+
+        output.push({
+          ...comment,
+          _depth: depth
+        });
+
+        if (
+          depth < REDDIT_COMMENT_MAX_DEPTH &&
+          comment.replies?.data?.children?.length
+        ) {
+          collectRedditComments(
+            comment.replies.data.children,
+            depth + 1,
+            output
+          );
+        }
+      }
+
+      return output;
+    }
+
+    function parseRedditCommentsPayload(data) {
+      return collectRedditComments(
+        data?.[1]?.data?.children || []
+      );
+    }
+
+    async function getRedditComments(permalink, sort, force = false) {
+      const cacheKey =
+        getCommentCacheKey(permalink, sort);
+
+      const cached =
+        redditCommentsCache.get(cacheKey);
+
+      if (
+        !force &&
+        cached
+      ) {
+        return cached.comments;
+      }
+
+      const res =
+        await fetch(
+          redditCommentsUrl(
+            permalink,
+            sort
+          )
+        );
+
+      if (!res.ok) {
+        throw new Error(`Reddit comments responded with ${res.status}`);
+      }
+
+      const data =
+        await res.json();
+
+      const comments =
+        parseRedditCommentsPayload(data);
+
+      redditCommentsCache.set(
+        cacheKey,
+        {
+          fetchedAt: Date.now(),
+          comments
+        }
+      );
+
+      return comments;
+    }
+
+    async function preloadRedditCommentSorts(permalink, force = false) {
+      const results =
+        await Promise.allSettled(
+          REDDIT_COMMENT_SORTS.map(sort =>
+            getRedditComments(
+              permalink,
+              sort,
+              force
+            )
+          )
+        );
+
+      results.forEach((result, index) => {
+        if (result.status === "rejected") {
+          console.warn(
+            `Could not load Reddit ${REDDIT_COMMENT_SORTS[index]} comments`,
+            result.reason
+          );
+        }
+      });
+    }
+
+    async function getCachedOrLoadRedditComments(permalink, sort) {
+      const cachedComments =
+        getCachedRedditComments(
+          permalink,
+          sort
+        );
+
+      if (cachedComments) {
+        return cachedComments;
+      }
+
+      return getRedditComments(
+        permalink,
+        sort,
+        false
+      );
+    }
+
+    async function renderRedditCommentsForCurrentSort(gameId) {
+      const state =
+        redditState[gameId];
+
+      const card =
+        gameCards[gameId];
+
+      if (!state || !card) return;
+
+      const sort =
+        card.querySelector(
+          ".reddit-sort"
+        ).value;
+
+      const gameThreadEl =
+        card.querySelector(
+          ".reddit-game-thread"
+        );
+
+      const postgameThreadEl =
+        card.querySelector(
+          ".reddit-postgame-thread"
+        );
+
+      const gamePermalink =
+        getStoredThreadPermalink(
+          gameId,
+          "game"
+        );
+
+      if (
+        gamePermalink &&
+        state.gameThread
+      ) {
+        const comments =
+          await getCachedOrLoadRedditComments(
+            state.gameThread.permalink,
+            sort
+          );
+
+        renderRedditThread(
+          gameThreadEl,
+          state.gameThread,
+          comments,
+          "Choose a Game Thread candidate above.",
+          redditFlairedSearchPageUrl("game")
+        );
+      } else if (gamePermalink) {
+        await refreshRedditForGame(gameId, false);
+      }
+
+      const postgamePermalink =
+        getStoredThreadPermalink(
+          gameId,
+          "postgame"
+        );
+
+      if (
+        postgamePermalink &&
+        state.postgameThread
+      ) {
+        const postgameComments =
+          await getCachedOrLoadRedditComments(
+            state.postgameThread.permalink,
+            sort
+          );
+
+        renderRedditThread(
+          postgameThreadEl,
+          state.postgameThread,
+          postgameComments,
+          "Choose a Post Game Thread candidate above.",
+          redditFlairedSearchPageUrl("postgame")
+        );
+      } else if (postgamePermalink) {
+        await refreshRedditForGame(gameId, false);
+      }
+    }
+
+    function formatRedditAge(createdUtc) {
+      if (!createdUtc) return "Time unknown";
+
+      const minutes =
+        Math.max(
+          1,
+          Math.round(
+            (Date.now() / 1000 - createdUtc) / 60
+          )
+        );
+
+      if (minutes < 60) {
+        return `${minutes}m ago`;
+      }
+
+      const hours =
+        Math.round(minutes / 60);
+
+      if (hours < 36) {
+        return `${hours}h ago`;
+      }
+
+      const days =
+        Math.round(hours / 24);
+
+      return `${days}d ago`;
+    }
+
+    function renderRedditThread(
+      targetEl,
+      thread,
+      comments,
+      fallbackText,
+      fallbackSearchUrl
+    ) {
+      if (!thread) {
+        targetEl.innerHTML = `
+          <div class="reddit-fallback">
+            ${escapeHTML(fallbackText)}
+          </div>
+
+          <div class="reddit-actions">
+            ${
+              fallbackSearchUrl
+                ? `
+                  <a
+                    class="reddit-action-link"
+                    href="${fallbackSearchUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Search r/nba
+                  </a>
+                `
+                : ""
+            }
+
+            <a
+              class="reddit-action-link"
+              href="https://www.reddit.com/r/nba/new/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open r/nba new
+            </a>
+          </div>
+        `;
+
+        return;
+      }
+
+      const confidence =
+        thread._confidence || "medium";
+
+      const confidenceLabel =
+        confidence === "manual"
+          ? "Linked thread"
+          : confidence === "high"
+            ? "High match"
+            : confidence === "medium"
+              ? "Medium match"
+              : "Low match";
+
+      const commentsHTML =
+        comments.length
+          ? comments.map(comment => {
+              return `
+                <div class="comment">
+                  <div class="comment-meta">
+                    u/${escapeHTML(comment.author)}
+                    • ${Number(comment.score || 0).toLocaleString()} upvotes
+                  </div>
+
+                  <div
+                    class="comment-body"
+                    style="margin-left:${Math.min(Number(comment._depth || 0), REDDIT_COMMENT_MAX_DEPTH) * 14}px"
+                  >
+                    ${escapeHTML(comment.body)}
+                  </div>
+                </div>
+              `;
+            }).join("")
+          : `
+            <div class="comment">
+              No comments found yet.
+            </div>
+          `;
+
+      targetEl.innerHTML = `
+        <div class="reddit-thread-card">
+          <div class="reddit-thread-topline">
+            <a
+              class="reddit-thread-link"
+              href="https://www.reddit.com${extractRedditPermalink(thread.permalink)}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ${escapeHTML(thread.title)}
+            </a>
+          </div>
+
+          <div class="reddit-thread-meta">
+            <span class="reddit-status-pill ${confidence}">
+              ${confidenceLabel}
+            </span>
+            <span>${Number(thread.num_comments || 0).toLocaleString()} comments</span>
+            <span>${formatRedditAge(thread.created_utc)}</span>
+          </div>
+
+          <div class="reddit-comments">
+            ${commentsHTML}
+          </div>
+        </div>
+      `;
+    }
+
+    async function refreshRedditForGame(
+      gameId,
+      force = false
+    ) {
+      if (
+        redditRefreshPaused &&
+        !force
+      ) {
+        return;
+      }
+
+      const state =
+        redditState[gameId];
+
+      if (!state) return;
+
+      const card =
+        gameCards[gameId];
+
+      if (!card) return;
+
+      if (
+        !force &&
+        state.redditRefreshInFlight
+      ) {
+        return;
+      }
+
+      const now =
+        Date.now();
+
+      if (
+        !force &&
+        state.lastRefresh &&
+        now - state.lastRefresh < REDDIT_REFRESH_INTERVAL_MS
+      ) {
+        return;
+      }
+
+      state.redditRefreshInFlight = true;
+      state.lastRefresh = now;
+
+      const sort =
+        card.querySelector(
+          ".reddit-sort"
+        ).value;
+
+      const gameThreadEl =
+        card.querySelector(
+          ".reddit-game-thread"
+        );
+
+      const postgameThreadEl =
+        card.querySelector(
+          ".reddit-postgame-thread"
+        );
+
+      try {
+        await refreshRedditThreadPickerList();
+        updateRedditThreadPicker(gameId);
+
+        const gamePermalink =
+          getStoredThreadPermalink(
+            gameId,
+            "game"
+          );
+
+        if (gamePermalink) {
+          if (
+            state.gameThreadOverrideUrl !== gamePermalink ||
+            !state.gameThread
+          ) {
+            gameThreadEl.innerHTML = `
+              <div class="reddit-fallback">
+                Loading selected r/nba Game Thread...
+              </div>
+            `;
+
+            state.gameThread =
+              await fetchRedditThreadFromUrl(
+                gamePermalink,
+                "game"
+              );
+
+            state.gameThreadOverrideUrl =
+              gamePermalink;
+          }
+
+          await preloadRedditCommentSorts(
+            state.gameThread.permalink,
+            force
+          );
+
+          const comments =
+            await getCachedOrLoadRedditComments(
+              state.gameThread.permalink,
+              sort
+            );
+
+          renderRedditThread(
+            gameThreadEl,
+            state.gameThread,
+            comments,
+            "Choose a Game Thread candidate above.",
+            redditFlairedSearchPageUrl("game")
+          );
+        } else {
+          state.gameThread = null;
+          state.gameThreadOverrideUrl = null;
+
+          renderRedditThread(
+            gameThreadEl,
+            null,
+            [],
+            "Choose a Game Thread candidate above to embed comments.",
+            redditFlairedSearchPageUrl("game")
+          );
+        }
+
+        const postgamePermalink =
+          getStoredThreadPermalink(
+            gameId,
+            "postgame"
+          );
+
+        if (postgamePermalink) {
+          if (
+            state.postgameThreadOverrideUrl !== postgamePermalink ||
+            !state.postgameThread
+          ) {
+            postgameThreadEl.innerHTML = `
+              <div class="reddit-fallback">
+                Loading selected r/nba Post Game Thread...
+              </div>
+            `;
+
+            state.postgameThread =
+              await fetchRedditThreadFromUrl(
+                postgamePermalink,
+                "postgame"
+              );
+
+            state.postgameThreadOverrideUrl =
+              postgamePermalink;
+          }
+
+          await preloadRedditCommentSorts(
+            state.postgameThread.permalink,
+            force
+          );
+
+          const postgameComments =
+            await getCachedOrLoadRedditComments(
+              state.postgameThread.permalink,
+              sort
+            );
+
+          renderRedditThread(
+            postgameThreadEl,
+            state.postgameThread,
+            postgameComments,
+            "Choose a Post Game Thread candidate above.",
+            redditFlairedSearchPageUrl("postgame")
+          );
+        } else {
+          state.postgameThread = null;
+          state.postgameThreadOverrideUrl = null;
+
+          renderRedditThread(
+            postgameThreadEl,
+            null,
+            [],
+            state.isFinal
+              ? "Choose a Post Game Thread candidate above to embed comments."
+              : "Postgame comments can be embedded once you choose a Post Game Thread candidate above.",
+            redditFlairedSearchPageUrl("postgame")
+          );
+        }
+
+      } catch (err) {
+        console.error(
+          "Reddit refresh failed",
+          err
+        );
+
+        renderRedditThread(
+          gameThreadEl,
+          null,
+          [],
+          "Could not load Reddit candidates or embedded comments directly. Use the search link instead.",
+          redditFlairedSearchPageUrl("game")
+        );
+      } finally {
+        state.redditRefreshInFlight = false;
+      }
+    }
+
+    function schedulePostgameChecks(gameId) {
+      const state =
+        redditState[gameId];
+
+      if (
+        !state ||
+        state.postgameChecksScheduled
+      ) {
+        return;
+      }
+
+      state.postgameChecksScheduled =
+        true;
+
+      setTimeout(async () => {
+        await refreshRedditThreadPickerList(true);
+        updateAllRedditThreadPickers();
+        state.postgameStopped = true;
+      }, 10 * 60 * 1000);
+    }
+
+    async function loadScores() {
+      currentLoadStartedAt =
+        Date.now();
+
+      try {
+        const scoreboardDate =
+          getNbaScoreboardDate();
+
+        if (currentScoreboardDate !== scoreboardDate) {
+          currentScoreboardDate = scoreboardDate;
+          clearAllGameCards();
+        }
+
+        const res =
+          await fetch(
+            `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${scoreboardDate}`
+          );
+
+        const data =
+          await res.json();
+
+        const activeGameIds =
+          new Set(
+            (data.events || []).map(event => event.id)
+          );
+
+        removeStaleGameCards(activeGameIds);
+
+        if (
+          !data.events ||
+          data.events.length === 0
+        ) {
+          scoresEl.innerHTML =
+            `<p>No NBA games for ${scoreboardDate}.</p>`;
+
+          updatedEl.textContent =
+            "Updated " +
+            new Date()
+              .toLocaleTimeString();
+
+          return;
+        }
+
+        if (
+          scoresEl.innerHTML.includes("No NBA games")
+        ) {
+          scoresEl.innerHTML = "";
+        }
+
+        for (const event of data.events) {
+          const comp =
+            event.competitions[0];
+
+          const teams =
+            comp.competitors;
+
+          const away =
+            teams.find(
+              t =>
+                t.homeAway === "away"
+            );
+
+          const home =
+            teams.find(
+              t =>
+                t.homeAway === "home"
+            );
+
+          const gameId =
+            event.id;
+
+          const card =
+            gameCards[gameId] ||
+            createGameCard(gameId);
+
+          const gameLabel =
+            `${away.team.abbreviation} vs ${home.team.abbreviation}`;
+
+          gameLabels[gameId] =
+            gameLabel;
+
+          const awayScore =
+            parseInt(
+              away.score || 0
+            );
+
+          const homeScore =
+            parseInt(
+              home.score || 0
+            );
+
+          const prevAway =
+            previousScores[
+              gameId
+            ]?.away ??
+            awayScore;
+
+          const prevHome =
+            previousScores[
+              gameId
+            ]?.home ??
+            homeScore;
+
+          const awayChanged =
+            awayScore !==
+            prevAway;
+
+          const homeChanged =
+            homeScore !==
+            prevHome;
+
+          previousScores[
+            gameId
+          ] = {
+            away: awayScore,
+            home: homeScore
+          };
+
+          card.querySelector(
+            ".away-abbr"
+          ).textContent =
+            away.team.abbreviation;
+
+          card.querySelector(
+            ".home-abbr"
+          ).textContent =
+            home.team.abbreviation;
+
+          card.querySelector(
+            ".away-name"
+          ).textContent =
+            away.team.displayName;
+
+          card.querySelector(
+            ".home-name"
+          ).textContent =
+            home.team.displayName;
+
+          card.querySelector(
+            ".away-record"
+          ).textContent =
+            getTeamRecordText(away);
+
+          card.querySelector(
+            ".home-record"
+          ).textContent =
+            getTeamRecordText(home);
+
+          const awayScoreEl =
+            card.querySelector(
+              ".away-score"
+            );
+
+          const homeScoreEl =
+            card.querySelector(
+              ".home-score"
+            );
+
+          if (
+            awayScoreEl.textContent !==
+            String(awayScore)
+          ) {
+            awayScoreEl.textContent =
+              awayScore;
+
+            if (awayChanged) {
+              flash(
+                awayScoreEl
+              );
+            }
+          }
+
+          if (
+            homeScoreEl.textContent !==
+            String(homeScore)
+          ) {
+            homeScoreEl.textContent =
+              homeScore;
+
+            if (homeChanged) {
+              flash(
+                homeScoreEl
+              );
+            }
+          }
+
+          const statusEl =
+            card.querySelector(
+              ".status"
+            );
+
+          const state =
+            event.status.type.state;
+
+          statusEl.textContent =
+            event.status.type.shortDetail;
+
+          statusEl.className =
+            "status" +
+            (
+              state === "in"
+                ? " live"
+                : ""
+            );
+
+          const broadcastNames =
+            getBroadcastNames(comp);
+
+          renderBroadcastLinks(
+            card,
+            broadcastNames
+          );
+
+          if (!redditState[gameId]) {
+            redditState[gameId] = {
+              awayName:
+                away.team.displayName,
+
+              homeName:
+                home.team.displayName,
+
+              awayAbbr:
+                away.team.abbreviation,
+
+              homeAbbr:
+                home.team.abbreviation,
+
+              gameThread:
+                null,
+
+              postgameThread:
+                null,
+
+              isFinal:
+                false,
+
+              postgameChecksScheduled:
+                false,
+
+              postgameStopped:
+                false,
+
+              lastRefresh:
+                0,
+
+              gameThreadOverrideUrl:
+                null,
+
+              postgameThreadOverrideUrl:
+                null,
+
+              redditRefreshInFlight:
+                false
+            };
+
+            updateRedditThreadOverrideControls(gameId);
+          }
+
+          const playsHTML =
+            await getLatestPlays(
+              gameId,
+              away.team.abbreviation,
+              home.team.abbreviation
+            );
+
+          const playsList =
+            card.querySelector(
+              ".plays-list"
+            );
+
+          if (
+            playsList.innerHTML !==
+            playsHTML
+          ) {
+            playsList.innerHTML =
+              playsHTML;
+          }
+
+          await updateMomentum(
+            gameId,
+            away.team.abbreviation,
+            home.team.abbreviation
+          );
+
+          if (boxScoreVisible[gameId]) {
+            await refreshBoxScoreForGame(gameId);
+          }
+
+          redditState[gameId].isFinal =
+            state === "post";
+
+          refreshRedditForGame(
+            gameId
+          ).catch(err => {
+            console.error(
+              "Background Reddit refresh failed",
+              err
+            );
+          });
+
+          if (state === "post") {
+            schedulePostgameChecks(
+              gameId
+            );
+          }
+        }
+
+        updateHiddenGamesUI();
+
+        updatedEl.textContent =
+          "Updated " +
+          new Date()
+            .toLocaleTimeString() +
+          ` · NBA date ${scoreboardDate}`;
+
+      } catch (err) {
+        console.error(err);
+
+        scoresEl.innerHTML =
+          "<p>Failed to load scores.</p>";
+      }
+    }
+
+    loadScores();
+
+    setInterval(
+      loadScores,
+      1000
+    );
+  </script>
+
+</body>
+</html>
