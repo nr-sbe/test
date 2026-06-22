@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#06111f" />
   <title>FIFA World Cup Live Bracket</title>
 
   <style>
@@ -119,6 +120,7 @@
       70% {
         box-shadow: 0 0 0 9px rgba(82, 242, 184, 0);
       }
+
       100% {
         box-shadow: 0 0 0 0 rgba(82, 242, 184, 0);
       }
@@ -132,7 +134,7 @@
     }
 
     .subhead {
-      max-width: 68ch;
+      max-width: 72ch;
       margin: 10px 0 0;
       color: var(--muted);
       line-height: 1.5;
@@ -296,6 +298,11 @@
       gap: 12px;
     }
 
+    .round[data-round="round-of-32"] .match-list {
+      padding-top: 12px;
+      gap: 14px;
+    }
+
     .round[data-round="round-of-16"] .match-list {
       padding-top: 18px;
       gap: 18px;
@@ -384,8 +391,8 @@
       grid-template-columns: 31px 1fr auto;
       gap: 9px;
       align-items: center;
-      min-height: 40px;
-      padding: 7px 8px;
+      min-height: 44px;
+      padding: 8px;
       border-radius: 13px;
       color: var(--muted);
     }
@@ -411,6 +418,12 @@
       overflow: hidden;
     }
 
+    .team-text {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
     .team-name {
       min-width: 0;
       overflow: hidden;
@@ -423,6 +436,29 @@
       color: var(--soft);
       font-size: 0.76rem;
       font-weight: 700;
+    }
+
+    .team-seed {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--soft);
+      font-size: 0.7rem;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .seed-chip {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 5px;
+      padding: 2px 6px;
+      border: 1px solid rgba(82, 242, 184, 0.25);
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(82, 242, 184, 0.08);
+      font-size: 0.66rem;
+      font-weight: 900;
     }
 
     .score {
@@ -449,10 +485,18 @@
       align-items: center;
     }
 
+    .venue {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .espn-link {
       color: var(--accent);
       font-weight: 900;
       text-decoration: none;
+      white-space: nowrap;
     }
 
     .espn-link:focus,
@@ -568,8 +612,9 @@
 
         <h1>Knockout Bracket</h1>
         <p class="subhead">
-          Auto-refreshing bracket view powered by ESPN scoreboard data. Tap a round to focus,
-          or open Gamecast for the full ESPN match view.
+          A mobile-friendly live bracket using ESPN scoreboard data. Group-position slots like
+          1A, 2B, and 3C/D/E are replaced with the current projected team whenever the group
+          table can be calculated.
         </p>
       </div>
 
@@ -589,11 +634,12 @@
     <section class="bracket" id="bracket" aria-live="polite"></section>
 
     <details class="notes">
-      <summary>Implementation notes</summary>
+      <summary>Data note</summary>
       <p>
-        ESPN’s public scoreboard feed is convenient for prototypes, but it is not a guaranteed
-        production API. If browser requests are blocked by CORS, set <code>CORS_PROXY</code>
-        in the script below or route requests through your own small backend/cache.
+        This page uses ESPN’s public scoreboard feed directly from the browser. For the most
+        reliable mobile experience, put your own small backend/cache in front of ESPN and set
+        <code>CORS_PROXY</code> in the script. Third-place pool slots are live projections until
+        the tournament confirms the official allocation.
       </p>
     </details>
   </main>
@@ -601,24 +647,33 @@
   <script>
     "use strict";
 
-    /*
-      ESPN data source.
-      For production, avoid calling ESPN directly from every client.
-      Put a small server-side cache/proxy in front of this endpoint.
-    */
     const ESPN_SCOREBOARD =
       "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
 
     /*
-      Leave blank first. If your browser gets a CORS error, use a proxy you control.
-      Example shape for many proxy services:
-        const CORS_PROXY = "https://your-proxy.example.com/?url=";
-      The app will call: CORS_PROXY + encodeURIComponent(ESPN URL)
+      Leave blank first.
+
+      If your Android browser or hosted site gets a CORS error, create your own proxy and set:
+      const CORS_PROXY = "https://your-proxy.example.com/?url=";
+
+      The app will call:
+      https://your-proxy.example.com/?url=<encoded ESPN URL>
     */
     const CORS_PROXY = "";
 
     const REFRESH_MS = 60_000;
-    const REQUEST_TIMEOUT_MS = 12_000;
+    const REQUEST_TIMEOUT_MS = 14_000;
+    const GROUP_LETTERS = "ABCDEFGHIJKL".split("");
+
+    const STAGE_FETCH_DAY_LIMITS = {
+      group: 22,
+      "round-of-32": 8,
+      "round-of-16": 6,
+      quarterfinals: 5,
+      semifinals: 5,
+      "third-place": 2,
+      final: 2
+    };
 
     const ROUND_META = [
       {
@@ -654,7 +709,7 @@
         label: "3rd Place",
         short: "3rd",
         order: 5,
-        aliases: ["3rd-place", "3rd place", "third-place", "third place"]
+        aliases: ["3rd-place", "3rd place", "third-place", "third place", "3rd-place match"]
       },
       {
         key: "final",
@@ -665,22 +720,66 @@
       }
     ];
 
-    /*
-      Used only if ESPN does not return calendar entries.
-      The live app prefers ESPN's calendar whenever available.
-    */
+    const FALLBACK_GROUP_ENTRIES = [
+      {
+        label: "Group",
+        detail: "Jun 11-27",
+        value: "1",
+        startDate: "2026-06-11T07:00:00Z",
+        endDate: "2026-06-28T06:59:00Z",
+        roundKey: "group"
+      }
+    ];
+
     const FALLBACK_KNOCKOUT_ENTRIES = [
-      { label: "Round of 32", startDate: "2026-06-28T07:00:00Z", endDate: "2026-07-04T06:59:00Z" },
-      { label: "Rd of 16", startDate: "2026-07-04T07:00:00Z", endDate: "2026-07-09T06:59:00Z" },
-      { label: "Quarterfinals", startDate: "2026-07-09T07:00:00Z", endDate: "2026-07-14T06:59:00Z" },
-      { label: "Semifinals", startDate: "2026-07-14T07:00:00Z", endDate: "2026-07-19T06:59:00Z" },
-      { label: "3rd-Place Match", startDate: "2026-07-18T07:00:00Z", endDate: "2026-07-19T06:59:00Z" },
-      { label: "Final", startDate: "2026-07-19T07:00:00Z", endDate: "2026-07-20T06:59:00Z" }
+      {
+        label: "Round of 32",
+        detail: "Jun 28-Jul 3",
+        value: "2",
+        startDate: "2026-06-28T07:00:00Z",
+        endDate: "2026-07-04T06:59:00Z"
+      },
+      {
+        label: "Rd of 16",
+        detail: "Jul 4-7",
+        value: "3",
+        startDate: "2026-07-04T07:00:00Z",
+        endDate: "2026-07-09T06:59:00Z"
+      },
+      {
+        label: "Quarterfinals",
+        detail: "Jul 9-11",
+        value: "4",
+        startDate: "2026-07-09T07:00:00Z",
+        endDate: "2026-07-14T06:59:00Z"
+      },
+      {
+        label: "Semifinals",
+        detail: "Jul 14-15",
+        value: "5",
+        startDate: "2026-07-14T07:00:00Z",
+        endDate: "2026-07-19T06:59:00Z"
+      },
+      {
+        label: "3rd-Place Match",
+        detail: "Jul 18",
+        value: "6",
+        startDate: "2026-07-18T07:00:00Z",
+        endDate: "2026-07-19T06:59:00Z"
+      },
+      {
+        label: "Final",
+        detail: "Jul 19",
+        value: "7",
+        startDate: "2026-07-19T07:00:00Z",
+        endDate: "2026-07-20T06:59:00Z"
+      }
     ];
 
     const appState = {
       selectedRound: "all",
       matches: [],
+      groupTables: new Map(),
       isLoading: false,
       lastUpdated: null,
       refreshTimer: null
@@ -726,58 +825,79 @@
       appState.isLoading = true;
       els.refresh.disabled = true;
 
-      setStatus(silent ? "Refreshing live data…" : "Loading ESPN bracket data…", "normal");
+      setStatus(
+        silent
+          ? "Refreshing bracket and group-position data…"
+          : "Loading ESPN bracket and group-position data…",
+        "normal"
+      );
 
       try {
         const baseScoreboard = await fetchJson(ESPN_SCOREBOARD);
+
+        const groupEntries = extractGroupEntries(baseScoreboard);
         const knockoutEntries = extractKnockoutEntries(baseScoreboard);
         const stageWindows = buildStageWindows(knockoutEntries);
-        const dateKeys = buildDateKeys(knockoutEntries);
 
-        const eventMap = new Map();
+        const allDateKeys = uniqueSorted([
+          ...buildDateKeys(groupEntries),
+          ...buildDateKeys(knockoutEntries)
+        ]);
 
-        for (const event of baseScoreboard.events || []) {
-          eventMap.set(event.id, event);
-        }
+        const allEvents = await fetchEventsForDateKeys(
+          allDateKeys,
+          baseScoreboard.events || []
+        );
 
-        const dateBatches = chunk(dateKeys, 5);
+        const groupEvents = allEvents.filter(isGroupEvent);
+        const groupTables = buildGroupTables(groupEvents);
+        const seedResolver = buildSeedResolver(groupTables);
 
-        for (const batch of dateBatches) {
-          const settled = await Promise.allSettled(
-            batch.map((dateKey) => fetchJson(`${ESPN_SCOREBOARD}?dates=${dateKey}`))
-          );
+        const knockoutEvents = allEvents.filter((event) => {
+          const competition = event?.competitions?.[0] || {};
+          return Boolean(detectRoundKey(event, competition, stageWindows));
+        });
 
-          for (const result of settled) {
-            if (result.status !== "fulfilled") continue;
-
-            for (const event of result.value.events || []) {
-              eventMap.set(event.id, event);
-            }
-          }
-        }
-
-        const matches = Array.from(eventMap.values())
-          .map((event) => normalizeEvent(event, stageWindows))
+        const matches = knockoutEvents
+          .map((event) => normalizeEvent(event, stageWindows, seedResolver))
           .filter((match) => match.roundKey)
           .sort(compareMatches);
 
         appState.matches = matches;
+        appState.groupTables = groupTables;
         appState.lastUpdated = new Date();
 
         render();
 
+        const resolvedSlots = countResolvedSeedSlots(matches);
+        const liveGroupCount = countLiveGroups(groupTables);
+
         if (matches.length === 0) {
           setStatus(
-            "ESPN responded, but no knockout fixtures were found yet. The bracket will populate as fixtures publish.",
+            "ESPN responded, but no knockout fixtures were found yet. The bracket will populate as ESPN publishes games.",
             "warn"
           );
+        } else if (resolvedSlots > 0) {
+          setStatus(
+            `Loaded ${matches.length} knockout match${matches.length === 1 ? "" : "es"} and resolved ${resolvedSlots} group-position slot${resolvedSlots === 1 ? "" : "s"} from current tables.`,
+            "ok"
+          );
+        } else if (liveGroupCount > 0) {
+          setStatus(
+            `Loaded ${matches.length} knockout match${matches.length === 1 ? "" : "es"}. Group tables are live, but ESPN has not exposed resolvable slot labels yet.`,
+            "ok"
+          );
         } else {
-          setStatus(`Loaded ${matches.length} knockout match${matches.length === 1 ? "" : "es"} from ESPN.`, "ok");
+          setStatus(
+            `Loaded ${matches.length} knockout match${matches.length === 1 ? "" : "es"}. Slot labels will resolve as group tables become available.`,
+            "ok"
+          );
         }
       } catch (error) {
         console.error(error);
 
         appState.matches = makeDemoMatches();
+        appState.groupTables = new Map();
         appState.lastUpdated = new Date();
 
         render();
@@ -806,7 +926,7 @@
           cache: "no-store",
           signal: controller.signal,
           headers: {
-            "Accept": "application/json"
+            Accept: "application/json"
           }
         });
 
@@ -820,11 +940,58 @@
       }
     }
 
-    function extractKnockoutEntries(scoreboard) {
-      const calendars = scoreboard?.leagues?.[0]?.calendar || [];
-      const entries = calendars.flatMap((calendar) => calendar.entries || []);
+    async function fetchEventsForDateKeys(dateKeys, seedEvents = []) {
+      const eventMap = new Map();
 
-      const parsed = entries
+      for (const event of seedEvents) {
+        if (event?.id) {
+          eventMap.set(event.id, event);
+        }
+      }
+
+      const batches = chunk(dateKeys, 5);
+
+      for (const batch of batches) {
+        const settled = await Promise.allSettled(
+          batch.map((dateKey) => fetchJson(`${ESPN_SCOREBOARD}?dates=${dateKey}`))
+        );
+
+        for (const result of settled) {
+          if (result.status !== "fulfilled") continue;
+
+          for (const event of result.value.events || []) {
+            if (event?.id) {
+              eventMap.set(event.id, event);
+            }
+          }
+        }
+      }
+
+      return Array.from(eventMap.values());
+    }
+
+    function extractCalendarEntries(scoreboard) {
+      const leagues = scoreboard?.leagues || [];
+
+      return leagues.flatMap((league) => {
+        const calendars = league.calendar || [];
+        return calendars.flatMap((calendar) => calendar.entries || []);
+      });
+    }
+
+    function extractGroupEntries(scoreboard) {
+      const parsed = extractCalendarEntries(scoreboard)
+        .filter((entry) => /group/i.test(entry.label || ""))
+        .map((entry) => ({
+          ...entry,
+          roundKey: "group"
+        }));
+
+      return parsed.length > 0 ? parsed : FALLBACK_GROUP_ENTRIES;
+    }
+
+    function extractKnockoutEntries(scoreboard) {
+      const parsed = extractCalendarEntries(scoreboard)
         .map((entry) => ({
           ...entry,
           roundKey: roundKeyFromText(entry.label)
@@ -855,30 +1022,46 @@
     }
 
     function buildDateKeys(entries) {
-      const validStarts = entries
-        .map((entry) => new Date(entry.startDate))
-        .filter((date) => Number.isFinite(date.getTime()));
+      const keys = new Set();
 
-      if (validStarts.length === 0) return [];
+      for (const entry of entries) {
+        const start = new Date(entry.startDate);
+        const end = new Date(entry.endDate || addDaysUTC(start, 1));
 
-      const firstStart = minDate(validStarts);
-      const lastStart = maxDate(validStarts);
-      const endWithBuffer = addDaysUTC(lastStart, 1);
+        if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) {
+          continue;
+        }
 
-      return dateKeysBetweenUTC(firstStart, endWithBuffer);
+        const stageKey = entry.roundKey || "group";
+        const dayLimit = STAGE_FETCH_DAY_LIMITS[stageKey] || 8;
+
+        const startDay = toUTCDateOnly(start);
+        const endDay = toUTCDateOnly(end);
+        const cappedEndDay = minDate([
+          endDay,
+          addDaysUTC(startDay, Math.max(dayLimit - 1, 0))
+        ]);
+
+        for (let cursor = startDay; cursor <= cappedEndDay; cursor = addDaysUTC(cursor, 1)) {
+          keys.add(formatYYYYMMDD(cursor));
+        }
+      }
+
+      return Array.from(keys).sort();
     }
 
-    function normalizeEvent(event, stageWindows) {
+    function normalizeEvent(event, stageWindows, seedResolver) {
       const competition = event?.competitions?.[0] || {};
       const statusType = competition?.status?.type || {};
+
       const competitors = [...(competition.competitors || [])]
         .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
 
       const roundKey = detectRoundKey(event, competition, stageWindows);
 
       const teams = [
-        normalizeTeam(competitors[0]),
-        normalizeTeam(competitors[1])
+        normalizeTeam(competitors[0], seedResolver),
+        normalizeTeam(competitors[1], seedResolver)
       ];
 
       return {
@@ -904,20 +1087,40 @@
       };
     }
 
-    function normalizeTeam(competitor) {
+    function normalizeRawTeam(competitor) {
       const team = competitor?.team || {};
+
       const name =
         team.shortDisplayName ||
         team.displayName ||
         team.name ||
         competitor?.displayName ||
+        competitor?.name ||
         "TBD";
 
       return {
         id: team.id || competitor?.id || "",
         name,
-        abbr: team.abbreviation || "",
-        logo: team.logo || "",
+        abbr: team.abbreviation || competitor?.abbreviation || "",
+        logo: team.logo || ""
+      };
+    }
+
+    function normalizeTeam(competitor, seedResolver) {
+      const raw = normalizeRawTeam(competitor);
+      const seedLabel = extractSeedLabelFromCompetitor(competitor);
+
+      const resolvedSeed = seedLabel
+        ? resolveSeedSlot(seedLabel, seedResolver)
+        : null;
+
+      const displayedTeam = resolvedSeed || raw;
+
+      return {
+        id: displayedTeam.id || raw.id,
+        name: displayedTeam.name || raw.name,
+        abbr: displayedTeam.abbr || raw.abbr,
+        logo: displayedTeam.logo || raw.logo,
         score: competitor?.score ?? "",
         winner: Boolean(competitor?.winner || competitor?.advance),
         shootoutScore: (
@@ -925,8 +1128,475 @@
           competitor?.penaltyScore ??
           competitor?.penalties?.score ??
           ""
-        )
+        ),
+        seedLabel,
+        seedResolved: Boolean(resolvedSeed),
+        seedDetail: resolvedSeed ? formatResolvedSeedDetail(seedLabel, resolvedSeed) : ""
       };
+    }
+
+    function buildGroupTables(events) {
+      const groupState = new Map();
+
+      for (const event of events) {
+        const competition = event?.competitions?.[0] || {};
+        const group = extractGroupLetter(event, competition);
+
+        if (!group) continue;
+
+        if (!groupState.has(group)) {
+          groupState.set(group, {
+            group,
+            rows: new Map(),
+            totalGames: 0,
+            completedGames: 0,
+            liveGames: 0,
+            startedGames: 0
+          });
+        }
+
+        const table = groupState.get(group);
+
+        const competitors = [...(competition.competitors || [])]
+          .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
+
+        if (competitors.length < 2) continue;
+
+        table.totalGames += 1;
+
+        const teamA = competitors[0];
+        const teamB = competitors[1];
+
+        const rowA = ensureStandingsRow(table.rows, group, teamA);
+        const rowB = ensureStandingsRow(table.rows, group, teamB);
+
+        const state = competition?.status?.type?.state || "pre";
+        const completed = Boolean(competition?.status?.type?.completed);
+
+        if (state === "in") {
+          table.liveGames += 1;
+        }
+
+        if (completed || state === "post") {
+          table.completedGames += 1;
+        }
+
+        if (state === "pre") {
+          continue;
+        }
+
+        const scoreA = Number.parseInt(teamA.score, 10);
+        const scoreB = Number.parseInt(teamB.score, 10);
+
+        if (!Number.isFinite(scoreA) || !Number.isFinite(scoreB)) {
+          continue;
+        }
+
+        table.startedGames += 1;
+
+        applyMatchToStandings(rowA, scoreA, scoreB);
+        applyMatchToStandings(rowB, scoreB, scoreA);
+      }
+
+      const tables = new Map();
+
+      for (const [group, table] of groupState.entries()) {
+        const rows = Array.from(table.rows.values());
+
+        const sortedRows = rows
+          .sort(compareStandingsRows)
+          .map((row, index) => ({
+            ...row,
+            rank: index + 1
+          }));
+
+        tables.set(group, {
+          group,
+          rows: table.startedGames > 0 ? sortedRows : [],
+          allRows: sortedRows,
+          totalGames: table.totalGames,
+          completedGames: table.completedGames,
+          liveGames: table.liveGames,
+          startedGames: table.startedGames,
+          isComplete: table.totalGames > 0 && table.completedGames >= table.totalGames
+        });
+      }
+
+      return tables;
+    }
+
+    function ensureStandingsRow(groupRows, group, competitor) {
+      const team = normalizeRawTeam(competitor);
+      const key = team.id || team.abbr || team.name;
+
+      if (!groupRows.has(key)) {
+        groupRows.set(key, {
+          group,
+          team,
+          played: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          points: 0,
+          goalsFor: 0,
+          goalsAgainst: 0,
+          goalDiff: 0,
+          rank: null
+        });
+      } else {
+        const existing = groupRows.get(key);
+        existing.team = {
+          ...existing.team,
+          ...team
+        };
+      }
+
+      return groupRows.get(key);
+    }
+
+    function applyMatchToStandings(row, goalsFor, goalsAgainst) {
+      row.played += 1;
+      row.goalsFor += goalsFor;
+      row.goalsAgainst += goalsAgainst;
+      row.goalDiff = row.goalsFor - row.goalsAgainst;
+
+      if (goalsFor > goalsAgainst) {
+        row.wins += 1;
+        row.points += 3;
+      } else if (goalsFor === goalsAgainst) {
+        row.draws += 1;
+        row.points += 1;
+      } else {
+        row.losses += 1;
+      }
+    }
+
+    function compareStandingsRows(a, b) {
+      return (
+        b.points - a.points ||
+        b.goalDiff - a.goalDiff ||
+        b.goalsFor - a.goalsFor ||
+        a.goalsAgainst - b.goalsAgainst ||
+        a.team.name.localeCompare(b.team.name)
+      );
+    }
+
+    function buildSeedResolver(groupTables) {
+      const seedMap = new Map();
+      const thirdPlaceRows = [];
+
+      for (const [group, table] of groupTables.entries()) {
+        for (const row of table.rows || []) {
+          if (!row.rank) continue;
+
+          const seedCode = `${row.rank}${group}`;
+          const resolved = {
+            id: row.team.id,
+            name: row.team.name,
+            abbr: row.team.abbr,
+            logo: row.team.logo,
+            group,
+            rank: row.rank,
+            sourceSeedLabel: seedCode,
+            points: row.points,
+            goalDiff: row.goalDiff,
+            goalsFor: row.goalsFor,
+            goalsAgainst: row.goalsAgainst,
+            record: `${row.wins}-${row.draws}-${row.losses}`,
+            played: row.played,
+            isComplete: table.isComplete,
+            liveGames: table.liveGames
+          };
+
+          seedMap.set(seedCode, resolved);
+
+          if (row.rank === 3) {
+            thirdPlaceRows.push(resolved);
+          }
+        }
+      }
+
+      thirdPlaceRows.sort(compareResolvedSeeds);
+
+      return {
+        seedMap,
+        thirdPlaceRows
+      };
+    }
+
+    function resolveSeedSlot(seedLabel, seedResolver) {
+      if (!seedResolver) return null;
+
+      const parsed = parseSeedLabel(seedLabel);
+      if (!parsed) return null;
+
+      const { rank, groups, normalized } = parsed;
+
+      if (groups.length === 1) {
+        const resolved = seedResolver.seedMap.get(`${rank}${groups[0]}`);
+
+        return resolved
+          ? {
+              ...resolved,
+              requestedSeedLabel: normalized,
+              composite: false
+            }
+          : null;
+      }
+
+      const candidates = groups
+        .map((group) => seedResolver.seedMap.get(`${rank}${group}`))
+        .filter(Boolean)
+        .sort(compareResolvedSeeds);
+
+      if (candidates.length === 0) return null;
+
+      return {
+        ...candidates[0],
+        requestedSeedLabel: normalized,
+        composite: true
+      };
+    }
+
+    function compareResolvedSeeds(a, b) {
+      return (
+        b.points - a.points ||
+        b.goalDiff - a.goalDiff ||
+        b.goalsFor - a.goalsFor ||
+        a.goalsAgainst - b.goalsAgainst ||
+        a.name.localeCompare(b.name)
+      );
+    }
+
+    function extractSeedLabelFromCompetitor(competitor) {
+      const team = competitor?.team || {};
+
+      const candidates = [
+        team.shortDisplayName,
+        team.displayName,
+        team.name,
+        team.abbreviation,
+        competitor?.displayName,
+        competitor?.abbreviation,
+        competitor?.name
+      ];
+
+      for (const candidate of candidates) {
+        const parsed = parseSeedLabel(candidate);
+        if (parsed) return parsed.normalized;
+      }
+
+      return "";
+    }
+
+    function parseSeedLabel(value) {
+      if (!value) return null;
+
+      const text = String(value)
+        .toUpperCase()
+        .replace(/[–—]/g, "-")
+        .replace(/\s+/g, " ")
+        .replace(/\bOR\b/g, "/")
+        .replace(/\bAND\b/g, "/")
+        .trim();
+
+      /*
+        Examples:
+          1A
+          2B
+          3C
+          3A/B/C/D
+          3ABCD
+      */
+      let match = text.match(/^([123])\s*([A-L](?:\s*[\/,&-]?\s*[A-L])*)$/);
+
+      if (match) {
+        const rank = Number(match[1]);
+        const groups = extractGroupLetters(match[2]);
+
+        if (rank && groups.length > 0) {
+          return {
+            rank,
+            groups,
+            normalized: `${rank}${groups.join("/")}`
+          };
+        }
+      }
+
+      /*
+        Examples:
+          1st Group A
+          2nd Group B
+          3rd Group C
+          First Group A
+          Second Group B
+          Third Group C
+          Runner-up Group D
+      */
+      match = text.match(
+        /^(1ST|2ND|3RD|FIRST|SECOND|THIRD|WINNER|RUNNER-UP|RUNNER UP)\s+(?:PLACE\s+)?(?:IN\s+)?(?:OF\s+)?GROUP\s+([A-L])$/
+      );
+
+      if (match) {
+        const rank = rankWordToNumber(match[1]);
+        const group = match[2];
+
+        return {
+          rank,
+          groups: [group],
+          normalized: `${rank}${group}`
+        };
+      }
+
+      /*
+        Examples:
+          Group A Winner
+          Group B Runner-up
+          Group C Second
+          Group D Third
+      */
+      match = text.match(
+        /^GROUP\s+([A-L])\s+(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)$/
+      );
+
+      if (match) {
+        const group = match[1];
+        const rank = rankWordToNumber(match[2]);
+
+        return {
+          rank,
+          groups: [group],
+          normalized: `${rank}${group}`
+        };
+      }
+
+      /*
+        Examples:
+          Winner Group A
+          Winner of Group A
+          Runner-up of Group A
+          Third of Group A
+      */
+      match = text.match(
+        /^(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)\s+(?:OF\s+)?GROUP\s+([A-L])$/
+      );
+
+      if (match) {
+        const rank = rankWordToNumber(match[1]);
+        const group = match[2];
+
+        return {
+          rank,
+          groups: [group],
+          normalized: `${rank}${group}`
+        };
+      }
+
+      /*
+        Examples:
+          Best 3rd Group A/B/C
+          Best Third-Place Groups A/B/C/D
+          3rd Place Groups C/D/E/F
+      */
+      match = text.match(
+        /^(?:BEST\s+)?(3RD|THIRD)\s*(?:PLACE)?\s*(?:FROM\s+)?GROUPS?\s+([A-L](?:\s*[\/,&-]?\s*[A-L])*)$/
+      );
+
+      if (match) {
+        const groups = extractGroupLetters(match[2]);
+
+        return {
+          rank: 3,
+          groups,
+          normalized: `3${groups.join("/")}`
+        };
+      }
+
+      return null;
+    }
+
+    function extractGroupLetters(value) {
+      const letters = String(value).match(/[A-L]/g) || [];
+      return Array.from(new Set(letters));
+    }
+
+    function rankWordToNumber(value) {
+      const text = String(value).toUpperCase();
+
+      if (["WINNER", "1ST", "FIRST"].includes(text)) return 1;
+      if (["RUNNER-UP", "RUNNER UP", "SECOND", "2ND"].includes(text)) return 2;
+      if (["THIRD", "3RD"].includes(text)) return 3;
+
+      return Number(text[0]) || 0;
+    }
+
+    function formatResolvedSeedDetail(seedLabel, resolvedSeed) {
+      const rankText = ordinal(resolvedSeed.rank);
+      const gd = resolvedSeed.goalDiff > 0
+        ? `+${resolvedSeed.goalDiff}`
+        : String(resolvedSeed.goalDiff);
+
+      const status = resolvedSeed.isComplete
+        ? "Confirmed table"
+        : resolvedSeed.liveGames > 0
+          ? "Live table"
+          : "Projected table";
+
+      if (resolvedSeed.composite) {
+        return `${status} · ${resolvedSeed.sourceSeedLabel} leads ${seedLabel} pool · ${resolvedSeed.points} pts · ${gd} GD`;
+      }
+
+      return `${status} · Group ${resolvedSeed.group} ${rankText} · ${resolvedSeed.points} pts · ${gd} GD`;
+    }
+
+    function ordinal(number) {
+      const value = Number(number);
+
+      if (value === 1) return "1st";
+      if (value === 2) return "2nd";
+      if (value === 3) return "3rd";
+
+      return `${value}th`;
+    }
+
+    function countResolvedSeedSlots(matches) {
+      return matches.reduce((count, match) => (
+        count + match.teams.filter((team) => team.seedResolved).length
+      ), 0);
+    }
+
+    function countLiveGroups(groupTables) {
+      let count = 0;
+
+      for (const table of groupTables.values()) {
+        if ((table.startedGames || 0) > 0) {
+          count += 1;
+        }
+      }
+
+      return count;
+    }
+
+    function isGroupEvent(event) {
+      const competition = event?.competitions?.[0] || {};
+      return Boolean(extractGroupLetter(event, competition));
+    }
+
+    function extractGroupLetter(event, competition) {
+      const text = [
+        event?.season?.slug,
+        event?.name,
+        event?.shortName,
+        competition?.note,
+        competition?.altGameNote,
+        competition?.status?.type?.detail
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      const match = text.match(/\bGroup\s+([A-L])\b/i);
+
+      return match ? match[1].toUpperCase() : "";
     }
 
     function detectRoundKey(event, competition, stageWindows) {
@@ -943,9 +1613,11 @@
         .toLowerCase();
 
       const direct = roundKeyFromText(text);
+
       if (direct) return direct;
 
       const eventDate = new Date(event?.date || competition?.date || competition?.startDate);
+
       if (!Number.isFinite(eventDate.getTime())) return "";
 
       const dateWindow = stageWindows.find((window) => (
@@ -1065,7 +1737,7 @@
 
           <footer class="match-footer">
             <div class="footer-row">
-              <span title="${escapeHtml(match.venue)}">${escapeHtml(match.venue || "Venue TBD")}</span>
+              <span class="venue" title="${escapeHtml(match.venue)}">${escapeHtml(match.venue || "Venue TBD")}</span>
               ${
                 match.link && !match.isDemo
                   ? `<a class="espn-link" href="${escapeHtml(match.link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>`
@@ -1085,17 +1757,39 @@
 
     function renderTeamRow(team, match) {
       const score = displayScore(team, match);
+
       const logo = team.logo
         ? `<img class="flag" src="${escapeHtml(team.logo)}" alt="" loading="lazy" />`
-        : `<span class="flag-fallback">${escapeHtml((team.abbr || "TBD").slice(0, 3))}</span>`;
+        : `<span class="flag-fallback">${escapeHtml((team.abbr || team.seedLabel || "TBD").slice(0, 3))}</span>`;
+
+      const seedLine = team.seedResolved
+        ? `
+          <div class="team-seed">
+            <span class="seed-chip">${escapeHtml(team.seedLabel)}</span>
+            ${escapeHtml(team.seedDetail)}
+          </div>
+        `
+        : team.seedLabel
+          ? `
+            <div class="team-seed">
+              <span class="seed-chip">${escapeHtml(team.seedLabel)}</span>
+              Awaiting live group position
+            </div>
+          `
+          : "";
 
       return `
         <div class="team ${team.winner ? "winner" : ""}">
           ${logo}
-          <div class="team-name">
-            ${escapeHtml(team.name)}
-            ${team.abbr ? `<span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}
+
+          <div class="team-text">
+            <div class="team-name">
+              ${escapeHtml(team.name)}
+              ${team.abbr ? `<span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}
+            </div>
+            ${seedLine}
           </div>
+
           <div class="score">${escapeHtml(score)}</div>
         </div>
       `;
@@ -1122,6 +1816,7 @@
 
       if (match.state === "in") {
         const clock = match.displayClock ? ` · ${match.displayClock}` : "";
+
         return `
           <span class="badge live">
             <span class="dot" aria-hidden="true"></span>
@@ -1168,10 +1863,10 @@
       const matchCounts = {
         "round-of-32": 16,
         "round-of-16": 8,
-        "quarterfinals": 4,
-        "semifinals": 2,
+        quarterfinals: 4,
+        semifinals: 2,
         "third-place": 1,
-        "final": 1
+        final: 1
       };
 
       return ROUND_META.flatMap((round) => {
@@ -1191,8 +1886,28 @@
           broadcasts: "",
           link: "",
           teams: [
-            { name: "TBD", abbr: "", logo: "", score: "", winner: false, shootoutScore: "" },
-            { name: "TBD", abbr: "", logo: "", score: "", winner: false, shootoutScore: "" }
+            {
+              name: "TBD",
+              abbr: "",
+              logo: "",
+              score: "",
+              winner: false,
+              shootoutScore: "",
+              seedLabel: "",
+              seedResolved: false,
+              seedDetail: ""
+            },
+            {
+              name: "TBD",
+              abbr: "",
+              logo: "",
+              score: "",
+              winner: false,
+              shootoutScore: "",
+              seedLabel: "",
+              seedResolved: false,
+              seedDetail: ""
+            }
           ],
           isDemo: true
         }));
@@ -1223,7 +1938,7 @@
     function formatVenue(venue) {
       if (!venue) return "";
 
-      const name = venue.fullName || venue.name || "";
+      const name = venue.fullName || venue.name || venue.displayName || "";
       const city = venue.address?.city || "";
       const country = venue.address?.country || "";
 
@@ -1254,18 +1969,6 @@
       return "";
     }
 
-    function dateKeysBetweenUTC(startDate, endDate) {
-      const start = toUTCDateOnly(startDate);
-      const end = toUTCDateOnly(endDate);
-      const keys = [];
-
-      for (let cursor = start; cursor <= end; cursor = addDaysUTC(cursor, 1)) {
-        keys.push(formatYYYYMMDD(cursor));
-      }
-
-      return Array.from(new Set(keys));
-    }
-
     function toUTCDateOnly(date) {
       return new Date(Date.UTC(
         date.getUTCFullYear(),
@@ -1291,10 +1994,6 @@
       return new Date(Math.min(...dates.map((date) => date.getTime())));
     }
 
-    function maxDate(dates) {
-      return new Date(Math.max(...dates.map((date) => date.getTime())));
-    }
-
     function chunk(items, size) {
       const chunks = [];
 
@@ -1303,6 +2002,10 @@
       }
 
       return chunks;
+    }
+
+    function uniqueSorted(items) {
+      return Array.from(new Set(items)).sort();
     }
 
     function groupBy(items, getKey) {
