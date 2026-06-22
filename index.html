@@ -4,58 +4,49 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#06111f" />
-  <title>FIFA World Cup Live Bracket</title>
+  <title>FIFA World Cup Live View</title>
 
   <style>
     :root {
       --bg: #06111f;
       --bg-2: #0b1728;
       --panel: rgba(255, 255, 255, 0.075);
-      --panel-2: rgba(255, 255, 255, 0.11);
+      --panel-2: rgba(255, 255, 255, 0.12);
       --line: rgba(255, 255, 255, 0.14);
       --text: #f6fbff;
       --muted: rgba(246, 251, 255, 0.7);
       --soft: rgba(246, 251, 255, 0.52);
       --accent: #52f2b8;
       --accent-2: #75a7ff;
-      --danger: #ff6b7a;
       --warn: #ffd166;
+      --danger: #ff6b7a;
       --radius-xl: 24px;
       --radius-lg: 18px;
       --radius-md: 14px;
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html {
       color-scheme: dark;
       -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
     }
 
     body {
       min-height: 100dvh;
       margin: 0;
-      font-family:
-        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at 20% 0%, rgba(82, 242, 184, 0.16), transparent 32rem),
-        radial-gradient(circle at 80% 10%, rgba(117, 167, 255, 0.18), transparent 30rem),
+        radial-gradient(circle at 80% 8%, rgba(117, 167, 255, 0.18), transparent 30rem),
         linear-gradient(180deg, var(--bg), #030814 72%);
     }
 
-    a {
-      color: inherit;
-    }
-
-    button,
-    select {
-      font: inherit;
-    }
+    a { color: inherit; }
+    button { font: inherit; }
 
     .app {
       width: min(1440px, 100%);
@@ -66,7 +57,7 @@
     .hero {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 16px;
@@ -74,9 +65,7 @@
       padding: 18px;
       border: 1px solid var(--line);
       border-radius: var(--radius-xl);
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.055)),
-        rgba(6, 17, 31, 0.86);
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.055)), rgba(6, 17, 31, 0.88);
       backdrop-filter: blur(18px);
       box-shadow: var(--shadow);
     }
@@ -89,7 +78,7 @@
       margin-bottom: 8px;
       color: var(--muted);
       font-size: 0.88rem;
-      font-weight: 700;
+      font-weight: 750;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
@@ -117,13 +106,8 @@
     }
 
     @keyframes pulse {
-      70% {
-        box-shadow: 0 0 0 9px rgba(82, 242, 184, 0);
-      }
-
-      100% {
-        box-shadow: 0 0 0 0 rgba(82, 242, 184, 0);
-      }
+      70% { box-shadow: 0 0 0 9px rgba(82, 242, 184, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(82, 242, 184, 0); }
     }
 
     h1 {
@@ -134,7 +118,7 @@
     }
 
     .subhead {
-      max-width: 72ch;
+      max-width: 76ch;
       margin: 10px 0 0;
       color: var(--muted);
       line-height: 1.5;
@@ -153,7 +137,7 @@
       border-radius: 999px;
       color: #041018;
       background: linear-gradient(135deg, var(--accent), #aafbdc);
-      font-weight: 900;
+      font-weight: 950;
       cursor: pointer;
       box-shadow: 0 10px 25px rgba(82, 242, 184, 0.2);
     }
@@ -181,9 +165,7 @@
       background: rgba(255, 255, 255, 0.052);
     }
 
-    .status-bar.ok {
-      border-color: rgba(82, 242, 184, 0.22);
-    }
+    .status-bar.ok { border-color: rgba(82, 242, 184, 0.22); }
 
     .status-bar.warn {
       border-color: rgba(255, 209, 102, 0.32);
@@ -199,14 +181,11 @@
       background: var(--accent-2);
     }
 
-    .status-bar.ok .status-icon {
-      background: var(--accent);
-    }
+    .status-bar.ok .status-icon { background: var(--accent); }
+    .status-bar.warn .status-icon { background: var(--warn); }
 
-    .status-bar.warn .status-icon {
-      background: var(--warn);
-    }
-
+    .view-tabs,
+    .group-tabs,
     .round-tabs {
       display: flex;
       gap: 8px;
@@ -215,6 +194,8 @@
       scrollbar-width: thin;
       scroll-snap-type: x proximity;
     }
+
+    .view-tabs { margin-top: 2px; }
 
     .tab {
       min-height: 42px;
@@ -232,7 +213,240 @@
       color: #06111f;
       border-color: transparent;
       background: var(--text);
-      font-weight: 900;
+      font-weight: 950;
+    }
+
+    .section {
+      margin-top: 16px;
+    }
+
+    .section.hidden { display: none; }
+
+    .section-head {
+      display: flex;
+      gap: 14px;
+      align-items: end;
+      justify-content: space-between;
+      margin: 8px 0 10px;
+    }
+
+    .section-kicker {
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin: 4px 0 0;
+      font-size: clamp(1.25rem, 3vw, 2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .section-copy {
+      margin: 6px 0 0;
+      max-width: 74ch;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .summary-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .stat-pill {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.052);
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .group-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .group-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: rgba(255, 255, 255, 0.048);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .group-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .group-card h3 {
+      margin: 0;
+      font-size: 1.08rem;
+      letter-spacing: -0.025em;
+    }
+
+    .group-meta {
+      color: var(--soft);
+      font-size: 0.78rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .standings-wrap {
+      overflow-x: auto;
+    }
+
+    .standings {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      min-width: 390px;
+    }
+
+    .standings th,
+    .standings td {
+      padding: 9px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .standings th {
+      color: var(--soft);
+      font-size: 0.68rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .standings td:first-child,
+    .standings th:first-child {
+      width: 30px;
+      text-align: center;
+      color: var(--soft);
+    }
+
+    .standings td:nth-child(2),
+    .standings th:nth-child(2) {
+      text-align: left;
+    }
+
+    .rank-qualify td:first-child {
+      color: var(--accent);
+      font-weight: 950;
+    }
+
+    .rank-third td:first-child {
+      color: var(--warn);
+      font-weight: 950;
+    }
+
+    .table-team {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .table-logo,
+    .table-logo-fallback {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      object-fit: cover;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 0.58rem;
+      font-weight: 950;
+      overflow: hidden;
+    }
+
+    .table-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+
+    .group-matches {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .group-match {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      background: rgba(0, 0, 0, 0.14);
+    }
+
+    .group-match.live {
+      border-color: rgba(82, 242, 184, 0.42);
+      background: rgba(82, 242, 184, 0.06);
+    }
+
+    .group-match-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--soft);
+      font-size: 0.74rem;
+    }
+
+    .mini-teams {
+      display: grid;
+      gap: 5px;
+    }
+
+    .mini-team {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+    }
+
+    .mini-team.winner {
+      color: var(--text);
+      font-weight: 950;
+    }
+
+    .mini-score {
+      font-variant-numeric: tabular-nums;
+      font-weight: 950;
+    }
+
+    .empty-box {
+      display: grid;
+      place-items: center;
+      min-height: 140px;
+      padding: 16px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius-lg);
+      color: var(--soft);
+      text-align: center;
+      line-height: 1.45;
+      background: rgba(255, 255, 255, 0.035);
     }
 
     .bracket {
@@ -268,7 +482,7 @@
     .round-kicker {
       color: var(--accent);
       font-size: 0.78rem;
-      font-weight: 900;
+      font-weight: 950;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
@@ -281,7 +495,7 @@
       margin-top: 4px;
     }
 
-    .round-title h2 {
+    .round-title h3 {
       margin: 0;
       font-size: 1.06rem;
       letter-spacing: -0.025em;
@@ -298,45 +512,25 @@
       gap: 12px;
     }
 
-    .round[data-round="round-of-32"] .match-list {
-      padding-top: 12px;
-      gap: 14px;
-    }
-
-    .round[data-round="round-of-16"] .match-list {
-      padding-top: 18px;
-      gap: 18px;
-    }
-
-    .round[data-round="quarterfinals"] .match-list {
-      padding-top: 34px;
-      gap: 28px;
-    }
-
-    .round[data-round="semifinals"] .match-list {
-      padding-top: 62px;
-      gap: 44px;
-    }
-
+    .round[data-round="round-of-32"] .match-list { padding-top: 12px; gap: 14px; }
+    .round[data-round="round-of-16"] .match-list { padding-top: 18px; gap: 18px; }
+    .round[data-round="quarterfinals"] .match-list { padding-top: 34px; gap: 28px; }
+    .round[data-round="semifinals"] .match-list { padding-top: 62px; gap: 44px; }
     .round[data-round="third-place"] .match-list,
-    .round[data-round="final"] .match-list {
-      padding-top: 92px;
-    }
+    .round[data-round="final"] .match-list { padding-top: 92px; }
 
     .match-card {
       position: relative;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.052)),
-        var(--bg-2);
+      background: linear-gradient(180deg, rgba(255,255,255,0.105), rgba(255,255,255,0.052)), var(--bg-2);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
     }
 
     .match-card.live {
       border-color: rgba(82, 242, 184, 0.48);
-      box-shadow: 0 0 0 1px rgba(82, 242, 184, 0.12), 0 18px 42px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 0 1px rgba(82, 242, 184, 0.12), 0 18px 42px rgba(0,0,0,0.3);
     }
 
     .match-card.placeholder {
@@ -362,23 +556,12 @@
       padding: 5px 8px;
       border-radius: 999px;
       font-size: 0.72rem;
-      font-weight: 900;
+      font-weight: 950;
     }
 
-    .badge.live {
-      color: var(--accent);
-      background: rgba(82, 242, 184, 0.105);
-    }
-
-    .badge.final {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.11);
-    }
-
-    .badge.scheduled {
-      color: #c8d8ff;
-      background: rgba(117, 167, 255, 0.12);
-    }
+    .badge.live { color: var(--accent); background: rgba(82, 242, 184, 0.105); }
+    .badge.final { color: var(--text); background: rgba(255, 255, 255, 0.11); }
+    .badge.scheduled { color: #c8d8ff; background: rgba(117, 167, 255, 0.12); }
 
     .teams {
       display: grid;
@@ -400,7 +583,7 @@
     .team.winner {
       color: var(--text);
       background: rgba(82, 242, 184, 0.09);
-      font-weight: 900;
+      font-weight: 950;
     }
 
     .flag,
@@ -414,7 +597,7 @@
       place-items: center;
       color: var(--muted);
       font-size: 0.67rem;
-      font-weight: 900;
+      font-weight: 950;
       overflow: hidden;
     }
 
@@ -435,7 +618,7 @@
       margin-left: 4px;
       color: var(--soft);
       font-size: 0.76rem;
-      font-weight: 700;
+      font-weight: 750;
     }
 
     .team-seed {
@@ -458,7 +641,7 @@
       color: var(--accent);
       background: rgba(82, 242, 184, 0.08);
       font-size: 0.66rem;
-      font-weight: 900;
+      font-weight: 950;
     }
 
     .score {
@@ -494,28 +677,13 @@
 
     .espn-link {
       color: var(--accent);
-      font-weight: 900;
+      font-weight: 950;
       text-decoration: none;
       white-space: nowrap;
     }
 
     .espn-link:focus,
-    .espn-link:hover {
-      text-decoration: underline;
-    }
-
-    .empty-round {
-      display: grid;
-      place-items: center;
-      min-height: 140px;
-      padding: 16px;
-      border: 1px dashed var(--line);
-      border-radius: var(--radius-lg);
-      color: var(--soft);
-      text-align: center;
-      line-height: 1.45;
-      background: rgba(255, 255, 255, 0.035);
-    }
+    .espn-link:hover { text-decoration: underline; }
 
     .notes {
       margin-top: 14px;
@@ -530,7 +698,7 @@
     .notes summary {
       color: var(--text);
       cursor: pointer;
-      font-weight: 900;
+      font-weight: 950;
     }
 
     .notes code {
@@ -539,10 +707,12 @@
       background: rgba(255, 255, 255, 0.11);
     }
 
+    @media (max-width: 1100px) {
+      .group-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
     @media (max-width: 760px) {
-      .app {
-        padding: 12px;
-      }
+      .app { padding: 12px; }
 
       .hero {
         position: relative;
@@ -556,12 +726,20 @@
         align-items: center;
       }
 
-      .updated {
-        text-align: right;
+      .updated { text-align: right; }
+      .refresh { width: 100%; }
+
+      .section-head {
+        display: block;
       }
 
-      .refresh {
-        width: 100%;
+      .summary-stats {
+        justify-content: flex-start;
+        margin-top: 10px;
+      }
+
+      .group-grid {
+        grid-template-columns: 1fr;
       }
 
       .bracket {
@@ -585,15 +763,8 @@
         gap: 12px;
       }
 
-      .team {
-        grid-template-columns: 28px 1fr auto;
-      }
-
-      .flag,
-      .flag-fallback {
-        width: 28px;
-        height: 28px;
-      }
+      .team { grid-template-columns: 28px 1fr auto; }
+      .flag, .flag-fallback { width: 28px; height: 28px; }
     }
   </style>
 </head>
@@ -605,41 +776,69 @@
         <div class="eyebrow">
           <span class="live-pill" id="livePill">
             <span class="dot" aria-hidden="true"></span>
-            Live bracket
+            Live tournament view
           </span>
           <span>FIFA World Cup</span>
         </div>
 
-        <h1>Knockout Bracket</h1>
+        <h1>Group Stage + Knockout Bracket</h1>
         <p class="subhead">
-          A mobile-friendly live bracket using ESPN scoreboard data. Group-position slots like
-          1A, 2B, and 3C/D/E are replaced with the current projected team whenever the group
-          table can be calculated.
+          A mobile-friendly live view using ESPN scoreboard data. Group tables update from match results,
+          and knockout slots like 1A, 2B, and 3C/D/E are replaced with the current projected team whenever possible.
         </p>
       </div>
 
       <div class="hero-actions">
         <button class="refresh" id="refreshBtn" type="button">Refresh</button>
-        <div class="updated" id="lastUpdated">Last updated: —</div>
+        <div class="updated" id="lastUpdated">Last updated: -</div>
       </div>
     </header>
 
     <div class="status-bar" id="statusBar" role="status" aria-live="polite">
       <span class="status-icon" aria-hidden="true"></span>
-      <span id="statusText">Loading bracket data…</span>
+      <span id="statusText">Loading tournament data...</span>
     </div>
 
-    <nav class="round-tabs" id="roundTabs" aria-label="Bracket rounds"></nav>
+    <nav class="view-tabs" id="viewTabs" aria-label="Main view"></nav>
 
-    <section class="bracket" id="bracket" aria-live="polite"></section>
+    <section class="section" id="groupSection">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Group Stage</div>
+          <h2 class="section-title">Live group tables and fixtures</h2>
+          <p class="section-copy">
+            Top two teams are highlighted in green. Third-place teams are highlighted in gold because some third-place teams can still feed into the knockout bracket.
+          </p>
+        </div>
+        <div class="summary-stats" id="groupSummary"></div>
+      </div>
+
+      <nav class="group-tabs" id="groupTabs" aria-label="Group filters"></nav>
+      <div class="group-grid" id="groupGrid" aria-live="polite"></div>
+    </section>
+
+    <section class="section" id="bracketSection">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Knockout Stage</div>
+          <h2 class="section-title">Live bracket</h2>
+          <p class="section-copy">
+            Bracket placeholders resolve from the current group tables. Composite third-place slots are useful projections until the official allocation is confirmed.
+          </p>
+        </div>
+        <div class="summary-stats" id="bracketSummary"></div>
+      </div>
+
+      <nav class="round-tabs" id="roundTabs" aria-label="Bracket rounds"></nav>
+      <section class="bracket" id="bracket" aria-live="polite"></section>
+    </section>
 
     <details class="notes">
       <summary>Data note</summary>
       <p>
-        This page uses ESPN’s public scoreboard feed directly from the browser. For the most
-        reliable mobile experience, put your own small backend/cache in front of ESPN and set
-        <code>CORS_PROXY</code> in the script. Third-place pool slots are live projections until
-        the tournament confirms the official allocation.
+        This page uses ESPN's public scoreboard feed directly from the browser. For the most reliable mobile experience,
+        put your own small backend/cache in front of ESPN and set <code>CORS_PROXY</code> in the script. Group standings here use points,
+        goal difference, goals for, goals against, then name as the local tie-break order.
       </p>
     </details>
   </main>
@@ -647,8 +846,7 @@
   <script>
     "use strict";
 
-    const ESPN_SCOREBOARD =
-      "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
+    const ESPN_SCOREBOARD = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
 
     /*
       Leave blank first.
@@ -672,8 +870,14 @@
       quarterfinals: 5,
       semifinals: 5,
       "third-place": 2,
-      final: 2
+      final: 14
     };
+
+    const VIEW_TABS = [
+      { key: "all", label: "All" },
+      { key: "groups", label: "Group Stage" },
+      { key: "bracket", label: "Bracket" }
+    ];
 
     const ROUND_META = [
       {
@@ -732,62 +936,38 @@
     ];
 
     const FALLBACK_KNOCKOUT_ENTRIES = [
-      {
-        label: "Round of 32",
-        detail: "Jun 28-Jul 3",
-        value: "2",
-        startDate: "2026-06-28T07:00:00Z",
-        endDate: "2026-07-04T06:59:00Z"
-      },
-      {
-        label: "Rd of 16",
-        detail: "Jul 4-7",
-        value: "3",
-        startDate: "2026-07-04T07:00:00Z",
-        endDate: "2026-07-09T06:59:00Z"
-      },
-      {
-        label: "Quarterfinals",
-        detail: "Jul 9-11",
-        value: "4",
-        startDate: "2026-07-09T07:00:00Z",
-        endDate: "2026-07-14T06:59:00Z"
-      },
-      {
-        label: "Semifinals",
-        detail: "Jul 14-15",
-        value: "5",
-        startDate: "2026-07-14T07:00:00Z",
-        endDate: "2026-07-19T06:59:00Z"
-      },
-      {
-        label: "3rd-Place Match",
-        detail: "Jul 18",
-        value: "6",
-        startDate: "2026-07-18T07:00:00Z",
-        endDate: "2026-07-19T06:59:00Z"
-      },
-      {
-        label: "Final",
-        detail: "Jul 19",
-        value: "7",
-        startDate: "2026-07-19T07:00:00Z",
-        endDate: "2026-07-20T06:59:00Z"
-      }
+      { label: "Round of 32", detail: "Jun 28-Jul 3", value: "2", startDate: "2026-06-28T07:00:00Z", endDate: "2026-07-04T06:59:00Z" },
+      { label: "Rd of 16", detail: "Jul 4-7", value: "3", startDate: "2026-07-04T07:00:00Z", endDate: "2026-07-09T06:59:00Z" },
+      { label: "Quarterfinals", detail: "Jul 9-11", value: "4", startDate: "2026-07-09T07:00:00Z", endDate: "2026-07-14T06:59:00Z" },
+      { label: "Semifinals", detail: "Jul 14-15", value: "5", startDate: "2026-07-14T07:00:00Z", endDate: "2026-07-19T06:59:00Z" },
+      { label: "3rd-Place Match", detail: "Jul 18", value: "6", startDate: "2026-07-18T07:00:00Z", endDate: "2026-07-19T06:59:00Z" },
+      { label: "Final", detail: "Jul 19", value: "7", startDate: "2026-07-19T07:00:00Z", endDate: "2026-08-01T06:59:00Z" }
     ];
 
     const appState = {
+      selectedView: "all",
+      selectedGroup: "all",
       selectedRound: "all",
-      matches: [],
+      allEvents: [],
+      groupEvents: [],
+      knockoutEvents: [],
       groupTables: new Map(),
+      matches: [],
       isLoading: false,
       lastUpdated: null,
       refreshTimer: null
     };
 
     const els = {
+      viewTabs: document.getElementById("viewTabs"),
+      groupTabs: document.getElementById("groupTabs"),
+      groupGrid: document.getElementById("groupGrid"),
+      groupSummary: document.getElementById("groupSummary"),
+      bracketSummary: document.getElementById("bracketSummary"),
       bracket: document.getElementById("bracket"),
-      tabs: document.getElementById("roundTabs"),
+      roundTabs: document.getElementById("roundTabs"),
+      groupSection: document.getElementById("groupSection"),
+      bracketSection: document.getElementById("bracketSection"),
       refresh: document.getElementById("refreshBtn"),
       lastUpdated: document.getElementById("lastUpdated"),
       livePill: document.getElementById("livePill"),
@@ -798,112 +978,104 @@
     document.addEventListener("DOMContentLoaded", init);
 
     function init() {
-      renderTabs();
+      renderViewTabs();
+      renderGroupTabs();
+      renderRoundTabs();
 
       els.refresh.addEventListener("click", () => {
-        loadBracket({ silent: false });
+        loadTournament({ silent: false });
       });
 
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
-          loadBracket({ silent: true });
+          loadTournament({ silent: true });
         }
       });
 
-      loadBracket({ silent: false });
+      loadTournament({ silent: false });
 
       appState.refreshTimer = window.setInterval(() => {
         if (!document.hidden) {
-          loadBracket({ silent: true });
+          loadTournament({ silent: true });
         }
       }, REFRESH_MS);
     }
 
-    async function loadBracket({ silent } = { silent: false }) {
+    async function loadTournament({ silent } = { silent: false }) {
       if (appState.isLoading) return;
 
       appState.isLoading = true;
       els.refresh.disabled = true;
 
       setStatus(
-        silent
-          ? "Refreshing bracket and group-position data…"
-          : "Loading ESPN bracket and group-position data…",
+        silent ? "Refreshing group stage and bracket data..." : "Loading ESPN group stage and bracket data...",
         "normal"
       );
 
       try {
         const baseScoreboard = await fetchJson(ESPN_SCOREBOARD);
-
         const groupEntries = extractGroupEntries(baseScoreboard);
         const knockoutEntries = extractKnockoutEntries(baseScoreboard);
         const stageWindows = buildStageWindows(knockoutEntries);
 
-        const allDateKeys = uniqueSorted([
+        const dateKeys = uniqueSorted([
           ...buildDateKeys(groupEntries),
           ...buildDateKeys(knockoutEntries)
         ]);
 
-        const allEvents = await fetchEventsForDateKeys(
-          allDateKeys,
-          baseScoreboard.events || []
-        );
-
-        const groupEvents = allEvents.filter(isGroupEvent);
+        const allEvents = await fetchEventsForDateKeys(dateKeys, baseScoreboard.events || []);
+        const groupEvents = allEvents.filter(isGroupEvent).sort(compareEventsByDate);
         const groupTables = buildGroupTables(groupEvents);
         const seedResolver = buildSeedResolver(groupTables);
 
-        const knockoutEvents = allEvents.filter((event) => {
-          const competition = event?.competitions?.[0] || {};
-          return Boolean(detectRoundKey(event, competition, stageWindows));
-        });
+        const knockoutEvents = allEvents
+          .filter((event) => Boolean(detectRoundKey(event, event?.competitions?.[0] || {}, stageWindows)))
+          .sort(compareEventsByDate);
 
         const matches = knockoutEvents
-          .map((event) => normalizeEvent(event, stageWindows, seedResolver))
+          .map((event) => normalizeKnockoutEvent(event, stageWindows, seedResolver))
           .filter((match) => match.roundKey)
           .sort(compareMatches);
 
-        appState.matches = matches;
+        appState.allEvents = allEvents;
+        appState.groupEvents = groupEvents;
+        appState.knockoutEvents = knockoutEvents;
         appState.groupTables = groupTables;
+        appState.matches = matches;
         appState.lastUpdated = new Date();
 
         render();
 
         const resolvedSlots = countResolvedSeedSlots(matches);
-        const liveGroupCount = countLiveGroups(groupTables);
+        const totalGroupMatches = groupEvents.length;
+        const liveEvents = countLiveEvents([...groupEvents, ...knockoutEvents]);
 
-        if (matches.length === 0) {
-          setStatus(
-            "ESPN responded, but no knockout fixtures were found yet. The bracket will populate as ESPN publishes games.",
-            "warn"
-          );
+        if (totalGroupMatches === 0 && matches.length === 0) {
+          setStatus("ESPN responded, but no World Cup fixtures were found yet.", "warn");
         } else if (resolvedSlots > 0) {
           setStatus(
-            `Loaded ${matches.length} knockout match${matches.length === 1 ? "" : "es"} and resolved ${resolvedSlots} group-position slot${resolvedSlots === 1 ? "" : "s"} from current tables.`,
-            "ok"
-          );
-        } else if (liveGroupCount > 0) {
-          setStatus(
-            `Loaded ${matches.length} knockout match${matches.length === 1 ? "" : "es"}. Group tables are live, but ESPN has not exposed resolvable slot labels yet.`,
+            `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"}, ${matches.length} knockout match${matches.length === 1 ? "" : "es"}, and resolved ${resolvedSlots} bracket slot${resolvedSlots === 1 ? "" : "s"}.`,
             "ok"
           );
         } else {
           setStatus(
-            `Loaded ${matches.length} knockout match${matches.length === 1 ? "" : "es"}. Slot labels will resolve as group tables become available.`,
+            `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"} and ${matches.length} knockout match${matches.length === 1 ? "" : "es"}${liveEvents ? `, with ${liveEvents} live` : ""}.`,
             "ok"
           );
         }
       } catch (error) {
         console.error(error);
-
+        appState.allEvents = [];
+        appState.groupEvents = [];
+        appState.knockoutEvents = [];
+        appState.groupTables = makeDemoGroupTables();
         appState.matches = makeDemoMatches();
-        appState.groupTables = new Map();
         appState.lastUpdated = new Date();
 
         render();
 
         setStatus(
-          "Live ESPN fetch failed, so a bracket shell is showing. Check CORS/network access or route ESPN requests through a backend proxy.",
+          "Live ESPN fetch failed, so a demo shell is showing. Check CORS/network access or route ESPN requests through a backend proxy.",
           "warn"
         );
       } finally {
@@ -916,18 +1088,13 @@
     async function fetchJson(url) {
       const controller = new AbortController();
       const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
-      const targetUrl = CORS_PROXY
-        ? `${CORS_PROXY}${encodeURIComponent(url)}`
-        : url;
+      const targetUrl = CORS_PROXY ? `${CORS_PROXY}${encodeURIComponent(url)}` : url;
 
       try {
         const response = await fetch(targetUrl, {
           cache: "no-store",
           signal: controller.signal,
-          headers: {
-            Accept: "application/json"
-          }
+          headers: { Accept: "application/json" }
         });
 
         if (!response.ok) {
@@ -944,9 +1111,7 @@
       const eventMap = new Map();
 
       for (const event of seedEvents) {
-        if (event?.id) {
-          eventMap.set(event.id, event);
-        }
+        if (event?.id) eventMap.set(event.id, event);
       }
 
       const batches = chunk(dateKeys, 5);
@@ -960,9 +1125,7 @@
           if (result.status !== "fulfilled") continue;
 
           for (const event of result.value.events || []) {
-            if (event?.id) {
-              eventMap.set(event.id, event);
-            }
+            if (event?.id) eventMap.set(event.id, event);
           }
         }
       }
@@ -972,7 +1135,6 @@
 
     function extractCalendarEntries(scoreboard) {
       const leagues = scoreboard?.leagues || [];
-
       return leagues.flatMap((league) => {
         const calendars = league.calendar || [];
         return calendars.flatMap((calendar) => calendar.entries || []);
@@ -982,20 +1144,14 @@
     function extractGroupEntries(scoreboard) {
       const parsed = extractCalendarEntries(scoreboard)
         .filter((entry) => /group/i.test(entry.label || ""))
-        .map((entry) => ({
-          ...entry,
-          roundKey: "group"
-        }));
+        .map((entry) => ({ ...entry, roundKey: "group" }));
 
       return parsed.length > 0 ? parsed : FALLBACK_GROUP_ENTRIES;
     }
 
     function extractKnockoutEntries(scoreboard) {
       const parsed = extractCalendarEntries(scoreboard)
-        .map((entry) => ({
-          ...entry,
-          roundKey: roundKeyFromText(entry.label)
-        }))
+        .map((entry) => ({ ...entry, roundKey: roundKeyFromText(entry.label) }))
         .filter((entry) => entry.roundKey);
 
       if (parsed.length > 0) return parsed;
@@ -1014,11 +1170,7 @@
           start: new Date(entry.startDate),
           end: new Date(entry.endDate)
         }))
-        .filter((window) => (
-          window.roundKey &&
-          Number.isFinite(window.start.getTime()) &&
-          Number.isFinite(window.end.getTime())
-        ));
+        .filter((stage) => stage.roundKey && Number.isFinite(stage.start.getTime()) && Number.isFinite(stage.end.getTime()));
     }
 
     function buildDateKeys(entries) {
@@ -1028,19 +1180,13 @@
         const start = new Date(entry.startDate);
         const end = new Date(entry.endDate || addDaysUTC(start, 1));
 
-        if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) {
-          continue;
-        }
+        if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) continue;
 
         const stageKey = entry.roundKey || "group";
         const dayLimit = STAGE_FETCH_DAY_LIMITS[stageKey] || 8;
-
         const startDay = toUTCDateOnly(start);
         const endDay = toUTCDateOnly(end);
-        const cappedEndDay = minDate([
-          endDay,
-          addDaysUTC(startDay, Math.max(dayLimit - 1, 0))
-        ]);
+        const cappedEndDay = minDate([endDay, addDaysUTC(startDay, Math.max(dayLimit - 1, 0))]);
 
         for (let cursor = startDay; cursor <= cappedEndDay; cursor = addDaysUTC(cursor, 1)) {
           keys.add(formatYYYYMMDD(cursor));
@@ -1050,104 +1196,19 @@
       return Array.from(keys).sort();
     }
 
-    function normalizeEvent(event, stageWindows, seedResolver) {
-      const competition = event?.competitions?.[0] || {};
-      const statusType = competition?.status?.type || {};
-
-      const competitors = [...(competition.competitors || [])]
-        .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
-
-      const roundKey = detectRoundKey(event, competition, stageWindows);
-
-      const teams = [
-        normalizeTeam(competitors[0], seedResolver),
-        normalizeTeam(competitors[1], seedResolver)
-      ];
-
-      return {
-        id: event.id || competition.id || cryptoSafeId(),
-        roundKey,
-        date: event.date || competition.date || competition.startDate || "",
-        name: event.name || event.shortName || "Match",
-        shortName: event.shortName || event.name || "Match",
-        state: statusType.state || "pre",
-        completed: Boolean(statusType.completed),
-        statusText: (
-          statusType.shortDetail ||
-          statusType.detail ||
-          statusType.description ||
-          "Scheduled"
-        ),
-        displayClock: competition.status?.displayClock || "",
-        venue: formatVenue(competition.venue),
-        broadcasts: formatBroadcasts(competition.broadcasts),
-        link: findEventLink(event),
-        teams,
-        isDemo: false
-      };
-    }
-
-    function normalizeRawTeam(competitor) {
-      const team = competitor?.team || {};
-
-      const name =
-        team.shortDisplayName ||
-        team.displayName ||
-        team.name ||
-        competitor?.displayName ||
-        competitor?.name ||
-        "TBD";
-
-      return {
-        id: team.id || competitor?.id || "",
-        name,
-        abbr: team.abbreviation || competitor?.abbreviation || "",
-        logo: team.logo || ""
-      };
-    }
-
-    function normalizeTeam(competitor, seedResolver) {
-      const raw = normalizeRawTeam(competitor);
-      const seedLabel = extractSeedLabelFromCompetitor(competitor);
-
-      const resolvedSeed = seedLabel
-        ? resolveSeedSlot(seedLabel, seedResolver)
-        : null;
-
-      const displayedTeam = resolvedSeed || raw;
-
-      return {
-        id: displayedTeam.id || raw.id,
-        name: displayedTeam.name || raw.name,
-        abbr: displayedTeam.abbr || raw.abbr,
-        logo: displayedTeam.logo || raw.logo,
-        score: competitor?.score ?? "",
-        winner: Boolean(competitor?.winner || competitor?.advance),
-        shootoutScore: (
-          competitor?.shootoutScore ??
-          competitor?.penaltyScore ??
-          competitor?.penalties?.score ??
-          ""
-        ),
-        seedLabel,
-        seedResolved: Boolean(resolvedSeed),
-        seedDetail: resolvedSeed ? formatResolvedSeedDetail(seedLabel, resolvedSeed) : ""
-      };
-    }
-
     function buildGroupTables(events) {
-      const groupState = new Map();
+      const tableMap = new Map();
 
       for (const event of events) {
         const competition = event?.competitions?.[0] || {};
         const group = extractGroupLetter(event, competition);
-
         if (!group) continue;
 
-        if (!groupState.has(group)) {
-          groupState.set(group, {
+        if (!tableMap.has(group)) {
+          tableMap.set(group, {
             group,
             rows: new Map(),
+            events: [],
             totalGames: 0,
             completedGames: 0,
             liveGames: 0,
@@ -1155,82 +1216,65 @@
           });
         }
 
-        const table = groupState.get(group);
-
-        const competitors = [...(competition.competitors || [])]
-          .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
-
-        if (competitors.length < 2) continue;
-
+        const table = tableMap.get(group);
+        table.events.push(event);
         table.totalGames += 1;
+
+        const competitors = getCompetitors(event);
+        if (competitors.length < 2) continue;
 
         const teamA = competitors[0];
         const teamB = competitors[1];
-
         const rowA = ensureStandingsRow(table.rows, group, teamA);
         const rowB = ensureStandingsRow(table.rows, group, teamB);
-
         const state = competition?.status?.type?.state || "pre";
         const completed = Boolean(competition?.status?.type?.completed);
 
-        if (state === "in") {
-          table.liveGames += 1;
-        }
-
-        if (completed || state === "post") {
-          table.completedGames += 1;
-        }
-
-        if (state === "pre") {
-          continue;
-        }
+        if (state === "in") table.liveGames += 1;
+        if (completed || state === "post") table.completedGames += 1;
+        if (state === "pre") continue;
 
         const scoreA = Number.parseInt(teamA.score, 10);
         const scoreB = Number.parseInt(teamB.score, 10);
-
-        if (!Number.isFinite(scoreA) || !Number.isFinite(scoreB)) {
-          continue;
-        }
+        if (!Number.isFinite(scoreA) || !Number.isFinite(scoreB)) continue;
 
         table.startedGames += 1;
-
         applyMatchToStandings(rowA, scoreA, scoreB);
         applyMatchToStandings(rowB, scoreB, scoreA);
       }
 
-      const tables = new Map();
+      const output = new Map();
 
-      for (const [group, table] of groupState.entries()) {
-        const rows = Array.from(table.rows.values());
+      for (const letter of GROUP_LETTERS) {
+        const raw = tableMap.get(letter);
+        if (!raw) continue;
 
-        const sortedRows = rows
+        const sortedRows = Array.from(raw.rows.values())
           .sort(compareStandingsRows)
-          .map((row, index) => ({
-            ...row,
-            rank: index + 1
-          }));
+          .map((row, index) => ({ ...row, rank: index + 1 }));
 
-        tables.set(group, {
-          group,
-          rows: table.startedGames > 0 ? sortedRows : [],
+        output.set(letter, {
+          group: letter,
+          rows: raw.startedGames > 0 ? sortedRows : [],
           allRows: sortedRows,
-          totalGames: table.totalGames,
-          completedGames: table.completedGames,
-          liveGames: table.liveGames,
-          startedGames: table.startedGames,
-          isComplete: table.totalGames > 0 && table.completedGames >= table.totalGames
+          events: raw.events.sort(compareEventsByDate),
+          totalGames: raw.totalGames,
+          completedGames: raw.completedGames,
+          liveGames: raw.liveGames,
+          startedGames: raw.startedGames,
+          isComplete: raw.totalGames > 0 && raw.completedGames >= raw.totalGames
         });
       }
 
-      return tables;
+      return output;
     }
 
-    function ensureStandingsRow(groupRows, group, competitor) {
+    function ensureStandingsRow(rowMap, group, competitor) {
       const team = normalizeRawTeam(competitor);
       const key = team.id || team.abbr || team.name;
 
-      if (!groupRows.has(key)) {
-        groupRows.set(key, {
+      if (!rowMap.has(key)) {
+        rowMap.set(key, {
           group,
           team,
           played: 0,
@@ -1244,14 +1288,11 @@
           rank: null
         });
       } else {
-        const existing = groupRows.get(key);
-        existing.team = {
-          ...existing.team,
-          ...team
-        };
+        const existing = rowMap.get(key);
+        existing.team = { ...existing.team, ...team };
       }
 
-      return groupRows.get(key);
+      return rowMap.get(key);
     }
 
     function applyMatchToStandings(row, goalsFor, goalsAgainst) {
@@ -1309,24 +1350,16 @@
           };
 
           seedMap.set(seedCode, resolved);
-
-          if (row.rank === 3) {
-            thirdPlaceRows.push(resolved);
-          }
+          if (row.rank === 3) thirdPlaceRows.push(resolved);
         }
       }
 
       thirdPlaceRows.sort(compareResolvedSeeds);
-
-      return {
-        seedMap,
-        thirdPlaceRows
-      };
+      return { seedMap, thirdPlaceRows };
     }
 
     function resolveSeedSlot(seedLabel, seedResolver) {
       if (!seedResolver) return null;
-
       const parsed = parseSeedLabel(seedLabel);
       if (!parsed) return null;
 
@@ -1334,14 +1367,7 @@
 
       if (groups.length === 1) {
         const resolved = seedResolver.seedMap.get(`${rank}${groups[0]}`);
-
-        return resolved
-          ? {
-              ...resolved,
-              requestedSeedLabel: normalized,
-              composite: false
-            }
-          : null;
+        return resolved ? { ...resolved, requestedSeedLabel: normalized, composite: false } : null;
       }
 
       const candidates = groups
@@ -1368,9 +1394,69 @@
       );
     }
 
+    function normalizeKnockoutEvent(event, stageWindows, seedResolver) {
+      const competition = event?.competitions?.[0] || {};
+      const statusType = competition?.status?.type || {};
+      const competitors = getCompetitors(event);
+      const roundKey = detectRoundKey(event, competition, stageWindows);
+
+      const teams = [
+        normalizeBracketTeam(competitors[0], seedResolver),
+        normalizeBracketTeam(competitors[1], seedResolver)
+      ];
+
+      return {
+        id: event.id || competition.id || cryptoSafeId(),
+        roundKey,
+        date: event.date || competition.date || competition.startDate || "",
+        name: event.name || event.shortName || "Match",
+        shortName: event.shortName || event.name || "Match",
+        state: statusType.state || "pre",
+        completed: Boolean(statusType.completed),
+        statusText: statusType.shortDetail || statusType.detail || statusType.description || "Scheduled",
+        displayClock: competition.status?.displayClock || "",
+        venue: formatVenue(competition.venue),
+        broadcasts: formatBroadcasts(competition.broadcasts),
+        link: findEventLink(event),
+        teams,
+        isDemo: false
+      };
+    }
+
+    function normalizeBracketTeam(competitor, seedResolver) {
+      const raw = normalizeRawTeam(competitor);
+      const seedLabel = extractSeedLabelFromCompetitor(competitor);
+      const resolvedSeed = seedLabel ? resolveSeedSlot(seedLabel, seedResolver) : null;
+      const displayedTeam = resolvedSeed || raw;
+
+      return {
+        id: displayedTeam.id || raw.id,
+        name: displayedTeam.name || raw.name,
+        abbr: displayedTeam.abbr || raw.abbr,
+        logo: displayedTeam.logo || raw.logo,
+        score: competitor?.score ?? "",
+        winner: Boolean(competitor?.winner || competitor?.advance),
+        shootoutScore: competitor?.shootoutScore ?? competitor?.penaltyScore ?? competitor?.penalties?.score ?? "",
+        seedLabel,
+        seedResolved: Boolean(resolvedSeed),
+        seedDetail: resolvedSeed ? formatResolvedSeedDetail(seedLabel, resolvedSeed) : ""
+      };
+    }
+
+    function normalizeRawTeam(competitor) {
+      const team = competitor?.team || {};
+      const name = team.shortDisplayName || team.displayName || team.name || competitor?.displayName || competitor?.name || "TBD";
+
+      return {
+        id: team.id || competitor?.id || "",
+        name,
+        abbr: team.abbreviation || competitor?.abbreviation || "",
+        logo: team.logo || ""
+      };
+    }
+
     function extractSeedLabelFromCompetitor(competitor) {
       const team = competitor?.team || {};
-
       const candidates = [
         team.shortDisplayName,
         team.displayName,
@@ -1394,122 +1480,47 @@
 
       const text = String(value)
         .toUpperCase()
-        .replace(/[–—]/g, "-")
+        .replace(/[\u2013\u2014]/g, "-")
         .replace(/\s+/g, " ")
         .replace(/\bOR\b/g, "/")
         .replace(/\bAND\b/g, "/")
         .trim();
 
-      /*
-        Examples:
-          1A
-          2B
-          3C
-          3A/B/C/D
-          3ABCD
-      */
       let match = text.match(/^([123])\s*([A-L](?:\s*[\/,&-]?\s*[A-L])*)$/);
 
       if (match) {
         const rank = Number(match[1]);
         const groups = extractGroupLetters(match[2]);
-
         if (rank && groups.length > 0) {
-          return {
-            rank,
-            groups,
-            normalized: `${rank}${groups.join("/")}`
-          };
+          return { rank, groups, normalized: `${rank}${groups.join("/")}` };
         }
       }
 
-      /*
-        Examples:
-          1st Group A
-          2nd Group B
-          3rd Group C
-          First Group A
-          Second Group B
-          Third Group C
-          Runner-up Group D
-      */
-      match = text.match(
-        /^(1ST|2ND|3RD|FIRST|SECOND|THIRD|WINNER|RUNNER-UP|RUNNER UP)\s+(?:PLACE\s+)?(?:IN\s+)?(?:OF\s+)?GROUP\s+([A-L])$/
-      );
-
+      match = text.match(/^(1ST|2ND|3RD|FIRST|SECOND|THIRD|WINNER|RUNNER-UP|RUNNER UP)\s+(?:PLACE\s+)?(?:IN\s+)?(?:OF\s+)?GROUP\s+([A-L])$/);
       if (match) {
         const rank = rankWordToNumber(match[1]);
         const group = match[2];
-
-        return {
-          rank,
-          groups: [group],
-          normalized: `${rank}${group}`
-        };
+        return { rank, groups: [group], normalized: `${rank}${group}` };
       }
 
-      /*
-        Examples:
-          Group A Winner
-          Group B Runner-up
-          Group C Second
-          Group D Third
-      */
-      match = text.match(
-        /^GROUP\s+([A-L])\s+(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)$/
-      );
-
+      match = text.match(/^GROUP\s+([A-L])\s+(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)$/);
       if (match) {
         const group = match[1];
         const rank = rankWordToNumber(match[2]);
-
-        return {
-          rank,
-          groups: [group],
-          normalized: `${rank}${group}`
-        };
+        return { rank, groups: [group], normalized: `${rank}${group}` };
       }
 
-      /*
-        Examples:
-          Winner Group A
-          Winner of Group A
-          Runner-up of Group A
-          Third of Group A
-      */
-      match = text.match(
-        /^(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)\s+(?:OF\s+)?GROUP\s+([A-L])$/
-      );
-
+      match = text.match(/^(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)\s+(?:OF\s+)?GROUP\s+([A-L])$/);
       if (match) {
         const rank = rankWordToNumber(match[1]);
         const group = match[2];
-
-        return {
-          rank,
-          groups: [group],
-          normalized: `${rank}${group}`
-        };
+        return { rank, groups: [group], normalized: `${rank}${group}` };
       }
 
-      /*
-        Examples:
-          Best 3rd Group A/B/C
-          Best Third-Place Groups A/B/C/D
-          3rd Place Groups C/D/E/F
-      */
-      match = text.match(
-        /^(?:BEST\s+)?(3RD|THIRD)\s*(?:PLACE)?\s*(?:FROM\s+)?GROUPS?\s+([A-L](?:\s*[\/,&-]?\s*[A-L])*)$/
-      );
-
+      match = text.match(/^(?:BEST\s+)?(3RD|THIRD)\s*(?:PLACE)?\s*(?:FROM\s+)?GROUPS?\s+([A-L](?:\s*[\/,&-]?\s*[A-L])*)$/);
       if (match) {
         const groups = extractGroupLetters(match[2]);
-
-        return {
-          rank: 3,
-          groups,
-          normalized: `3${groups.join("/")}`
-        };
+        return { rank: 3, groups, normalized: `3${groups.join("/")}` };
       }
 
       return null;
@@ -1522,59 +1533,35 @@
 
     function rankWordToNumber(value) {
       const text = String(value).toUpperCase();
-
       if (["WINNER", "1ST", "FIRST"].includes(text)) return 1;
       if (["RUNNER-UP", "RUNNER UP", "SECOND", "2ND"].includes(text)) return 2;
       if (["THIRD", "3RD"].includes(text)) return 3;
-
       return Number(text[0]) || 0;
     }
 
     function formatResolvedSeedDetail(seedLabel, resolvedSeed) {
       const rankText = ordinal(resolvedSeed.rank);
-      const gd = resolvedSeed.goalDiff > 0
-        ? `+${resolvedSeed.goalDiff}`
-        : String(resolvedSeed.goalDiff);
-
-      const status = resolvedSeed.isComplete
-        ? "Confirmed table"
-        : resolvedSeed.liveGames > 0
-          ? "Live table"
-          : "Projected table";
+      const gd = resolvedSeed.goalDiff > 0 ? `+${resolvedSeed.goalDiff}` : String(resolvedSeed.goalDiff);
+      const status = resolvedSeed.isComplete ? "Confirmed table" : resolvedSeed.liveGames > 0 ? "Live table" : "Projected table";
 
       if (resolvedSeed.composite) {
-        return `${status} · ${resolvedSeed.sourceSeedLabel} leads ${seedLabel} pool · ${resolvedSeed.points} pts · ${gd} GD`;
+        return `${status} - ${resolvedSeed.sourceSeedLabel} leads ${seedLabel} pool - ${resolvedSeed.points} pts - ${gd} GD`;
       }
 
-      return `${status} · Group ${resolvedSeed.group} ${rankText} · ${resolvedSeed.points} pts · ${gd} GD`;
+      return `${status} - Group ${resolvedSeed.group} ${rankText} - ${resolvedSeed.points} pts - ${gd} GD`;
     }
 
     function ordinal(number) {
       const value = Number(number);
-
       if (value === 1) return "1st";
       if (value === 2) return "2nd";
       if (value === 3) return "3rd";
-
       return `${value}th`;
     }
 
-    function countResolvedSeedSlots(matches) {
-      return matches.reduce((count, match) => (
-        count + match.teams.filter((team) => team.seedResolved).length
-      ), 0);
-    }
-
-    function countLiveGroups(groupTables) {
-      let count = 0;
-
-      for (const table of groupTables.values()) {
-        if ((table.startedGames || 0) > 0) {
-          count += 1;
-        }
-      }
-
-      return count;
+    function getCompetitors(event) {
+      const competition = event?.competitions?.[0] || {};
+      return [...(competition.competitors || [])].sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
     }
 
     function isGroupEvent(event) {
@@ -1590,12 +1577,9 @@
         competition?.note,
         competition?.altGameNote,
         competition?.status?.type?.detail
-      ]
-        .filter(Boolean)
-        .join(" ");
+      ].filter(Boolean).join(" ");
 
       const match = text.match(/\bGroup\s+([A-L])\b/i);
-
       return match ? match[1].toUpperCase() : "";
     }
 
@@ -1607,79 +1591,267 @@
         competition?.note,
         competition?.altGameNote,
         competition?.status?.type?.detail
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+      ].filter(Boolean).join(" ").toLowerCase();
 
       const direct = roundKeyFromText(text);
-
       if (direct) return direct;
 
       const eventDate = new Date(event?.date || competition?.date || competition?.startDate);
-
       if (!Number.isFinite(eventDate.getTime())) return "";
 
-      const dateWindow = stageWindows.find((window) => (
-        eventDate >= window.start && eventDate < window.end
-      ));
-
+      const dateWindow = stageWindows.find((stage) => eventDate >= stage.start && eventDate < stage.end);
       return dateWindow?.roundKey || "";
     }
 
     function roundKeyFromText(text = "") {
       const normalized = String(text).toLowerCase();
-
       for (const round of ROUND_META) {
-        if (round.aliases.some((alias) => normalized.includes(alias))) {
-          return round.key;
-        }
+        if (round.aliases.some((alias) => normalized.includes(alias))) return round.key;
       }
-
       return "";
+    }
+
+    function compareEventsByDate(a, b) {
+      const dateA = new Date(a?.date || a?.competitions?.[0]?.date || 0).getTime() || 0;
+      const dateB = new Date(b?.date || b?.competitions?.[0]?.date || 0).getTime() || 0;
+      return dateA - dateB;
     }
 
     function compareMatches(a, b) {
       const roundA = ROUND_META.find((round) => round.key === a.roundKey)?.order ?? 99;
       const roundB = ROUND_META.find((round) => round.key === b.roundKey)?.order ?? 99;
-
       if (roundA !== roundB) return roundA - roundB;
 
       const dateA = new Date(a.date).getTime() || 0;
       const dateB = new Date(b.date).getTime() || 0;
-
       return dateA - dateB;
     }
 
-    function renderTabs() {
-      const tabs = [
-        { key: "all", label: "All Rounds" },
-        ...ROUND_META.map((round) => ({ key: round.key, label: round.short }))
-      ];
+    function render() {
+      renderViewTabs();
+      renderGroupTabs();
+      renderRoundTabs();
+      renderSectionVisibility();
+      renderGroupSummary();
+      renderBracketSummary();
+      renderGroups();
+      renderBracket();
+      updateHeaderMeta();
+    }
 
-      els.tabs.innerHTML = tabs.map((tab) => `
-        <button
-          class="tab"
-          type="button"
-          data-round="${escapeHtml(tab.key)}"
-          aria-selected="${tab.key === appState.selectedRound ? "true" : "false"}"
-        >
+    function renderViewTabs() {
+      els.viewTabs.innerHTML = VIEW_TABS.map((tab) => `
+        <button class="tab" type="button" data-view="${escapeHtml(tab.key)}" aria-selected="${tab.key === appState.selectedView ? "true" : "false"}">
           ${escapeHtml(tab.label)}
         </button>
       `).join("");
 
-      els.tabs.querySelectorAll(".tab").forEach((button) => {
+      els.viewTabs.querySelectorAll(".tab").forEach((button) => {
         button.addEventListener("click", () => {
-          appState.selectedRound = button.dataset.round;
-          renderTabs();
+          appState.selectedView = button.dataset.view;
           render();
         });
       });
     }
 
-    function render() {
-      updateHeaderMeta();
+    function renderGroupTabs() {
+      const availableGroups = getAvailableGroups();
+      const tabs = [{ key: "all", label: "All Groups" }, ...availableGroups.map((group) => ({ key: group, label: `Group ${group}` }))];
 
+      els.groupTabs.innerHTML = tabs.map((tab) => `
+        <button class="tab" type="button" data-group="${escapeHtml(tab.key)}" aria-selected="${tab.key === appState.selectedGroup ? "true" : "false"}">
+          ${escapeHtml(tab.label)}
+        </button>
+      `).join("");
+
+      els.groupTabs.querySelectorAll(".tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          appState.selectedGroup = button.dataset.group;
+          renderGroupTabs();
+          renderGroups();
+        });
+      });
+    }
+
+    function renderRoundTabs() {
+      const tabs = [{ key: "all", label: "All Rounds" }, ...ROUND_META.map((round) => ({ key: round.key, label: round.short }))];
+
+      els.roundTabs.innerHTML = tabs.map((tab) => `
+        <button class="tab" type="button" data-round="${escapeHtml(tab.key)}" aria-selected="${tab.key === appState.selectedRound ? "true" : "false"}">
+          ${escapeHtml(tab.label)}
+        </button>
+      `).join("");
+
+      els.roundTabs.querySelectorAll(".tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          appState.selectedRound = button.dataset.round;
+          renderRoundTabs();
+          renderBracket();
+        });
+      });
+    }
+
+    function renderSectionVisibility() {
+      els.groupSection.classList.toggle("hidden", appState.selectedView === "bracket");
+      els.bracketSection.classList.toggle("hidden", appState.selectedView === "groups");
+    }
+
+    function renderGroupSummary() {
+      const groupCount = appState.groupTables.size;
+      const groupMatches = appState.groupEvents.length;
+      const liveGroupMatches = countLiveEvents(appState.groupEvents);
+      const completedGroupMatches = appState.groupEvents.filter(isCompletedEvent).length;
+
+      els.groupSummary.innerHTML = [
+        `${groupCount} groups`,
+        `${completedGroupMatches}/${groupMatches} played`,
+        liveGroupMatches ? `${liveGroupMatches} live` : "No live group matches"
+      ].map((text) => `<span class="stat-pill">${escapeHtml(text)}</span>`).join("");
+    }
+
+    function renderBracketSummary() {
+      const resolvedSlots = countResolvedSeedSlots(appState.matches);
+      const liveKnockout = appState.matches.filter((match) => match.state === "in").length;
+
+      els.bracketSummary.innerHTML = [
+        `${appState.matches.length} knockout matches`,
+        `${resolvedSlots} slots resolved`,
+        liveKnockout ? `${liveKnockout} live` : "No live bracket matches"
+      ].map((text) => `<span class="stat-pill">${escapeHtml(text)}</span>`).join("");
+    }
+
+    function renderGroups() {
+      const groups = getVisibleGroups();
+
+      if (groups.length === 0) {
+        els.groupGrid.innerHTML = `<div class="empty-box">No group-stage data found yet. Once ESPN exposes group fixtures, the tables and match cards will appear here.</div>`;
+        return;
+      }
+
+      els.groupGrid.innerHTML = groups.map((group) => renderGroupCard(group)).join("");
+    }
+
+    function renderGroupCard(group) {
+      const table = appState.groupTables.get(group);
+      const displayRows = (table?.rows?.length ? table.rows : table?.allRows) || [];
+      const events = table?.events || [];
+      const status = table?.isComplete ? "Complete" : table?.liveGames ? `${table.liveGames} live` : `${table?.completedGames || 0}/${table?.totalGames || 0} played`;
+
+      return `
+        <article class="group-card" id="group-${escapeHtml(group)}">
+          <header class="group-card-head">
+            <h3>Group ${escapeHtml(group)}</h3>
+            <div class="group-meta">${escapeHtml(status)}</div>
+          </header>
+
+          <div class="standings-wrap">
+            ${displayRows.length ? renderStandingsTable(displayRows, Boolean(table?.rows?.length)) : renderEmptyStandings()}
+          </div>
+
+          <div class="group-matches">
+            ${events.length ? events.map(renderGroupMatch).join("") : `<div class="empty-box">No fixtures found for Group ${escapeHtml(group)}.</div>`}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderStandingsTable(rows, hasStarted) {
+      return `
+        <table class="standings">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Team</th>
+              <th>MP</th>
+              <th>W</th>
+              <th>D</th>
+              <th>L</th>
+              <th>GD</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((row, index) => renderStandingsRow(row, hasStarted ? row.rank : index + 1, hasStarted)).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderStandingsRow(row, rank, hasStarted) {
+      const qualifyClass = hasStarted && rank <= 2 ? "rank-qualify" : hasStarted && rank === 3 ? "rank-third" : "";
+      const gd = row.goalDiff > 0 ? `+${row.goalDiff}` : String(row.goalDiff);
+      const logo = row.team.logo
+        ? `<img class="table-logo" src="${escapeHtml(row.team.logo)}" alt="" loading="lazy" />`
+        : `<span class="table-logo-fallback">${escapeHtml((row.team.abbr || row.team.name || "TBD").slice(0, 3))}</span>`;
+
+      return `
+        <tr class="${escapeHtml(qualifyClass)}">
+          <td>${hasStarted ? escapeHtml(rank) : "-"}</td>
+          <td>
+            <span class="table-team">
+              ${logo}
+              <span class="table-name">${escapeHtml(row.team.name)}${row.team.abbr ? ` <span class="team-abbr">${escapeHtml(row.team.abbr)}</span>` : ""}</span>
+            </span>
+          </td>
+          <td>${escapeHtml(row.played)}</td>
+          <td>${escapeHtml(row.wins)}</td>
+          <td>${escapeHtml(row.draws)}</td>
+          <td>${escapeHtml(row.losses)}</td>
+          <td>${escapeHtml(gd)}</td>
+          <td><strong>${escapeHtml(row.points)}</strong></td>
+        </tr>
+      `;
+    }
+
+    function renderEmptyStandings() {
+      return `<div class="empty-box">Teams will appear here once ESPN publishes fixtures for this group.</div>`;
+    }
+
+    function renderGroupMatch(event) {
+      const competition = event?.competitions?.[0] || {};
+      const competitors = getCompetitors(event);
+      const statusType = competition?.status?.type || {};
+      const state = statusType.state || "pre";
+      const isLive = state === "in";
+      const statusText = statusType.shortDetail || statusType.detail || statusType.description || "Scheduled";
+      const link = findEventLink(event);
+      const teams = [normalizeRawTeam(competitors[0]), normalizeRawTeam(competitors[1])];
+
+      return `
+        <article class="group-match ${isLive ? "live" : ""}">
+          <div class="group-match-top">
+            <span>${escapeHtml(formatKickoff(event.date || competition.date || competition.startDate))}</span>
+            ${renderSmallBadge(state, statusText, competition.status?.displayClock || "")}
+          </div>
+
+          <div class="mini-teams">
+            ${renderMiniTeam(teams[0], competitors[0], statusType)}
+            ${renderMiniTeam(teams[1], competitors[1], statusType)}
+          </div>
+
+          <div class="footer-row">
+            <span class="venue" title="${escapeHtml(formatVenue(competition.venue))}">${escapeHtml(formatVenue(competition.venue) || "Venue TBD")}</span>
+            ${link ? `<a class="espn-link" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>` : ""}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderMiniTeam(team, competitor, statusType) {
+      const completed = Boolean(statusType?.completed);
+      const state = statusType?.state || "pre";
+      const score = competitor?.score === undefined || competitor?.score === null || competitor?.score === "" ? "-" : String(competitor.score);
+      const showScore = state !== "pre" || completed;
+
+      return `
+        <div class="mini-team ${competitor?.winner ? "winner" : ""}">
+          <span>${escapeHtml(team.name)}${team.abbr ? ` <span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}</span>
+          <span class="mini-score">${escapeHtml(showScore ? score : "-")}</span>
+        </div>
+      `;
+    }
+
+    function renderBracket() {
       const selectedRounds = appState.selectedRound === "all"
         ? ROUND_META
         : ROUND_META.filter((round) => round.key === appState.selectedRound);
@@ -1694,17 +1866,13 @@
             <header class="round-header">
               <div class="round-kicker">${escapeHtml(round.short)}</div>
               <div class="round-title">
-                <h2 id="heading-${escapeHtml(round.key)}">${escapeHtml(round.label)}</h2>
+                <h3 id="heading-${escapeHtml(round.key)}">${escapeHtml(round.label)}</h3>
                 <span class="match-count">${matches.length} match${matches.length === 1 ? "" : "es"}</span>
               </div>
             </header>
 
             <div class="match-list">
-              ${
-                matches.length
-                  ? matches.map(renderMatchCard).join("")
-                  : renderEmptyRound(round)
-              }
+              ${matches.length ? matches.map(renderMatchCard).join("") : renderEmptyRound(round)}
             </div>
           </section>
         `;
@@ -1712,14 +1880,7 @@
     }
 
     function renderMatchCard(match) {
-      const stateClass = match.isDemo
-        ? "placeholder"
-        : match.state === "in"
-          ? "live"
-          : match.completed || match.state === "post"
-            ? "final"
-            : "scheduled";
-
+      const stateClass = match.isDemo ? "placeholder" : match.state === "in" ? "live" : match.completed || match.state === "post" ? "final" : "scheduled";
       const badge = renderStatusBadge(match);
       const timeText = match.isDemo ? "Bracket slot" : formatKickoff(match.date);
 
@@ -1738,18 +1899,9 @@
           <footer class="match-footer">
             <div class="footer-row">
               <span class="venue" title="${escapeHtml(match.venue)}">${escapeHtml(match.venue || "Venue TBD")}</span>
-              ${
-                match.link && !match.isDemo
-                  ? `<a class="espn-link" href="${escapeHtml(match.link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>`
-                  : `<span>${escapeHtml(match.broadcasts || "")}</span>`
-              }
+              ${match.link && !match.isDemo ? `<a class="espn-link" href="${escapeHtml(match.link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>` : `<span>${escapeHtml(match.broadcasts || "")}</span>`}
             </div>
-
-            ${
-              match.broadcasts && match.link && !match.isDemo
-                ? `<div>${escapeHtml(match.broadcasts)}</div>`
-                : ""
-            }
+            ${match.broadcasts && match.link && !match.isDemo ? `<div>${escapeHtml(match.broadcasts)}</div>` : ""}
           </footer>
         </article>
       `;
@@ -1757,50 +1909,32 @@
 
     function renderTeamRow(team, match) {
       const score = displayScore(team, match);
-
       const logo = team.logo
         ? `<img class="flag" src="${escapeHtml(team.logo)}" alt="" loading="lazy" />`
         : `<span class="flag-fallback">${escapeHtml((team.abbr || team.seedLabel || "TBD").slice(0, 3))}</span>`;
 
       const seedLine = team.seedResolved
-        ? `
-          <div class="team-seed">
-            <span class="seed-chip">${escapeHtml(team.seedLabel)}</span>
-            ${escapeHtml(team.seedDetail)}
-          </div>
-        `
+        ? `<div class="team-seed"><span class="seed-chip">${escapeHtml(team.seedLabel)}</span>${escapeHtml(team.seedDetail)}</div>`
         : team.seedLabel
-          ? `
-            <div class="team-seed">
-              <span class="seed-chip">${escapeHtml(team.seedLabel)}</span>
-              Awaiting live group position
-            </div>
-          `
+          ? `<div class="team-seed"><span class="seed-chip">${escapeHtml(team.seedLabel)}</span>Awaiting live group position</div>`
           : "";
 
       return `
         <div class="team ${team.winner ? "winner" : ""}">
           ${logo}
-
           <div class="team-text">
-            <div class="team-name">
-              ${escapeHtml(team.name)}
-              ${team.abbr ? `<span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}
-            </div>
+            <div class="team-name">${escapeHtml(team.name)}${team.abbr ? `<span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}</div>
             ${seedLine}
           </div>
-
           <div class="score">${escapeHtml(score)}</div>
         </div>
       `;
     }
 
     function displayScore(team, match) {
-      if (match.isDemo) return "—";
+      if (match.isDemo) return "-";
 
-      const score = team.score === "" || team.score === null || team.score === undefined
-        ? "—"
-        : String(team.score);
+      const score = team.score === "" || team.score === null || team.score === undefined ? "-" : String(team.score);
 
       if (team.shootoutScore !== "" && team.shootoutScore !== null && team.shootoutScore !== undefined) {
         return `${score} (${team.shootoutScore})`;
@@ -1810,53 +1944,70 @@
     }
 
     function renderStatusBadge(match) {
-      if (match.isDemo) {
-        return `<span class="badge scheduled">Waiting</span>`;
+      if (match.isDemo) return `<span class="badge scheduled">Waiting</span>`;
+      return renderSmallBadge(match.state, match.statusText, match.displayClock, match.completed);
+    }
+
+    function renderSmallBadge(state, statusText, displayClock, completed = false) {
+      if (state === "in") {
+        const clock = displayClock ? ` - ${displayClock}` : "";
+        return `<span class="badge live"><span class="dot" aria-hidden="true"></span>Live${escapeHtml(clock)}</span>`;
       }
 
-      if (match.state === "in") {
-        const clock = match.displayClock ? ` · ${match.displayClock}` : "";
-
-        return `
-          <span class="badge live">
-            <span class="dot" aria-hidden="true"></span>
-            Live${escapeHtml(clock)}
-          </span>
-        `;
+      if (completed || state === "post") {
+        return `<span class="badge final">${escapeHtml(statusText || "Final")}</span>`;
       }
 
-      if (match.completed || match.state === "post") {
-        return `<span class="badge final">${escapeHtml(match.statusText || "Final")}</span>`;
-      }
-
-      return `<span class="badge scheduled">${escapeHtml(match.statusText || "Scheduled")}</span>`;
+      return `<span class="badge scheduled">${escapeHtml(statusText || "Scheduled")}</span>`;
     }
 
     function renderEmptyRound(round) {
-      return `
-        <div class="empty-round">
-          No ESPN fixtures found yet for ${escapeHtml(round.label)}.
-          This round will fill in automatically when ESPN publishes games.
-        </div>
-      `;
+      return `<div class="empty-box">No ESPN fixtures found yet for ${escapeHtml(round.label)}. This round will fill in automatically when ESPN publishes games.</div>`;
     }
 
     function updateHeaderMeta() {
-      const liveCount = appState.matches.filter((match) => match.state === "in" && !match.isDemo).length;
-
-      els.livePill.innerHTML = `
-        <span class="dot" aria-hidden="true"></span>
-        ${liveCount > 0 ? `${liveCount} live` : "Live bracket"}
-      `;
-
-      els.lastUpdated.textContent = appState.lastUpdated
-        ? `Last updated: ${formatClock(appState.lastUpdated)}`
-        : "Last updated: —";
+      const liveCount = countLiveEvents([...appState.groupEvents, ...appState.knockoutEvents]);
+      els.livePill.innerHTML = `<span class="dot" aria-hidden="true"></span>${liveCount > 0 ? `${liveCount} live` : "Live tournament view"}`;
+      els.lastUpdated.textContent = appState.lastUpdated ? `Last updated: ${formatClock(appState.lastUpdated)}` : "Last updated: -";
     }
 
     function setStatus(message, type = "normal") {
       els.statusText.textContent = message;
       els.statusBar.className = `status-bar ${type}`;
+    }
+
+    function makeDemoGroupTables() {
+      const tables = new Map();
+
+      for (const group of GROUP_LETTERS) {
+        const rows = Array.from({ length: 4 }, (_, index) => ({
+          group,
+          team: { id: `demo-${group}-${index}`, name: "TBD", abbr: "", logo: "" },
+          played: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          points: 0,
+          goalsFor: 0,
+          goalsAgainst: 0,
+          goalDiff: 0,
+          rank: index + 1
+        }));
+
+        tables.set(group, {
+          group,
+          rows: [],
+          allRows: rows,
+          events: [],
+          totalGames: 0,
+          completedGames: 0,
+          liveGames: 0,
+          startedGames: 0,
+          isComplete: false
+        });
+      }
+
+      return tables;
     }
 
     function makeDemoMatches() {
@@ -1871,7 +2022,6 @@
 
       return ROUND_META.flatMap((round) => {
         const count = matchCounts[round.key] || 0;
-
         return Array.from({ length: count }, (_, index) => ({
           id: `demo-${round.key}-${index + 1}`,
           roundKey: round.key,
@@ -1886,37 +2036,39 @@
           broadcasts: "",
           link: "",
           teams: [
-            {
-              name: "TBD",
-              abbr: "",
-              logo: "",
-              score: "",
-              winner: false,
-              shootoutScore: "",
-              seedLabel: "",
-              seedResolved: false,
-              seedDetail: ""
-            },
-            {
-              name: "TBD",
-              abbr: "",
-              logo: "",
-              score: "",
-              winner: false,
-              shootoutScore: "",
-              seedLabel: "",
-              seedResolved: false,
-              seedDetail: ""
-            }
+            { name: "TBD", abbr: "", logo: "", score: "", winner: false, shootoutScore: "", seedLabel: "", seedResolved: false, seedDetail: "" },
+            { name: "TBD", abbr: "", logo: "", score: "", winner: false, shootoutScore: "", seedLabel: "", seedResolved: false, seedDetail: "" }
           ],
           isDemo: true
         }));
       });
     }
 
+    function getAvailableGroups() {
+      const groups = Array.from(appState.groupTables.keys()).sort();
+      return groups.length > 0 ? groups : GROUP_LETTERS;
+    }
+
+    function getVisibleGroups() {
+      const groups = getAvailableGroups();
+      if (appState.selectedGroup === "all") return groups;
+      return groups.filter((group) => group === appState.selectedGroup);
+    }
+
+    function countResolvedSeedSlots(matches) {
+      return matches.reduce((count, match) => count + match.teams.filter((team) => team.seedResolved).length, 0);
+    }
+
+    function countLiveEvents(events) {
+      return events.filter((event) => (event?.competitions?.[0]?.status?.type?.state || "") === "in").length;
+    }
+
+    function isCompletedEvent(event) {
+      return Boolean(event?.competitions?.[0]?.status?.type?.completed || (event?.competitions?.[0]?.status?.type?.state === "post"));
+    }
+
     function formatKickoff(dateValue) {
       const date = new Date(dateValue);
-
       if (!Number.isFinite(date.getTime())) return "Time TBD";
 
       return new Intl.DateTimeFormat(undefined, {
@@ -1937,44 +2089,27 @@
 
     function formatVenue(venue) {
       if (!venue) return "";
-
       const name = venue.fullName || venue.name || venue.displayName || "";
       const city = venue.address?.city || "";
       const country = venue.address?.country || "";
-
-      return [name, city, country].filter(Boolean).join(" · ");
+      return [name, city, country].filter(Boolean).join(" - ");
     }
 
     function formatBroadcasts(broadcasts = []) {
-      const names = broadcasts
-        .flatMap((broadcast) => broadcast.names || broadcast.name || [])
-        .filter(Boolean);
-
+      const names = broadcasts.flatMap((broadcast) => broadcast.names || broadcast.name || []).filter(Boolean);
       return Array.from(new Set(names)).slice(0, 3).join(", ");
     }
 
     function findEventLink(event) {
       const links = event?.links || [];
-
-      const summary = links.find((link) => (
-        Array.isArray(link.rel) && link.rel.includes("summary") && link.href
-      ));
-
+      const summary = links.find((link) => Array.isArray(link.rel) && link.rel.includes("summary") && link.href);
       if (summary?.href) return summary.href;
-
-      if (event?.id) {
-        return `https://www.espn.com/soccer/match/_/gameId/${encodeURIComponent(event.id)}`;
-      }
-
+      if (event?.id) return `https://www.espn.com/soccer/match/_/gameId/${encodeURIComponent(event.id)}`;
       return "";
     }
 
     function toUTCDateOnly(date) {
-      return new Date(Date.UTC(
-        date.getUTCFullYear(),
-        date.getUTCMonth(),
-        date.getUTCDate()
-      ));
+      return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
     }
 
     function addDaysUTC(date, days) {
@@ -1996,11 +2131,9 @@
 
     function chunk(items, size) {
       const chunks = [];
-
       for (let index = 0; index < items.length; index += size) {
         chunks.push(items.slice(index, index + size));
       }
-
       return chunks;
     }
 
@@ -2010,17 +2143,11 @@
 
     function groupBy(items, getKey) {
       const map = new Map();
-
       for (const item of items) {
         const key = getKey(item);
-
-        if (!map.has(key)) {
-          map.set(key, []);
-        }
-
+        if (!map.has(key)) map.set(key, []);
         map.get(key).push(item);
       }
-
       return map;
     }
 
@@ -2035,10 +2162,7 @@
     }
 
     function cryptoSafeId() {
-      if (window.crypto?.randomUUID) {
-        return window.crypto.randomUUID();
-      }
-
+      if (window.crypto?.randomUUID) return window.crypto.randomUUID();
       return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     }
   </script>
