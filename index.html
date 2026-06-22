@@ -17,6 +17,7 @@
       --accent: #52f2b8;
       --accent-2: #75a7ff;
       --warn: #ffd166;
+      --danger: #ff6b7a;
       --radius-xl: 24px;
       --radius-lg: 18px;
       --radius-md: 14px;
@@ -50,7 +51,8 @@
       color: inherit;
     }
 
-    button {
+    button,
+    input {
       font: inherit;
     }
 
@@ -131,7 +133,7 @@
     }
 
     .subhead {
-      max-width: 78ch;
+      max-width: 82ch;
       margin: 10px 0 0;
       color: var(--muted);
       line-height: 1.5;
@@ -270,7 +272,7 @@
 
     .section-copy {
       margin: 6px 0 0;
-      max-width: 78ch;
+      max-width: 82ch;
       color: var(--muted);
       line-height: 1.5;
     }
@@ -290,6 +292,166 @@
       background: rgba(255, 255, 255, 0.052);
       font-size: 0.82rem;
       white-space: nowrap;
+    }
+
+    .daily-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(82, 242, 184, 0.08), transparent 24rem),
+        rgba(255, 255, 255, 0.045);
+      overflow: hidden;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .daily-toolbar {
+      display: grid;
+      grid-template-columns: auto minmax(160px, 220px) auto auto;
+      gap: 8px;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .date-btn,
+    .date-input {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.065);
+    }
+
+    .date-btn {
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .date-btn:hover,
+    .date-input:focus {
+      border-color: rgba(82, 242, 184, 0.42);
+      outline: none;
+    }
+
+    .date-input {
+      padding: 0 12px;
+      color-scheme: dark;
+    }
+
+    .daily-date-label {
+      padding: 0 14px 14px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      font-weight: 800;
+    }
+
+    .daily-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .daily-card {
+      display: grid;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.095), rgba(255,255,255,0.047)),
+        var(--bg-2);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .daily-card.live {
+      border-color: rgba(82, 242, 184, 0.48);
+      box-shadow: 0 0 0 1px rgba(82, 242, 184, 0.12), 0 18px 42px rgba(0,0,0,0.24);
+    }
+
+    .daily-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--soft);
+      font-size: 0.78rem;
+    }
+
+    .daily-stage {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(82, 242, 184, 0.09);
+      font-size: 0.72rem;
+      font-weight: 950;
+    }
+
+    .daily-teams {
+      display: grid;
+      gap: 5px;
+    }
+
+    .daily-team {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 36px;
+      padding: 6px;
+      border-radius: 12px;
+      color: var(--muted);
+    }
+
+    .daily-team.winner {
+      color: var(--text);
+      background: rgba(82, 242, 184, 0.09);
+      font-weight: 950;
+    }
+
+    .daily-logo,
+    .daily-logo-fallback {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      object-fit: cover;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 950;
+      overflow: hidden;
+    }
+
+    .daily-team-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .daily-score {
+      min-width: 24px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 950;
+    }
+
+    .daily-card-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      color: var(--soft);
+      font-size: 0.78rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.09);
+      padding-top: 10px;
     }
 
     .group-grid {
@@ -839,7 +1001,8 @@
     }
 
     @media (max-width: 1100px) {
-      .group-grid {
+      .group-grid,
+      .daily-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
@@ -878,6 +1041,16 @@
         margin-top: 10px;
       }
 
+      .daily-toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .date-input {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+
+      .daily-grid,
       .group-grid {
         grid-template-columns: 1fr;
       }
@@ -926,10 +1099,10 @@
           <span>FIFA World Cup</span>
         </div>
 
-        <h1>Group Stage + Knockout Bracket</h1>
+        <h1>World Cup Live View</h1>
         <p class="subhead">
-          A mobile-friendly live view using ESPN scoreboard data. Group tables update from match results,
-          and the knockout bracket can be swiped sideways like a real bracket board.
+          Daily match schedule, group tables, and a side-scrolling knockout bracket using ESPN scoreboard data.
+          Use the Daily Matches tab to jump backward or forward by date.
         </p>
       </div>
 
@@ -945,6 +1118,31 @@
     </div>
 
     <nav class="view-tabs" id="viewTabs" aria-label="Main view"></nav>
+
+    <section class="section" id="dailySection">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Daily Matches</div>
+          <h2 class="section-title">Matches by date</h2>
+          <p class="section-copy">
+            View today’s matches, jump to earlier dates, or look ahead to future fixtures.
+          </p>
+        </div>
+        <div class="summary-stats" id="dailySummary"></div>
+      </div>
+
+      <div class="daily-panel">
+        <div class="daily-toolbar">
+          <button class="date-btn" id="prevDateBtn" type="button">← Previous</button>
+          <input class="date-input" id="dateInput" type="date" />
+          <button class="date-btn" id="todayDateBtn" type="button">Today</button>
+          <button class="date-btn" id="nextDateBtn" type="button">Next →</button>
+        </div>
+
+        <div class="daily-date-label" id="dailyDateLabel">-</div>
+        <div class="daily-grid" id="dailyGrid" aria-live="polite"></div>
+      </div>
+    </section>
 
     <section class="section" id="groupSection">
       <div class="section-head">
@@ -995,8 +1193,7 @@
       <p>
         This page uses ESPN's public scoreboard feed directly from the browser. For the most reliable mobile experience,
         put your own small backend/cache in front of ESPN and set <code>CORS_PROXY</code> in the script.
-        Group standings here use points, goal difference, goals for, goals against, then name as the local tie-break order.
-        The bracket display is capped to official match counts, so Round of 32 will never display more than 16 match slots.
+        The daily date picker can fetch dates outside the initially loaded tournament calendar as needed.
       </p>
     </details>
   </main>
@@ -1042,6 +1239,7 @@
 
     const VIEW_TABS = [
       { key: "all", label: "All" },
+      { key: "daily", label: "Daily Matches" },
       { key: "groups", label: "Group Stage" },
       { key: "bracket", label: "Bracket" }
     ];
@@ -1158,6 +1356,11 @@
       selectedView: "all",
       selectedGroup: "all",
       selectedRound: "all",
+      selectedDate: getTodayDateKeyLocal(),
+      dailyLoading: false,
+      dailyError: "",
+      fetchedDateKeys: new Set(),
+      stageWindows: [],
       allEvents: [],
       groupEvents: [],
       knockoutEvents: [],
@@ -1172,6 +1375,14 @@
 
     const els = {
       viewTabs: document.getElementById("viewTabs"),
+      dailySection: document.getElementById("dailySection"),
+      dailySummary: document.getElementById("dailySummary"),
+      dailyGrid: document.getElementById("dailyGrid"),
+      dailyDateLabel: document.getElementById("dailyDateLabel"),
+      dateInput: document.getElementById("dateInput"),
+      prevDate: document.getElementById("prevDateBtn"),
+      nextDate: document.getElementById("nextDateBtn"),
+      todayDate: document.getElementById("todayDateBtn"),
       groupTabs: document.getElementById("groupTabs"),
       groupGrid: document.getElementById("groupGrid"),
       groupSummary: document.getElementById("groupSummary"),
@@ -1193,11 +1404,28 @@
 
     function init() {
       renderViewTabs();
+      renderDailyControls();
       renderGroupTabs();
       renderRoundTabs();
 
       els.refresh.addEventListener("click", () => {
         loadTournament({ silent: false });
+      });
+
+      els.prevDate.addEventListener("click", () => {
+        void setSelectedDate(addDaysToDateKey(appState.selectedDate, -1));
+      });
+
+      els.nextDate.addEventListener("click", () => {
+        void setSelectedDate(addDaysToDateKey(appState.selectedDate, 1));
+      });
+
+      els.todayDate.addEventListener("click", () => {
+        void setSelectedDate(getTodayDateKeyLocal());
+      });
+
+      els.dateInput.addEventListener("change", (event) => {
+        void setSelectedDate(event.target.value);
       });
 
       document.addEventListener("visibilitychange", () => {
@@ -1227,7 +1455,7 @@
       els.refresh.disabled = true;
 
       setStatus(
-        silent ? "Refreshing group stage and bracket data..." : "Loading ESPN group stage and bracket data...",
+        silent ? "Refreshing daily matches, group stage, and bracket data..." : "Loading ESPN tournament data...",
         "normal"
       );
 
@@ -1237,49 +1465,43 @@
         const knockoutEntries = extractKnockoutEntries(baseScoreboard);
         const stageWindows = buildStageWindows(knockoutEntries);
 
+        appState.stageWindows = stageWindows;
+
         const dateKeys = uniqueSorted([
           ...buildDateKeys(groupEntries),
           ...buildDateKeys(knockoutEntries)
         ]);
 
         const allEvents = await fetchEventsForDateKeys(dateKeys, baseScoreboard.events || []);
-        const groupEvents = allEvents.filter(isGroupEvent).sort(compareEventsByDate);
-        const groupTables = buildGroupTables(groupEvents);
-        const seedResolver = buildSeedResolver(groupTables);
 
-        const knockoutEvents = allEvents
-          .filter((event) => Boolean(detectRoundKey(event, event?.competitions?.[0] || {}, stageWindows)))
-          .sort(compareEventsByDate);
-
-        const matches = knockoutEvents
-          .map((event) => normalizeKnockoutEvent(event, stageWindows, seedResolver))
-          .filter((match) => match.roundKey)
-          .sort(compareMatches);
-
-        appState.allEvents = allEvents;
-        appState.groupEvents = groupEvents;
-        appState.knockoutEvents = knockoutEvents;
-        appState.groupTables = groupTables;
-        appState.matches = matches;
+        appState.fetchedDateKeys = new Set(dateKeys);
+        recomputeDerivedData(allEvents, stageWindows);
         appState.lastUpdated = new Date();
 
         render();
 
-        const cappedMatches = getCappedAllMatches(matches);
-        const resolvedSlots = countResolvedSeedSlots(cappedMatches);
-        const totalGroupMatches = groupEvents.length;
-        const liveEvents = countLiveEvents([...groupEvents, ...knockoutEvents]);
+        const selectedEspnDateKey = toEspnDateKey(appState.selectedDate);
 
-        if (totalGroupMatches === 0 && cappedMatches.length === 0) {
-          setStatus("ESPN responded, but no World Cup fixtures were found yet. The bracket shell is ready.", "warn");
+        if (!appState.fetchedDateKeys.has(selectedEspnDateKey)) {
+          await ensureDateLoaded(appState.selectedDate);
+        }
+
+        const cappedMatches = getCappedAllMatches(appState.matches);
+        const resolvedSlots = countResolvedSeedSlots(cappedMatches);
+        const totalGroupMatches = appState.groupEvents.length;
+        const dailyEvents = getDailyEvents();
+        const liveEvents = countLiveEvents([...appState.groupEvents, ...appState.knockoutEvents]);
+
+        if (dailyEvents.length === 0 && totalGroupMatches === 0 && cappedMatches.length === 0) {
+          setStatus("ESPN responded, but no World Cup fixtures were found for the loaded dates.", "warn");
         } else if (resolvedSlots > 0) {
           setStatus(
-            `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"}, ${cappedMatches.length} knockout match${cappedMatches.length === 1 ? "" : "es"}, and resolved ${resolvedSlots} bracket slot${resolvedSlots === 1 ? "" : "s"}.`,
+            `Loaded ${dailyEvents.length} match${dailyEvents.length === 1 ? "" : "es"} for the selected day, ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"}, ${cappedMatches.length} knockout match${cappedMatches.length === 1 ? "" : "es"}, and resolved ${resolvedSlots} bracket slot${resolvedSlots === 1 ? "" : "s"}.`,
             "ok"
           );
         } else {
           setStatus(
-            `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"} and ${cappedMatches.length} knockout match${cappedMatches.length === 1 ? "" : "es"}${liveEvents ? `, with ${liveEvents} live` : ""}.`,
+            `Loaded ${dailyEvents.length} match${dailyEvents.length === 1 ? "" : "es"} for the selected day, ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"}, and ${cappedMatches.length} knockout match${cappedMatches.length === 1 ? "" : "es"}${liveEvents ? `, with ${liveEvents} live` : ""}.`,
             "ok"
           );
         }
@@ -1303,6 +1525,50 @@
         appState.isLoading = false;
         els.refresh.disabled = false;
         updateHeaderMeta();
+      }
+    }
+
+    async function setSelectedDate(dateKey) {
+      const normalized = normalizeDateKey(dateKey) || getTodayDateKeyLocal();
+
+      appState.selectedDate = normalized;
+      appState.dailyError = "";
+
+      renderDailyControls();
+      renderDailySummary();
+      renderDaily();
+
+      await ensureDateLoaded(normalized);
+    }
+
+    async function ensureDateLoaded(dateKey) {
+      const espnDateKey = toEspnDateKey(dateKey);
+
+      if (!espnDateKey || appState.fetchedDateKeys.has(espnDateKey)) {
+        return;
+      }
+
+      appState.dailyLoading = true;
+      appState.dailyError = "";
+      renderDailySummary();
+      renderDaily();
+
+      try {
+        const data = await fetchJson(`${ESPN_SCOREBOARD}?dates=${espnDateKey}`);
+        const newEvents = data.events || [];
+
+        appState.fetchedDateKeys.add(espnDateKey);
+
+        if (newEvents.length > 0) {
+          const merged = mergeEvents(appState.allEvents, newEvents);
+          recomputeDerivedData(merged, appState.stageWindows);
+        }
+      } catch (error) {
+        console.error(error);
+        appState.dailyError = "Could not fetch that date from ESPN. Try refreshing or using a backend proxy.";
+      } finally {
+        appState.dailyLoading = false;
+        render();
       }
     }
 
@@ -1348,6 +1614,40 @@
           for (const event of result.value.events || []) {
             if (event?.id) eventMap.set(event.id, event);
           }
+        }
+      }
+
+      return Array.from(eventMap.values());
+    }
+
+    function recomputeDerivedData(allEvents, stageWindows) {
+      const dedupedEvents = mergeEvents([], allEvents);
+      const groupEvents = dedupedEvents.filter(isGroupEvent).sort(compareEventsByDate);
+      const groupTables = buildGroupTables(groupEvents);
+      const seedResolver = buildSeedResolver(groupTables);
+
+      const knockoutEvents = dedupedEvents
+        .filter((event) => Boolean(detectRoundKey(event, event?.competitions?.[0] || {}, stageWindows)))
+        .sort(compareEventsByDate);
+
+      const matches = knockoutEvents
+        .map((event) => normalizeKnockoutEvent(event, stageWindows, seedResolver))
+        .filter((match) => match.roundKey)
+        .sort(compareMatches);
+
+      appState.allEvents = dedupedEvents.sort(compareEventsByDate);
+      appState.groupEvents = groupEvents;
+      appState.groupTables = groupTables;
+      appState.knockoutEvents = knockoutEvents;
+      appState.matches = matches;
+    }
+
+    function mergeEvents(existingEvents, newEvents) {
+      const eventMap = new Map();
+
+      for (const event of [...existingEvents, ...newEvents]) {
+        if (event?.id) {
+          eventMap.set(event.id, event);
         }
       }
 
@@ -1885,19 +2185,10 @@
     function detectRoundKey(event, competition, stageWindows) {
       const seasonSlug = String(event?.season?.slug || "").toLowerCase();
 
-      /*
-        Important:
-        Never allow group-stage matches into the bracket.
-      */
       if (seasonSlug.includes("group-stage")) {
         return "";
       }
 
-      /*
-        Prefer ESPN's explicit stage slug if present.
-        This prevents broad date fallback from accidentally placing extra games
-        into Round of 32, which caused things like "24/16 set".
-      */
       const fromSlug = roundKeyFromStageSlug(seasonSlug);
 
       if (fromSlug) {
@@ -1919,10 +2210,6 @@
         return direct;
       }
 
-      /*
-        Last resort only:
-        Use calendar date windows for non-group-stage events without a clear slug.
-      */
       const eventDate = new Date(event?.date || competition?.date || competition?.startDate);
 
       if (!Number.isFinite(eventDate.getTime())) return "";
@@ -1974,9 +2261,6 @@
         return "third-place";
       }
 
-      /*
-        Keep final after quarterfinal/semifinal checks.
-      */
       if (
         normalized === "final" ||
         normalized === "finals" ||
@@ -1991,10 +2275,6 @@
     function roundKeyFromText(text = "") {
       const normalized = String(text).toLowerCase();
 
-      /*
-        Order matters. Quarterfinal and semifinal contain "final",
-        so final must be checked after them.
-      */
       if (
         normalized.includes("round of 32") ||
         normalized.includes("rd of 32") ||
@@ -2047,6 +2327,26 @@
       return "";
     }
 
+    function getEventStageLabel(event) {
+      const competition = event?.competitions?.[0] || {};
+
+      if (isGroupEvent(event)) {
+        const group = extractGroupLetter(event, competition);
+        return group ? `Group ${group}` : "Group Stage";
+      }
+
+      const roundKey = detectRoundKey(event, competition, appState.stageWindows);
+      const round = ROUND_META.find((item) => item.key === roundKey);
+
+      if (round) {
+        return round.label;
+      }
+
+      const note = competition.altGameNote || competition.note || event?.season?.slug || "FIFA World Cup";
+
+      return titleCase(String(note).replace(/-/g, " "));
+    }
+
     function compareEventsByDate(a, b) {
       const dateA = new Date(a?.date || a?.competitions?.[0]?.date || 0).getTime() || 0;
       const dateB = new Date(b?.date || b?.competitions?.[0]?.date || 0).getTime() || 0;
@@ -2067,11 +2367,14 @@
 
     function render() {
       renderViewTabs();
+      renderDailyControls();
       renderGroupTabs();
       renderRoundTabs();
       renderSectionVisibility();
+      renderDailySummary();
       renderGroupSummary();
       renderBracketSummary();
+      renderDaily();
       renderGroups();
       renderBracket();
       updateHeaderMeta();
@@ -2095,6 +2398,11 @@
           render();
         });
       });
+    }
+
+    function renderDailyControls() {
+      els.dateInput.value = appState.selectedDate;
+      els.dailyDateLabel.textContent = formatDateLabel(appState.selectedDate);
     }
 
     function renderGroupTabs() {
@@ -2151,9 +2459,25 @@
     }
 
     function renderSectionVisibility() {
-      els.groupSection.classList.toggle("hidden", appState.selectedView === "bracket");
-      els.bracketSection.classList.toggle("hidden", appState.selectedView === "groups");
+      const view = appState.selectedView;
+
+      els.dailySection.classList.toggle("hidden", !(view === "all" || view === "daily"));
+      els.groupSection.classList.toggle("hidden", !(view === "all" || view === "groups"));
+      els.bracketSection.classList.toggle("hidden", !(view === "all" || view === "bracket"));
+
       scheduleDrawBracketConnectors();
+    }
+
+    function renderDailySummary() {
+      const events = getDailyEvents();
+      const completed = events.filter(isCompletedEvent).length;
+      const live = countLiveEvents(events);
+
+      els.dailySummary.innerHTML = [
+        `${events.length} match${events.length === 1 ? "" : "es"}`,
+        `${completed}/${events.length} complete`,
+        appState.dailyLoading ? "Loading date..." : live ? `${live} live` : "No live matches"
+      ].map((text) => `<span class="stat-pill">${escapeHtml(text)}</span>`).join("");
     }
 
     function renderGroupSummary() {
@@ -2179,6 +2503,100 @@
         `${resolvedSlots} slots resolved`,
         liveKnockout ? `${liveKnockout} live` : "No live bracket matches"
       ].map((text) => `<span class="stat-pill">${escapeHtml(text)}</span>`).join("");
+    }
+
+    function renderDaily() {
+      const events = getDailyEvents();
+
+      if (appState.dailyLoading) {
+        els.dailyGrid.innerHTML = `
+          <div class="empty-box">
+            Fetching matches for ${escapeHtml(formatDateLabel(appState.selectedDate))}...
+          </div>
+        `;
+        return;
+      }
+
+      if (appState.dailyError && events.length === 0) {
+        els.dailyGrid.innerHTML = `
+          <div class="empty-box">
+            ${escapeHtml(appState.dailyError)}
+          </div>
+        `;
+        return;
+      }
+
+      if (events.length === 0) {
+        els.dailyGrid.innerHTML = `
+          <div class="empty-box">
+            No matches found for ${escapeHtml(formatDateLabel(appState.selectedDate))}.
+            Use Previous, Next, or the date picker to browse other dates.
+          </div>
+        `;
+        return;
+      }
+
+      els.dailyGrid.innerHTML = events.map(renderDailyMatch).join("");
+    }
+
+    function renderDailyMatch(event) {
+      const competition = event?.competitions?.[0] || {};
+      const statusType = competition?.status?.type || {};
+      const state = statusType.state || "pre";
+      const isLive = state === "in";
+      const statusText = statusType.shortDetail || statusType.detail || statusType.description || "Scheduled";
+      const competitors = getCompetitors(event);
+      const teams = [normalizeRawTeam(competitors[0]), normalizeRawTeam(competitors[1])];
+      const link = findEventLink(event);
+      const stage = getEventStageLabel(event);
+
+      return `
+        <article class="daily-card ${isLive ? "live" : ""}">
+          <div class="daily-card-top">
+            <span>${escapeHtml(formatKickoff(event.date || competition.date || competition.startDate))}</span>
+            ${renderSmallBadge(state, statusText, competition.status?.displayClock || "", Boolean(statusType.completed))}
+          </div>
+
+          <span class="daily-stage">${escapeHtml(stage)}</span>
+
+          <div class="daily-teams">
+            ${renderDailyTeam(teams[0], competitors[0], statusType)}
+            ${renderDailyTeam(teams[1], competitors[1], statusType)}
+          </div>
+
+          <div class="daily-card-footer">
+            <span class="venue" title="${escapeHtml(formatVenue(competition.venue))}">
+              ${escapeHtml(formatVenue(competition.venue) || "Venue TBD")}
+            </span>
+            ${link ? `<a class="espn-link" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>` : ""}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderDailyTeam(team, competitor, statusType) {
+      const completed = Boolean(statusType?.completed);
+      const state = statusType?.state || "pre";
+      const score = competitor?.score === undefined || competitor?.score === null || competitor?.score === ""
+        ? "-"
+        : String(competitor.score);
+
+      const showScore = state !== "pre" || completed;
+
+      const logo = team.logo
+        ? `<img class="daily-logo" src="${escapeHtml(team.logo)}" alt="" loading="lazy" />`
+        : `<span class="daily-logo-fallback">${escapeHtml((team.abbr || team.name || "TBD").slice(0, 3))}</span>`;
+
+      return `
+        <div class="daily-team ${competitor?.winner ? "winner" : ""}">
+          ${logo}
+          <span class="daily-team-name">
+            ${escapeHtml(team.name)}
+            ${team.abbr ? `<span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}
+          </span>
+          <span class="daily-score">${escapeHtml(showScore ? score : "-")}</span>
+        </div>
+      `;
     }
 
     function renderGroups() {
@@ -2353,11 +2771,6 @@
         const expectedCount = EXPECTED_MATCH_COUNTS[round.key] || 0;
         const rawActualMatches = grouped.get(round.key) || [];
 
-        /*
-          Important fix:
-          Each round is capped to its real bracket size.
-          This prevents impossible labels like "24/16 set".
-        */
         const actualMatches = rawActualMatches
           .slice()
           .sort(compareMatches)
@@ -2603,7 +3016,7 @@
         return;
       }
 
-      if (appState.selectedView === "groups") {
+      if (!(appState.selectedView === "all" || appState.selectedView === "bracket")) {
         svg.innerHTML = "";
         return;
       }
@@ -2763,6 +3176,12 @@
       });
     }
 
+    function getDailyEvents() {
+      return appState.allEvents
+        .filter((event) => getLocalDateKeyFromEvent(event) === appState.selectedDate)
+        .sort(compareEventsByDate);
+    }
+
     function getAvailableGroups() {
       const groups = Array.from(appState.groupTables.keys()).sort();
       return groups.length > 0 ? groups : GROUP_LETTERS;
@@ -2795,6 +3214,77 @@
         event?.competitions?.[0]?.status?.type?.completed ||
         event?.competitions?.[0]?.status?.type?.state === "post"
       );
+    }
+
+    function getEventDate(event) {
+      return new Date(event?.date || event?.competitions?.[0]?.date || event?.competitions?.[0]?.startDate || "");
+    }
+
+    function getLocalDateKeyFromEvent(event) {
+      const date = getEventDate(event);
+
+      if (!Number.isFinite(date.getTime())) return "";
+
+      return formatDateKeyLocal(date);
+    }
+
+    function getTodayDateKeyLocal() {
+      return formatDateKeyLocal(new Date());
+    }
+
+    function formatDateKeyLocal(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function normalizeDateKey(value) {
+      if (!value) return "";
+
+      const text = String(value).trim();
+      const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+      if (!match) return "";
+
+      const date = parseDateKeyLocal(text);
+
+      if (!Number.isFinite(date.getTime())) return "";
+
+      return formatDateKeyLocal(date);
+    }
+
+    function parseDateKeyLocal(dateKey) {
+      const [year, month, day] = String(dateKey).split("-").map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    function addDaysToDateKey(dateKey, days) {
+      const date = parseDateKeyLocal(normalizeDateKey(dateKey) || getTodayDateKeyLocal());
+      date.setDate(date.getDate() + days);
+      return formatDateKeyLocal(date);
+    }
+
+    function toEspnDateKey(dateKey) {
+      const normalized = normalizeDateKey(dateKey);
+
+      if (!normalized) return "";
+
+      return normalized.replace(/-/g, "");
+    }
+
+    function formatDateLabel(dateKey) {
+      const date = parseDateKeyLocal(normalizeDateKey(dateKey) || getTodayDateKeyLocal());
+
+      if (!Number.isFinite(date.getTime())) return "-";
+
+      return new Intl.DateTimeFormat(undefined, {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      }).format(date);
     }
 
     function formatKickoff(dateValue) {
@@ -2906,6 +3396,14 @@
       }
 
       return map;
+    }
+
+    function titleCase(value) {
+      return String(value)
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(" ");
     }
 
     function escapeHtml(value) {
