@@ -26,7 +26,9 @@
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     html {
       color-scheme: dark;
@@ -37,7 +39,9 @@
     body {
       min-height: 100dvh;
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at 20% 0%, rgba(82, 242, 184, 0.16), transparent 32rem),
@@ -45,8 +49,13 @@
         linear-gradient(180deg, var(--bg), #030814 72%);
     }
 
-    a { color: inherit; }
-    button { font: inherit; }
+    a {
+      color: inherit;
+    }
+
+    button {
+      font: inherit;
+    }
 
     .app {
       width: min(1440px, 100%);
@@ -65,7 +74,9 @@
       padding: 18px;
       border: 1px solid var(--line);
       border-radius: var(--radius-xl);
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.055)), rgba(6, 17, 31, 0.88);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.055)),
+        rgba(6, 17, 31, 0.88);
       backdrop-filter: blur(18px);
       box-shadow: var(--shadow);
     }
@@ -106,8 +117,13 @@
     }
 
     @keyframes pulse {
-      70% { box-shadow: 0 0 0 9px rgba(82, 242, 184, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(82, 242, 184, 0); }
+      70% {
+        box-shadow: 0 0 0 9px rgba(82, 242, 184, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(82, 242, 184, 0);
+      }
     }
 
     h1 {
@@ -165,7 +181,9 @@
       background: rgba(255, 255, 255, 0.052);
     }
 
-    .status-bar.ok { border-color: rgba(82, 242, 184, 0.22); }
+    .status-bar.ok {
+      border-color: rgba(82, 242, 184, 0.22);
+    }
 
     .status-bar.warn {
       border-color: rgba(255, 209, 102, 0.32);
@@ -181,8 +199,13 @@
       background: var(--accent-2);
     }
 
-    .status-bar.ok .status-icon { background: var(--accent); }
-    .status-bar.warn .status-icon { background: var(--warn); }
+    .status-bar.ok .status-icon {
+      background: var(--accent);
+    }
+
+    .status-bar.warn .status-icon {
+      background: var(--warn);
+    }
 
     .view-tabs,
     .group-tabs,
@@ -195,7 +218,9 @@
       scroll-snap-type: x proximity;
     }
 
-    .view-tabs { margin-top: 2px; }
+    .view-tabs {
+      margin-top: 2px;
+    }
 
     .tab {
       min-height: 42px;
@@ -220,7 +245,9 @@
       margin-top: 16px;
     }
 
-    .section.hidden { display: none; }
+    .section.hidden {
+      display: none;
+    }
 
     .section-head {
       display: flex;
@@ -512,19 +539,39 @@
       gap: 12px;
     }
 
-    .round[data-round="round-of-32"] .match-list { padding-top: 12px; gap: 14px; }
-    .round[data-round="round-of-16"] .match-list { padding-top: 18px; gap: 18px; }
-    .round[data-round="quarterfinals"] .match-list { padding-top: 34px; gap: 28px; }
-    .round[data-round="semifinals"] .match-list { padding-top: 62px; gap: 44px; }
+    .round[data-round="round-of-32"] .match-list {
+      padding-top: 12px;
+      gap: 14px;
+    }
+
+    .round[data-round="round-of-16"] .match-list {
+      padding-top: 18px;
+      gap: 18px;
+    }
+
+    .round[data-round="quarterfinals"] .match-list {
+      padding-top: 34px;
+      gap: 28px;
+    }
+
+    .round[data-round="semifinals"] .match-list {
+      padding-top: 62px;
+      gap: 44px;
+    }
+
     .round[data-round="third-place"] .match-list,
-    .round[data-round="final"] .match-list { padding-top: 92px; }
+    .round[data-round="final"] .match-list {
+      padding-top: 92px;
+    }
 
     .match-card {
       position: relative;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
-      background: linear-gradient(180deg, rgba(255,255,255,0.105), rgba(255,255,255,0.052)), var(--bg-2);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.105), rgba(255,255,255,0.052)),
+        var(--bg-2);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
     }
 
@@ -559,9 +606,20 @@
       font-weight: 950;
     }
 
-    .badge.live { color: var(--accent); background: rgba(82, 242, 184, 0.105); }
-    .badge.final { color: var(--text); background: rgba(255, 255, 255, 0.11); }
-    .badge.scheduled { color: #c8d8ff; background: rgba(117, 167, 255, 0.12); }
+    .badge.live {
+      color: var(--accent);
+      background: rgba(82, 242, 184, 0.105);
+    }
+
+    .badge.final {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.11);
+    }
+
+    .badge.scheduled {
+      color: #c8d8ff;
+      background: rgba(117, 167, 255, 0.12);
+    }
 
     .teams {
       display: grid;
@@ -683,7 +741,9 @@
     }
 
     .espn-link:focus,
-    .espn-link:hover { text-decoration: underline; }
+    .espn-link:hover {
+      text-decoration: underline;
+    }
 
     .notes {
       margin-top: 14px;
@@ -708,11 +768,15 @@
     }
 
     @media (max-width: 1100px) {
-      .group-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .group-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 760px) {
-      .app { padding: 12px; }
+      .app {
+        padding: 12px;
+      }
 
       .hero {
         position: relative;
@@ -726,8 +790,13 @@
         align-items: center;
       }
 
-      .updated { text-align: right; }
-      .refresh { width: 100%; }
+      .updated {
+        text-align: right;
+      }
+
+      .refresh {
+        width: 100%;
+      }
 
       .section-head {
         display: block;
@@ -763,8 +832,15 @@
         gap: 12px;
       }
 
-      .team { grid-template-columns: 28px 1fr auto; }
-      .flag, .flag-fallback { width: 28px; height: 28px; }
+      .team {
+        grid-template-columns: 28px 1fr auto;
+      }
+
+      .flag,
+      .flag-fallback {
+        width: 28px;
+        height: 28px;
+      }
     }
   </style>
 </head>
@@ -936,12 +1012,48 @@
     ];
 
     const FALLBACK_KNOCKOUT_ENTRIES = [
-      { label: "Round of 32", detail: "Jun 28-Jul 3", value: "2", startDate: "2026-06-28T07:00:00Z", endDate: "2026-07-04T06:59:00Z" },
-      { label: "Rd of 16", detail: "Jul 4-7", value: "3", startDate: "2026-07-04T07:00:00Z", endDate: "2026-07-09T06:59:00Z" },
-      { label: "Quarterfinals", detail: "Jul 9-11", value: "4", startDate: "2026-07-09T07:00:00Z", endDate: "2026-07-14T06:59:00Z" },
-      { label: "Semifinals", detail: "Jul 14-15", value: "5", startDate: "2026-07-14T07:00:00Z", endDate: "2026-07-19T06:59:00Z" },
-      { label: "3rd-Place Match", detail: "Jul 18", value: "6", startDate: "2026-07-18T07:00:00Z", endDate: "2026-07-19T06:59:00Z" },
-      { label: "Final", detail: "Jul 19", value: "7", startDate: "2026-07-19T07:00:00Z", endDate: "2026-08-01T06:59:00Z" }
+      {
+        label: "Round of 32",
+        detail: "Jun 28-Jul 3",
+        value: "2",
+        startDate: "2026-06-28T07:00:00Z",
+        endDate: "2026-07-04T06:59:00Z"
+      },
+      {
+        label: "Rd of 16",
+        detail: "Jul 4-7",
+        value: "3",
+        startDate: "2026-07-04T07:00:00Z",
+        endDate: "2026-07-09T06:59:00Z"
+      },
+      {
+        label: "Quarterfinals",
+        detail: "Jul 9-11",
+        value: "4",
+        startDate: "2026-07-09T07:00:00Z",
+        endDate: "2026-07-14T06:59:00Z"
+      },
+      {
+        label: "Semifinals",
+        detail: "Jul 14-15",
+        value: "5",
+        startDate: "2026-07-14T07:00:00Z",
+        endDate: "2026-07-19T06:59:00Z"
+      },
+      {
+        label: "3rd-Place Match",
+        detail: "Jul 18",
+        value: "6",
+        startDate: "2026-07-18T07:00:00Z",
+        endDate: "2026-07-19T06:59:00Z"
+      },
+      {
+        label: "Final",
+        detail: "Jul 19",
+        value: "7",
+        startDate: "2026-07-19T07:00:00Z",
+        endDate: "2026-08-01T06:59:00Z"
+      }
     ];
 
     const appState = {
@@ -1065,6 +1177,7 @@
         }
       } catch (error) {
         console.error(error);
+
         appState.allEvents = [];
         appState.groupEvents = [];
         appState.knockoutEvents = [];
@@ -1135,6 +1248,7 @@
 
     function extractCalendarEntries(scoreboard) {
       const leagues = scoreboard?.leagues || [];
+
       return leagues.flatMap((league) => {
         const calendars = league.calendar || [];
         return calendars.flatMap((calendar) => calendar.entries || []);
@@ -1170,7 +1284,11 @@
           start: new Date(entry.startDate),
           end: new Date(entry.endDate)
         }))
-        .filter((stage) => stage.roundKey && Number.isFinite(stage.start.getTime()) && Number.isFinite(stage.end.getTime()));
+        .filter((stage) => (
+          stage.roundKey &&
+          Number.isFinite(stage.start.getTime()) &&
+          Number.isFinite(stage.end.getTime())
+        ));
     }
 
     function buildDateKeys(entries) {
@@ -1202,6 +1320,7 @@
       for (const event of events) {
         const competition = event?.competitions?.[0] || {};
         const group = extractGroupLetter(event, competition);
+
         if (!group) continue;
 
         if (!tableMap.has(group)) {
@@ -1251,6 +1370,7 @@
 
         const sortedRows = Array.from(raw.rows.values())
           .sort(compareStandingsRows)
+          .slice(0, 4)
           .map((row, index) => ({ ...row, rank: index + 1 }));
 
         output.set(letter, {
@@ -1331,6 +1451,7 @@
           if (!row.rank) continue;
 
           const seedCode = `${row.rank}${group}`;
+
           const resolved = {
             id: row.team.id,
             name: row.team.name,
@@ -1360,6 +1481,7 @@
 
     function resolveSeedSlot(seedLabel, seedResolver) {
       if (!seedResolver) return null;
+
       const parsed = parseSeedLabel(seedLabel);
       if (!parsed) return null;
 
@@ -1445,7 +1567,13 @@
 
     function normalizeRawTeam(competitor) {
       const team = competitor?.team || {};
-      const name = team.shortDisplayName || team.displayName || team.name || competitor?.displayName || competitor?.name || "TBD";
+      const name =
+        team.shortDisplayName ||
+        team.displayName ||
+        team.name ||
+        competitor?.displayName ||
+        competitor?.name ||
+        "TBD";
 
       return {
         id: team.id || competitor?.id || "",
@@ -1457,6 +1585,7 @@
 
     function extractSeedLabelFromCompetitor(competitor) {
       const team = competitor?.team || {};
+
       const candidates = [
         team.shortDisplayName,
         team.displayName,
@@ -1491,36 +1620,73 @@
       if (match) {
         const rank = Number(match[1]);
         const groups = extractGroupLetters(match[2]);
+
         if (rank && groups.length > 0) {
-          return { rank, groups, normalized: `${rank}${groups.join("/")}` };
+          return {
+            rank,
+            groups,
+            normalized: `${rank}${groups.join("/")}`
+          };
         }
       }
 
-      match = text.match(/^(1ST|2ND|3RD|FIRST|SECOND|THIRD|WINNER|RUNNER-UP|RUNNER UP)\s+(?:PLACE\s+)?(?:IN\s+)?(?:OF\s+)?GROUP\s+([A-L])$/);
+      match = text.match(
+        /^(1ST|2ND|3RD|FIRST|SECOND|THIRD|WINNER|RUNNER-UP|RUNNER UP)\s+(?:PLACE\s+)?(?:IN\s+)?(?:OF\s+)?GROUP\s+([A-L])$/
+      );
+
       if (match) {
         const rank = rankWordToNumber(match[1]);
         const group = match[2];
-        return { rank, groups: [group], normalized: `${rank}${group}` };
+
+        return {
+          rank,
+          groups: [group],
+          normalized: `${rank}${group}`
+        };
       }
 
-      match = text.match(/^GROUP\s+([A-L])\s+(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)$/);
+      match = text.match(
+        /^GROUP\s+([A-L])\s+(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)$/
+      );
+
       if (match) {
         const group = match[1];
         const rank = rankWordToNumber(match[2]);
-        return { rank, groups: [group], normalized: `${rank}${group}` };
+
+        return {
+          rank,
+          groups: [group],
+          normalized: `${rank}${group}`
+        };
       }
 
-      match = text.match(/^(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)\s+(?:OF\s+)?GROUP\s+([A-L])$/);
+      match = text.match(
+        /^(WINNER|1ST|FIRST|RUNNER-UP|RUNNER UP|SECOND|2ND|THIRD|3RD)\s+(?:OF\s+)?GROUP\s+([A-L])$/
+      );
+
       if (match) {
         const rank = rankWordToNumber(match[1]);
         const group = match[2];
-        return { rank, groups: [group], normalized: `${rank}${group}` };
+
+        return {
+          rank,
+          groups: [group],
+          normalized: `${rank}${group}`
+        };
       }
 
-      match = text.match(/^(?:BEST\s+)?(3RD|THIRD)\s*(?:PLACE)?\s*(?:FROM\s+)?GROUPS?\s+([A-L](?:\s*[\/,&-]?\s*[A-L])*)$/);
+      match = text.match(
+        /^(?:BEST\s+)?(3RD|THIRD)\s*(?:PLACE)?\s*(?:FROM\s+)?GROUPS?\s+([A-L](?:\s*[\/,&-]?\s*[A-L])*)$/
+      );
+
       if (match) {
         const groups = extractGroupLetters(match[2]);
-        return { rank: 3, groups, normalized: `3${groups.join("/")}` };
+
+        return {
+          rank: 3,
+          groups,
+          normalized: `3${groups.join("/")}`
+        };
       }
 
       return null;
@@ -1533,16 +1699,22 @@
 
     function rankWordToNumber(value) {
       const text = String(value).toUpperCase();
+
       if (["WINNER", "1ST", "FIRST"].includes(text)) return 1;
       if (["RUNNER-UP", "RUNNER UP", "SECOND", "2ND"].includes(text)) return 2;
       if (["THIRD", "3RD"].includes(text)) return 3;
+
       return Number(text[0]) || 0;
     }
 
     function formatResolvedSeedDetail(seedLabel, resolvedSeed) {
       const rankText = ordinal(resolvedSeed.rank);
       const gd = resolvedSeed.goalDiff > 0 ? `+${resolvedSeed.goalDiff}` : String(resolvedSeed.goalDiff);
-      const status = resolvedSeed.isComplete ? "Confirmed table" : resolvedSeed.liveGames > 0 ? "Live table" : "Projected table";
+      const status = resolvedSeed.isComplete
+        ? "Confirmed table"
+        : resolvedSeed.liveGames > 0
+          ? "Live table"
+          : "Projected table";
 
       if (resolvedSeed.composite) {
         return `${status} - ${resolvedSeed.sourceSeedLabel} leads ${seedLabel} pool - ${resolvedSeed.points} pts - ${gd} GD`;
@@ -1553,33 +1725,65 @@
 
     function ordinal(number) {
       const value = Number(number);
+
       if (value === 1) return "1st";
       if (value === 2) return "2nd";
       if (value === 3) return "3rd";
+
       return `${value}th`;
     }
 
     function getCompetitors(event) {
       const competition = event?.competitions?.[0] || {};
-      return [...(competition.competitors || [])].sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
+      return [...(competition.competitors || [])]
+        .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
     }
 
     function isGroupEvent(event) {
       const competition = event?.competitions?.[0] || {};
+      const seasonSlug = String(event?.season?.slug || "").toLowerCase();
+
+      /*
+        This is the important fix.
+
+        Only true group-stage matches should contribute to group tables.
+        Knockout placeholder text like "Winner Group A" or "Runner-up Group B"
+        can mention groups, but those are not group-stage matches.
+      */
+      if (seasonSlug !== "group-stage") {
+        return false;
+      }
+
       return Boolean(extractGroupLetter(event, competition));
     }
 
     function extractGroupLetter(event, competition) {
-      const text = [
-        event?.season?.slug,
-        event?.name,
-        event?.shortName,
-        competition?.note,
+      const seasonSlug = String(event?.season?.slug || "").toLowerCase();
+
+      /*
+        This prevents knockout placeholders from being treated as group-stage data.
+      */
+      if (seasonSlug !== "group-stage") {
+        return "";
+      }
+
+      /*
+        ESPN usually puts the actual group here, such as:
+        "FIFA World Cup, Group F"
+      */
+      const reliableGroupText = [
         competition?.altGameNote,
-        competition?.status?.type?.detail
+        competition?.note
       ].filter(Boolean).join(" ");
 
-      const match = text.match(/\bGroup\s+([A-L])\b/i);
+      let match = reliableGroupText.match(/\bFIFA World Cup,\s*Group\s+([A-L])\b/i);
+
+      if (match) {
+        return match[1].toUpperCase();
+      }
+
+      match = reliableGroupText.match(/\bGroup\s+([A-L])\b/i);
+
       return match ? match[1].toUpperCase() : "";
     }
 
@@ -1605,9 +1809,13 @@
 
     function roundKeyFromText(text = "") {
       const normalized = String(text).toLowerCase();
+
       for (const round of ROUND_META) {
-        if (round.aliases.some((alias) => normalized.includes(alias))) return round.key;
+        if (round.aliases.some((alias) => normalized.includes(alias))) {
+          return round.key;
+        }
       }
+
       return "";
     }
 
@@ -1620,10 +1828,12 @@
     function compareMatches(a, b) {
       const roundA = ROUND_META.find((round) => round.key === a.roundKey)?.order ?? 99;
       const roundB = ROUND_META.find((round) => round.key === b.roundKey)?.order ?? 99;
+
       if (roundA !== roundB) return roundA - roundB;
 
       const dateA = new Date(a.date).getTime() || 0;
       const dateB = new Date(b.date).getTime() || 0;
+
       return dateA - dateB;
     }
 
@@ -1641,7 +1851,12 @@
 
     function renderViewTabs() {
       els.viewTabs.innerHTML = VIEW_TABS.map((tab) => `
-        <button class="tab" type="button" data-view="${escapeHtml(tab.key)}" aria-selected="${tab.key === appState.selectedView ? "true" : "false"}">
+        <button
+          class="tab"
+          type="button"
+          data-view="${escapeHtml(tab.key)}"
+          aria-selected="${tab.key === appState.selectedView ? "true" : "false"}"
+        >
           ${escapeHtml(tab.label)}
         </button>
       `).join("");
@@ -1656,10 +1871,18 @@
 
     function renderGroupTabs() {
       const availableGroups = getAvailableGroups();
-      const tabs = [{ key: "all", label: "All Groups" }, ...availableGroups.map((group) => ({ key: group, label: `Group ${group}` }))];
+      const tabs = [
+        { key: "all", label: "All Groups" },
+        ...availableGroups.map((group) => ({ key: group, label: `Group ${group}` }))
+      ];
 
       els.groupTabs.innerHTML = tabs.map((tab) => `
-        <button class="tab" type="button" data-group="${escapeHtml(tab.key)}" aria-selected="${tab.key === appState.selectedGroup ? "true" : "false"}">
+        <button
+          class="tab"
+          type="button"
+          data-group="${escapeHtml(tab.key)}"
+          aria-selected="${tab.key === appState.selectedGroup ? "true" : "false"}"
+        >
           ${escapeHtml(tab.label)}
         </button>
       `).join("");
@@ -1674,10 +1897,18 @@
     }
 
     function renderRoundTabs() {
-      const tabs = [{ key: "all", label: "All Rounds" }, ...ROUND_META.map((round) => ({ key: round.key, label: round.short }))];
+      const tabs = [
+        { key: "all", label: "All Rounds" },
+        ...ROUND_META.map((round) => ({ key: round.key, label: round.short }))
+      ];
 
       els.roundTabs.innerHTML = tabs.map((tab) => `
-        <button class="tab" type="button" data-round="${escapeHtml(tab.key)}" aria-selected="${tab.key === appState.selectedRound ? "true" : "false"}">
+        <button
+          class="tab"
+          type="button"
+          data-round="${escapeHtml(tab.key)}"
+          aria-selected="${tab.key === appState.selectedRound ? "true" : "false"}"
+        >
           ${escapeHtml(tab.label)}
         </button>
       `).join("");
@@ -1724,7 +1955,11 @@
       const groups = getVisibleGroups();
 
       if (groups.length === 0) {
-        els.groupGrid.innerHTML = `<div class="empty-box">No group-stage data found yet. Once ESPN exposes group fixtures, the tables and match cards will appear here.</div>`;
+        els.groupGrid.innerHTML = `
+          <div class="empty-box">
+            No group-stage data found yet. Once ESPN exposes group fixtures, the tables and match cards will appear here.
+          </div>
+        `;
         return;
       }
 
@@ -1735,7 +1970,11 @@
       const table = appState.groupTables.get(group);
       const displayRows = (table?.rows?.length ? table.rows : table?.allRows) || [];
       const events = table?.events || [];
-      const status = table?.isComplete ? "Complete" : table?.liveGames ? `${table.liveGames} live` : `${table?.completedGames || 0}/${table?.totalGames || 0} played`;
+      const status = table?.isComplete
+        ? "Complete"
+        : table?.liveGames
+          ? `${table.liveGames} live`
+          : `${table?.completedGames || 0}/${table?.totalGames || 0} played`;
 
       return `
         <article class="group-card" id="group-${escapeHtml(group)}">
@@ -1778,8 +2017,14 @@
     }
 
     function renderStandingsRow(row, rank, hasStarted) {
-      const qualifyClass = hasStarted && rank <= 2 ? "rank-qualify" : hasStarted && rank === 3 ? "rank-third" : "";
+      const qualifyClass = hasStarted && rank <= 2
+        ? "rank-qualify"
+        : hasStarted && rank === 3
+          ? "rank-third"
+          : "";
+
       const gd = row.goalDiff > 0 ? `+${row.goalDiff}` : String(row.goalDiff);
+
       const logo = row.team.logo
         ? `<img class="table-logo" src="${escapeHtml(row.team.logo)}" alt="" loading="lazy" />`
         : `<span class="table-logo-fallback">${escapeHtml((row.team.abbr || row.team.name || "TBD").slice(0, 3))}</span>`;
@@ -1790,7 +2035,10 @@
           <td>
             <span class="table-team">
               ${logo}
-              <span class="table-name">${escapeHtml(row.team.name)}${row.team.abbr ? ` <span class="team-abbr">${escapeHtml(row.team.abbr)}</span>` : ""}</span>
+              <span class="table-name">
+                ${escapeHtml(row.team.name)}
+                ${row.team.abbr ? ` <span class="team-abbr">${escapeHtml(row.team.abbr)}</span>` : ""}
+              </span>
             </span>
           </td>
           <td>${escapeHtml(row.played)}</td>
@@ -1804,7 +2052,11 @@
     }
 
     function renderEmptyStandings() {
-      return `<div class="empty-box">Teams will appear here once ESPN publishes fixtures for this group.</div>`;
+      return `
+        <div class="empty-box">
+          Teams will appear here once ESPN publishes fixtures for this group.
+        </div>
+      `;
     }
 
     function renderGroupMatch(event) {
@@ -1830,7 +2082,9 @@
           </div>
 
           <div class="footer-row">
-            <span class="venue" title="${escapeHtml(formatVenue(competition.venue))}">${escapeHtml(formatVenue(competition.venue) || "Venue TBD")}</span>
+            <span class="venue" title="${escapeHtml(formatVenue(competition.venue))}">
+              ${escapeHtml(formatVenue(competition.venue) || "Venue TBD")}
+            </span>
             ${link ? `<a class="espn-link" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>` : ""}
           </div>
         </article>
@@ -1840,12 +2094,18 @@
     function renderMiniTeam(team, competitor, statusType) {
       const completed = Boolean(statusType?.completed);
       const state = statusType?.state || "pre";
-      const score = competitor?.score === undefined || competitor?.score === null || competitor?.score === "" ? "-" : String(competitor.score);
+      const score = competitor?.score === undefined || competitor?.score === null || competitor?.score === ""
+        ? "-"
+        : String(competitor.score);
+
       const showScore = state !== "pre" || completed;
 
       return `
         <div class="mini-team ${competitor?.winner ? "winner" : ""}">
-          <span>${escapeHtml(team.name)}${team.abbr ? ` <span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}</span>
+          <span>
+            ${escapeHtml(team.name)}
+            ${team.abbr ? ` <span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}
+          </span>
           <span class="mini-score">${escapeHtml(showScore ? score : "-")}</span>
         </div>
       `;
@@ -1880,7 +2140,14 @@
     }
 
     function renderMatchCard(match) {
-      const stateClass = match.isDemo ? "placeholder" : match.state === "in" ? "live" : match.completed || match.state === "post" ? "final" : "scheduled";
+      const stateClass = match.isDemo
+        ? "placeholder"
+        : match.state === "in"
+          ? "live"
+          : match.completed || match.state === "post"
+            ? "final"
+            : "scheduled";
+
       const badge = renderStatusBadge(match);
       const timeText = match.isDemo ? "Bracket slot" : formatKickoff(match.date);
 
@@ -1899,8 +2166,13 @@
           <footer class="match-footer">
             <div class="footer-row">
               <span class="venue" title="${escapeHtml(match.venue)}">${escapeHtml(match.venue || "Venue TBD")}</span>
-              ${match.link && !match.isDemo ? `<a class="espn-link" href="${escapeHtml(match.link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>` : `<span>${escapeHtml(match.broadcasts || "")}</span>`}
+              ${
+                match.link && !match.isDemo
+                  ? `<a class="espn-link" href="${escapeHtml(match.link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>`
+                  : `<span>${escapeHtml(match.broadcasts || "")}</span>`
+              }
             </div>
+
             ${match.broadcasts && match.link && !match.isDemo ? `<div>${escapeHtml(match.broadcasts)}</div>` : ""}
           </footer>
         </article>
@@ -1909,6 +2181,7 @@
 
     function renderTeamRow(team, match) {
       const score = displayScore(team, match);
+
       const logo = team.logo
         ? `<img class="flag" src="${escapeHtml(team.logo)}" alt="" loading="lazy" />`
         : `<span class="flag-fallback">${escapeHtml((team.abbr || team.seedLabel || "TBD").slice(0, 3))}</span>`;
@@ -1922,10 +2195,15 @@
       return `
         <div class="team ${team.winner ? "winner" : ""}">
           ${logo}
+
           <div class="team-text">
-            <div class="team-name">${escapeHtml(team.name)}${team.abbr ? `<span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}</div>
+            <div class="team-name">
+              ${escapeHtml(team.name)}
+              ${team.abbr ? `<span class="team-abbr">${escapeHtml(team.abbr)}</span>` : ""}
+            </div>
             ${seedLine}
           </div>
+
           <div class="score">${escapeHtml(score)}</div>
         </div>
       `;
@@ -1934,7 +2212,9 @@
     function displayScore(team, match) {
       if (match.isDemo) return "-";
 
-      const score = team.score === "" || team.score === null || team.score === undefined ? "-" : String(team.score);
+      const score = team.score === "" || team.score === null || team.score === undefined
+        ? "-"
+        : String(team.score);
 
       if (team.shootoutScore !== "" && team.shootoutScore !== null && team.shootoutScore !== undefined) {
         return `${score} (${team.shootoutScore})`;
@@ -1944,7 +2224,10 @@
     }
 
     function renderStatusBadge(match) {
-      if (match.isDemo) return `<span class="badge scheduled">Waiting</span>`;
+      if (match.isDemo) {
+        return `<span class="badge scheduled">Waiting</span>`;
+      }
+
       return renderSmallBadge(match.state, match.statusText, match.displayClock, match.completed);
     }
 
@@ -1962,13 +2245,25 @@
     }
 
     function renderEmptyRound(round) {
-      return `<div class="empty-box">No ESPN fixtures found yet for ${escapeHtml(round.label)}. This round will fill in automatically when ESPN publishes games.</div>`;
+      return `
+        <div class="empty-box">
+          No ESPN fixtures found yet for ${escapeHtml(round.label)}.
+          This round will fill in automatically when ESPN publishes games.
+        </div>
+      `;
     }
 
     function updateHeaderMeta() {
       const liveCount = countLiveEvents([...appState.groupEvents, ...appState.knockoutEvents]);
-      els.livePill.innerHTML = `<span class="dot" aria-hidden="true"></span>${liveCount > 0 ? `${liveCount} live` : "Live tournament view"}`;
-      els.lastUpdated.textContent = appState.lastUpdated ? `Last updated: ${formatClock(appState.lastUpdated)}` : "Last updated: -";
+
+      els.livePill.innerHTML = `
+        <span class="dot" aria-hidden="true"></span>
+        ${liveCount > 0 ? `${liveCount} live` : "Live tournament view"}
+      `;
+
+      els.lastUpdated.textContent = appState.lastUpdated
+        ? `Last updated: ${formatClock(appState.lastUpdated)}`
+        : "Last updated: -";
     }
 
     function setStatus(message, type = "normal") {
@@ -1982,7 +2277,12 @@
       for (const group of GROUP_LETTERS) {
         const rows = Array.from({ length: 4 }, (_, index) => ({
           group,
-          team: { id: `demo-${group}-${index}`, name: "TBD", abbr: "", logo: "" },
+          team: {
+            id: `demo-${group}-${index}`,
+            name: "TBD",
+            abbr: "",
+            logo: ""
+          },
           played: 0,
           wins: 0,
           draws: 0,
@@ -2022,6 +2322,7 @@
 
       return ROUND_META.flatMap((round) => {
         const count = matchCounts[round.key] || 0;
+
         return Array.from({ length: count }, (_, index) => ({
           id: `demo-${round.key}-${index + 1}`,
           roundKey: round.key,
@@ -2036,8 +2337,28 @@
           broadcasts: "",
           link: "",
           teams: [
-            { name: "TBD", abbr: "", logo: "", score: "", winner: false, shootoutScore: "", seedLabel: "", seedResolved: false, seedDetail: "" },
-            { name: "TBD", abbr: "", logo: "", score: "", winner: false, shootoutScore: "", seedLabel: "", seedResolved: false, seedDetail: "" }
+            {
+              name: "TBD",
+              abbr: "",
+              logo: "",
+              score: "",
+              winner: false,
+              shootoutScore: "",
+              seedLabel: "",
+              seedResolved: false,
+              seedDetail: ""
+            },
+            {
+              name: "TBD",
+              abbr: "",
+              logo: "",
+              score: "",
+              winner: false,
+              shootoutScore: "",
+              seedLabel: "",
+              seedResolved: false,
+              seedDetail: ""
+            }
           ],
           isDemo: true
         }));
@@ -2051,24 +2372,36 @@
 
     function getVisibleGroups() {
       const groups = getAvailableGroups();
-      if (appState.selectedGroup === "all") return groups;
+
+      if (appState.selectedGroup === "all") {
+        return groups;
+      }
+
       return groups.filter((group) => group === appState.selectedGroup);
     }
 
     function countResolvedSeedSlots(matches) {
-      return matches.reduce((count, match) => count + match.teams.filter((team) => team.seedResolved).length, 0);
+      return matches.reduce((count, match) => (
+        count + match.teams.filter((team) => team.seedResolved).length
+      ), 0);
     }
 
     function countLiveEvents(events) {
-      return events.filter((event) => (event?.competitions?.[0]?.status?.type?.state || "") === "in").length;
+      return events.filter((event) => (
+        event?.competitions?.[0]?.status?.type?.state || ""
+      ) === "in").length;
     }
 
     function isCompletedEvent(event) {
-      return Boolean(event?.competitions?.[0]?.status?.type?.completed || (event?.competitions?.[0]?.status?.type?.state === "post"));
+      return Boolean(
+        event?.competitions?.[0]?.status?.type?.completed ||
+        event?.competitions?.[0]?.status?.type?.state === "post"
+      );
     }
 
     function formatKickoff(dateValue) {
       const date = new Date(dateValue);
+
       if (!Number.isFinite(date.getTime())) return "Time TBD";
 
       return new Intl.DateTimeFormat(undefined, {
@@ -2089,27 +2422,45 @@
 
     function formatVenue(venue) {
       if (!venue) return "";
+
       const name = venue.fullName || venue.name || venue.displayName || "";
       const city = venue.address?.city || "";
       const country = venue.address?.country || "";
+
       return [name, city, country].filter(Boolean).join(" - ");
     }
 
     function formatBroadcasts(broadcasts = []) {
-      const names = broadcasts.flatMap((broadcast) => broadcast.names || broadcast.name || []).filter(Boolean);
+      const names = broadcasts
+        .flatMap((broadcast) => broadcast.names || broadcast.name || [])
+        .filter(Boolean);
+
       return Array.from(new Set(names)).slice(0, 3).join(", ");
     }
 
     function findEventLink(event) {
       const links = event?.links || [];
-      const summary = links.find((link) => Array.isArray(link.rel) && link.rel.includes("summary") && link.href);
+      const summary = links.find((link) => (
+        Array.isArray(link.rel) &&
+        link.rel.includes("summary") &&
+        link.href
+      ));
+
       if (summary?.href) return summary.href;
-      if (event?.id) return `https://www.espn.com/soccer/match/_/gameId/${encodeURIComponent(event.id)}`;
+
+      if (event?.id) {
+        return `https://www.espn.com/soccer/match/_/gameId/${encodeURIComponent(event.id)}`;
+      }
+
       return "";
     }
 
     function toUTCDateOnly(date) {
-      return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+      return new Date(Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate()
+      ));
     }
 
     function addDaysUTC(date, days) {
@@ -2131,9 +2482,11 @@
 
     function chunk(items, size) {
       const chunks = [];
+
       for (let index = 0; index < items.length; index += size) {
         chunks.push(items.slice(index, index + size));
       }
+
       return chunks;
     }
 
@@ -2143,11 +2496,17 @@
 
     function groupBy(items, getKey) {
       const map = new Map();
+
       for (const item of items) {
         const key = getKey(item);
-        if (!map.has(key)) map.set(key, []);
+
+        if (!map.has(key)) {
+          map.set(key, []);
+        }
+
         map.get(key).push(item);
       }
+
       return map;
     }
 
@@ -2162,7 +2521,10 @@
     }
 
     function cryptoSafeId() {
-      if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+      if (window.crypto?.randomUUID) {
+        return window.crypto.randomUUID();
+      }
+
       return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     }
   </script>
