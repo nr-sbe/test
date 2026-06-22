@@ -10,8 +10,6 @@
     :root {
       --bg: #06111f;
       --bg-2: #0b1728;
-      --panel: rgba(255, 255, 255, 0.075);
-      --panel-2: rgba(255, 255, 255, 0.12);
       --line: rgba(255, 255, 255, 0.14);
       --text: #f6fbff;
       --muted: rgba(246, 251, 255, 0.7);
@@ -19,7 +17,6 @@
       --accent: #52f2b8;
       --accent-2: #75a7ff;
       --warn: #ffd166;
-      --danger: #ff6b7a;
       --radius-xl: 24px;
       --radius-lg: 18px;
       --radius-md: 14px;
@@ -997,8 +994,9 @@
       <summary>Data note</summary>
       <p>
         This page uses ESPN's public scoreboard feed directly from the browser. For the most reliable mobile experience,
-        put your own small backend/cache in front of ESPN and set <code>CORS_PROXY</code> in the script. Group standings here use points,
-        goal difference, goals for, goals against, then name as the local tie-break order.
+        put your own small backend/cache in front of ESPN and set <code>CORS_PROXY</code> in the script.
+        Group standings here use points, goal difference, goals for, goals against, then name as the local tie-break order.
+        The bracket display is capped to official match counts, so Round of 32 will never display more than 16 match slots.
       </p>
     </details>
   </main>
@@ -1029,7 +1027,7 @@
       "round-of-16": 6,
       quarterfinals: 5,
       semifinals: 5,
-      final: 14,
+      final: 3,
       "third-place": 2
     };
 
@@ -1054,14 +1052,14 @@
         label: "Round of 32",
         short: "R32",
         order: 1,
-        aliases: ["round of 32", "rd of 32", "round-of-32"]
+        aliases: ["round of 32", "rd of 32", "round-of-32", "round 32"]
       },
       {
         key: "round-of-16",
         label: "Round of 16",
         short: "R16",
         order: 2,
-        aliases: ["round of 16", "rd of 16", "round-of-16"]
+        aliases: ["round of 16", "rd of 16", "round-of-16", "round 16"]
       },
       {
         key: "quarterfinals",
@@ -1138,14 +1136,14 @@
         detail: "Jul 14-15",
         value: "5",
         startDate: "2026-07-14T07:00:00Z",
-        endDate: "2026-07-19T06:59:00Z"
+        endDate: "2026-07-17T06:59:00Z"
       },
       {
         label: "Final",
         detail: "Jul 19",
         value: "7",
         startDate: "2026-07-19T07:00:00Z",
-        endDate: "2026-08-01T06:59:00Z"
+        endDate: "2026-07-20T06:59:00Z"
       },
       {
         label: "3rd-Place Match",
@@ -1267,20 +1265,21 @@
 
         render();
 
-        const resolvedSlots = countResolvedSeedSlots(matches);
+        const cappedMatches = getCappedAllMatches(matches);
+        const resolvedSlots = countResolvedSeedSlots(cappedMatches);
         const totalGroupMatches = groupEvents.length;
         const liveEvents = countLiveEvents([...groupEvents, ...knockoutEvents]);
 
-        if (totalGroupMatches === 0 && matches.length === 0) {
+        if (totalGroupMatches === 0 && cappedMatches.length === 0) {
           setStatus("ESPN responded, but no World Cup fixtures were found yet. The bracket shell is ready.", "warn");
         } else if (resolvedSlots > 0) {
           setStatus(
-            `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"}, ${matches.length} knockout match${matches.length === 1 ? "" : "es"}, and resolved ${resolvedSlots} bracket slot${resolvedSlots === 1 ? "" : "s"}.`,
+            `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"}, ${cappedMatches.length} knockout match${cappedMatches.length === 1 ? "" : "es"}, and resolved ${resolvedSlots} bracket slot${resolvedSlots === 1 ? "" : "s"}.`,
             "ok"
           );
         } else {
           setStatus(
-            `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"} and ${matches.length} knockout match${matches.length === 1 ? "" : "es"}${liveEvents ? `, with ${liveEvents} live` : ""}.`,
+            `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"} and ${cappedMatches.length} knockout match${cappedMatches.length === 1 ? "" : "es"}${liveEvents ? `, with ${liveEvents} live` : ""}.`,
             "ok"
           );
         }
@@ -1884,6 +1883,27 @@
     }
 
     function detectRoundKey(event, competition, stageWindows) {
+      const seasonSlug = String(event?.season?.slug || "").toLowerCase();
+
+      /*
+        Important:
+        Never allow group-stage matches into the bracket.
+      */
+      if (seasonSlug.includes("group-stage")) {
+        return "";
+      }
+
+      /*
+        Prefer ESPN's explicit stage slug if present.
+        This prevents broad date fallback from accidentally placing extra games
+        into Round of 32, which caused things like "24/16 set".
+      */
+      const fromSlug = roundKeyFromStageSlug(seasonSlug);
+
+      if (fromSlug) {
+        return fromSlug;
+      }
+
       const text = [
         event?.season?.slug,
         event?.name,
@@ -1894,22 +1914,134 @@
       ].filter(Boolean).join(" ").toLowerCase();
 
       const direct = roundKeyFromText(text);
-      if (direct) return direct;
 
+      if (direct) {
+        return direct;
+      }
+
+      /*
+        Last resort only:
+        Use calendar date windows for non-group-stage events without a clear slug.
+      */
       const eventDate = new Date(event?.date || competition?.date || competition?.startDate);
+
       if (!Number.isFinite(eventDate.getTime())) return "";
 
       const dateWindow = stageWindows.find((stage) => eventDate >= stage.start && eventDate < stage.end);
+
       return dateWindow?.roundKey || "";
+    }
+
+    function roundKeyFromStageSlug(slug = "") {
+      const normalized = String(slug).toLowerCase().replace(/_/g, "-");
+
+      if (
+        normalized.includes("round-of-32") ||
+        normalized.includes("rd-of-32") ||
+        normalized.includes("round-32")
+      ) {
+        return "round-of-32";
+      }
+
+      if (
+        normalized.includes("round-of-16") ||
+        normalized.includes("rd-of-16") ||
+        normalized.includes("round-16")
+      ) {
+        return "round-of-16";
+      }
+
+      if (
+        normalized.includes("quarterfinal") ||
+        normalized.includes("quarter-final")
+      ) {
+        return "quarterfinals";
+      }
+
+      if (
+        normalized.includes("semifinal") ||
+        normalized.includes("semi-final")
+      ) {
+        return "semifinals";
+      }
+
+      if (
+        normalized.includes("third-place") ||
+        normalized.includes("3rd-place") ||
+        normalized.includes("third place") ||
+        normalized.includes("3rd place")
+      ) {
+        return "third-place";
+      }
+
+      /*
+        Keep final after quarterfinal/semifinal checks.
+      */
+      if (
+        normalized === "final" ||
+        normalized === "finals" ||
+        /(^|[-\s])final(s)?($|[-\s])/.test(normalized)
+      ) {
+        return "final";
+      }
+
+      return "";
     }
 
     function roundKeyFromText(text = "") {
       const normalized = String(text).toLowerCase();
 
-      for (const round of ROUND_META) {
-        if (round.aliases.some((alias) => normalized.includes(alias))) {
-          return round.key;
-        }
+      /*
+        Order matters. Quarterfinal and semifinal contain "final",
+        so final must be checked after them.
+      */
+      if (
+        normalized.includes("round of 32") ||
+        normalized.includes("rd of 32") ||
+        normalized.includes("round-of-32") ||
+        normalized.includes("round 32")
+      ) {
+        return "round-of-32";
+      }
+
+      if (
+        normalized.includes("round of 16") ||
+        normalized.includes("rd of 16") ||
+        normalized.includes("round-of-16") ||
+        normalized.includes("round 16")
+      ) {
+        return "round-of-16";
+      }
+
+      if (
+        normalized.includes("quarterfinal") ||
+        normalized.includes("quarter-final") ||
+        normalized.includes("quarter finals") ||
+        normalized.includes("quarter-finals")
+      ) {
+        return "quarterfinals";
+      }
+
+      if (
+        normalized.includes("semifinal") ||
+        normalized.includes("semi-final") ||
+        normalized.includes("semi finals") ||
+        normalized.includes("semi-finals")
+      ) {
+        return "semifinals";
+      }
+
+      if (
+        normalized.includes("third-place") ||
+        normalized.includes("third place") ||
+        normalized.includes("3rd-place") ||
+        normalized.includes("3rd place")
+      ) {
+        return "third-place";
+      }
+
+      if (/\bfinal\b/.test(normalized)) {
+        return "final";
       }
 
       return "";
@@ -2038,11 +2170,12 @@
     }
 
     function renderBracketSummary() {
-      const resolvedSlots = countResolvedSeedSlots(appState.matches);
-      const liveKnockout = appState.matches.filter((match) => match.state === "in").length;
+      const cappedMatches = getCappedAllMatches(appState.matches);
+      const resolvedSlots = countResolvedSeedSlots(cappedMatches);
+      const liveKnockout = cappedMatches.filter((match) => match.state === "in").length;
 
       els.bracketSummary.innerHTML = [
-        `${appState.matches.length} knockout matches`,
+        `${cappedMatches.length} knockout matches`,
         `${resolvedSlots} slots resolved`,
         liveKnockout ? `${liveKnockout} live` : "No live bracket matches"
       ].map((text) => `<span class="stat-pill">${escapeHtml(text)}</span>`).join("");
@@ -2217,9 +2350,25 @@
       const displayMatchesByRound = new Map();
 
       const roundsHtml = selectedRounds.map((round) => {
-        const actualMatches = grouped.get(round.key) || [];
+        const expectedCount = EXPECTED_MATCH_COUNTS[round.key] || 0;
+        const rawActualMatches = grouped.get(round.key) || [];
+
+        /*
+          Important fix:
+          Each round is capped to its real bracket size.
+          This prevents impossible labels like "24/16 set".
+        */
+        const actualMatches = rawActualMatches
+          .slice()
+          .sort(compareMatches)
+          .slice(0, expectedCount || rawActualMatches.length);
+
         const matches = getDisplayMatchesForRound(round, actualMatches);
         displayMatchesByRound.set(round.key, matches);
+
+        const setCount = expectedCount
+          ? Math.min(actualMatches.length, expectedCount)
+          : actualMatches.length;
 
         return `
           <section class="round" data-round="${escapeHtml(round.key)}">
@@ -2227,7 +2376,7 @@
               <div class="round-kicker">${escapeHtml(round.short)}</div>
               <div class="round-title">
                 <h3>${escapeHtml(round.label)}</h3>
-                <span class="match-count">${actualMatches.length}/${EXPECTED_MATCH_COUNTS[round.key] || actualMatches.length} set</span>
+                <span class="match-count">${setCount}/${expectedCount || setCount} set</span>
               </div>
             </header>
 
@@ -2253,16 +2402,35 @@
     function getDisplayMatchesForRound(round, actualMatches) {
       const expectedCount = EXPECTED_MATCH_COUNTS[round.key] || actualMatches.length;
 
-      if (actualMatches.length >= expectedCount) {
-        return actualMatches;
+      const cappedActualMatches = actualMatches
+        .slice()
+        .sort(compareMatches)
+        .slice(0, expectedCount);
+
+      if (cappedActualMatches.length >= expectedCount) {
+        return cappedActualMatches;
       }
 
       const placeholders = Array.from(
-        { length: expectedCount - actualMatches.length },
-        (_, index) => makePlaceholderMatch(round, actualMatches.length + index + 1)
+        { length: expectedCount - cappedActualMatches.length },
+        (_, index) => makePlaceholderMatch(round, cappedActualMatches.length + index + 1)
       );
 
-      return [...actualMatches, ...placeholders];
+      return [...cappedActualMatches, ...placeholders];
+    }
+
+    function getCappedAllMatches(matches) {
+      const grouped = groupBy(matches, (match) => match.roundKey);
+
+      return ROUND_META.flatMap((round) => {
+        const expectedCount = EXPECTED_MATCH_COUNTS[round.key] || 0;
+        const rawMatches = grouped.get(round.key) || [];
+
+        return rawMatches
+          .slice()
+          .sort(compareMatches)
+          .slice(0, expectedCount || rawMatches.length);
+      });
     }
 
     function makePlaceholderMatch(round, slotNumber) {
