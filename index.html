@@ -22,6 +22,8 @@
       --radius-lg: 18px;
       --radius-md: 14px;
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
+      --score-card-width: 370px;
+      --score-card-width-mobile: 330px;
     }
 
     * {
@@ -349,7 +351,7 @@
 
     .daily-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
       gap: 12px;
       padding: 14px;
     }
@@ -357,6 +359,7 @@
     .daily-card {
       display: grid;
       gap: 10px;
+      min-width: 0;
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
       padding: 12px;
@@ -373,9 +376,10 @@
 
     .daily-card-top {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px 10px;
       color: var(--soft);
       font-size: 0.78rem;
     }
@@ -384,24 +388,28 @@
       display: inline-flex;
       align-items: center;
       width: fit-content;
+      max-width: 100%;
       padding: 5px 8px;
       border-radius: 999px;
       color: var(--accent);
       background: rgba(82, 242, 184, 0.09);
       font-size: 0.72rem;
       font-weight: 950;
+      white-space: normal;
+      line-height: 1.25;
     }
 
     .daily-teams {
       display: grid;
       gap: 5px;
+      min-width: 0;
     }
 
     .daily-team {
       display: grid;
-      grid-template-columns: 28px 1fr auto;
+      grid-template-columns: 28px minmax(0, 1fr) max-content;
       gap: 8px;
-      align-items: center;
+      align-items: start;
       min-height: 36px;
       padding: 6px;
       border-radius: 12px;
@@ -431,9 +439,11 @@
 
     .daily-team-name {
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow: visible;
+      text-overflow: unset;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
     }
 
     .daily-score {
@@ -441,27 +451,31 @@
       text-align: right;
       font-variant-numeric: tabular-nums;
       font-weight: 950;
+      white-space: nowrap;
     }
 
     .daily-card-footer {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 10px;
-      align-items: center;
+      gap: 8px 10px;
+      align-items: flex-start;
       color: var(--soft);
       font-size: 0.78rem;
       border-top: 1px solid rgba(255, 255, 255, 0.09);
       padding-top: 10px;
+      min-width: 0;
     }
 
     .group-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 370px), 1fr));
       gap: 14px;
     }
 
     .group-card {
       overflow: hidden;
+      min-width: 0;
       border: 1px solid var(--line);
       border-radius: var(--radius-xl);
       background: rgba(255, 255, 255, 0.048);
@@ -470,8 +484,9 @@
 
     .group-card-head {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 12px;
+      gap: 8px 12px;
       align-items: center;
       padding: 14px;
       border-bottom: 1px solid var(--line);
@@ -499,7 +514,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.82rem;
-      min-width: 390px;
+      min-width: 430px;
     }
 
     .standings th,
@@ -528,6 +543,7 @@
     .standings td:nth-child(2),
     .standings th:nth-child(2) {
       text-align: left;
+      min-width: 170px;
     }
 
     .rank-qualify td:first-child {
@@ -542,7 +558,7 @@
 
     .table-team {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
       min-width: 0;
     }
@@ -565,10 +581,12 @@
 
     .table-name {
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow: visible;
+      text-overflow: unset;
+      white-space: normal;
+      overflow-wrap: anywhere;
       font-weight: 800;
+      line-height: 1.25;
     }
 
     .group-matches {
@@ -580,6 +598,7 @@
     .group-match {
       display: grid;
       gap: 8px;
+      min-width: 0;
       padding: 10px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: var(--radius-md);
@@ -593,8 +612,9 @@
 
     .group-match-top {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px 10px;
       color: var(--soft);
       font-size: 0.74rem;
     }
@@ -602,14 +622,22 @@
     .mini-teams {
       display: grid;
       gap: 5px;
+      min-width: 0;
     }
 
     .mini-team {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: minmax(0, 1fr) max-content;
       gap: 8px;
-      align-items: center;
+      align-items: start;
       color: var(--muted);
+    }
+
+    .mini-team span:first-child {
+      min-width: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
     }
 
     .mini-team.winner {
@@ -620,6 +648,7 @@
     .mini-score {
       font-variant-numeric: tabular-nums;
       font-weight: 950;
+      white-space: nowrap;
     }
 
     .empty-box {
@@ -649,8 +678,9 @@
 
     .bracket-board-head {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 12px;
+      gap: 8px 12px;
       align-items: center;
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
@@ -678,8 +708,8 @@
       position: relative;
       display: grid;
       grid-auto-flow: column;
-      grid-auto-columns: minmax(280px, 280px);
-      gap: 74px;
+      grid-auto-columns: minmax(var(--score-card-width), var(--score-card-width));
+      gap: 88px;
       align-items: start;
       width: max-content;
       min-width: 100%;
@@ -714,7 +744,7 @@
     .round {
       position: relative;
       z-index: 1;
-      min-width: 280px;
+      min-width: var(--score-card-width);
       padding: 14px;
       border: 1px solid var(--line);
       border-radius: var(--radius-xl);
@@ -744,8 +774,9 @@
 
     .round-title {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 12px;
+      gap: 6px 12px;
       align-items: end;
       margin-top: 4px;
     }
@@ -796,7 +827,8 @@
 
     .match-card {
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      min-width: 0;
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
       background:
@@ -820,23 +852,28 @@
 
     .match-top {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
       align-items: center;
       justify-content: space-between;
       padding: 12px 12px 8px;
       color: var(--soft);
       font-size: 0.78rem;
+      line-height: 1.25;
     }
 
     .badge {
       display: inline-flex;
       gap: 6px;
       align-items: center;
-      flex: 0 0 auto;
+      flex: 0 1 auto;
+      max-width: 100%;
       padding: 5px 8px;
       border-radius: 999px;
       font-size: 0.72rem;
       font-weight: 950;
+      white-space: normal;
+      line-height: 1.2;
     }
 
     .badge.live {
@@ -858,13 +895,14 @@
       display: grid;
       gap: 2px;
       padding: 0 10px 10px;
+      min-width: 0;
     }
 
     .team {
       display: grid;
-      grid-template-columns: 31px 1fr auto;
+      grid-template-columns: 31px minmax(0, 1fr) max-content;
       gap: 9px;
-      align-items: center;
+      align-items: start;
       min-height: 44px;
       padding: 8px;
       border-radius: 13px;
@@ -900,9 +938,11 @@
 
     .team-name {
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow: visible;
+      text-overflow: unset;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
     }
 
     .team-abbr {
@@ -910,22 +950,25 @@
       color: var(--soft);
       font-size: 0.76rem;
       font-weight: 750;
+      white-space: nowrap;
     }
 
     .team-seed {
       min-width: 0;
-      overflow: hidden;
+      overflow: visible;
       color: var(--soft);
       font-size: 0.7rem;
       line-height: 1.25;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      text-overflow: unset;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
 
     .seed-chip {
       display: inline-flex;
       align-items: center;
       margin-right: 5px;
+      margin-bottom: 2px;
       padding: 2px 6px;
       border: 1px solid rgba(82, 242, 184, 0.25);
       border-radius: 999px;
@@ -933,6 +976,7 @@
       background: rgba(82, 242, 184, 0.08);
       font-size: 0.66rem;
       font-weight: 950;
+      white-space: nowrap;
     }
 
     .score {
@@ -941,6 +985,7 @@
       font-variant-numeric: tabular-nums;
       font-size: 1.05rem;
       font-weight: 950;
+      white-space: nowrap;
     }
 
     .match-footer {
@@ -950,20 +995,26 @@
       border-top: 1px solid var(--line);
       color: var(--soft);
       font-size: 0.78rem;
+      min-width: 0;
     }
 
     .footer-row {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 12px;
-      align-items: center;
+      gap: 8px 12px;
+      align-items: flex-start;
+      min-width: 0;
     }
 
     .venue {
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      max-width: 100%;
+      overflow: visible;
+      text-overflow: unset;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
     }
 
     .espn-link {
@@ -1000,14 +1051,11 @@
       background: rgba(255, 255, 255, 0.11);
     }
 
-    @media (max-width: 1100px) {
-      .group-grid,
-      .daily-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
     @media (max-width: 760px) {
+      :root {
+        --score-card-width: var(--score-card-width-mobile);
+      }
+
       .app {
         padding: 12px;
       }
@@ -1050,11 +1098,6 @@
         width: 100%;
       }
 
-      .daily-grid,
-      .group-grid {
-        grid-template-columns: 1fr;
-      }
-
       .bracket-board-head {
         display: block;
       }
@@ -1065,17 +1108,17 @@
       }
 
       .bracket-surface {
-        grid-auto-columns: minmax(286px, 286px);
-        gap: 58px;
+        grid-auto-columns: minmax(var(--score-card-width-mobile), var(--score-card-width-mobile));
+        gap: 62px;
         padding: 14px 18px 24px;
       }
 
       .round {
-        min-width: 286px;
+        min-width: var(--score-card-width-mobile);
       }
 
       .team {
-        grid-template-columns: 28px 1fr auto;
+        grid-template-columns: 28px minmax(0, 1fr) max-content;
       }
 
       .flag,
