@@ -134,7 +134,7 @@
     }
 
     .subhead {
-      max-width: 76ch;
+      max-width: 78ch;
       margin: 10px 0 0;
       color: var(--muted);
       line-height: 1.5;
@@ -273,7 +273,7 @@
 
     .section-copy {
       margin: 6px 0 0;
-      max-width: 74ch;
+      max-width: 78ch;
       color: var(--muted);
       line-height: 1.5;
     }
@@ -476,33 +476,102 @@
       background: rgba(255, 255, 255, 0.035);
     }
 
-    .bracket {
+    .bracket-board {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(82, 242, 184, 0.08), transparent 26rem),
+        radial-gradient(circle at 85% 15%, rgba(117, 167, 255, 0.08), transparent 28rem),
+        rgba(255, 255, 255, 0.04);
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.22);
+    }
+
+    .bracket-board-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.045);
+      font-size: 0.84rem;
+    }
+
+    .bracket-hint {
+      color: var(--accent);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .bracket-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .bracket-surface {
+      position: relative;
       display: grid;
       grid-auto-flow: column;
-      grid-auto-columns: minmax(260px, 1fr);
-      gap: 14px;
-      overflow-x: auto;
-      padding: 2px 2px 22px;
-      scrollbar-width: thin;
+      grid-auto-columns: minmax(280px, 280px);
+      gap: 74px;
+      align-items: start;
+      width: max-content;
+      min-width: 100%;
+      padding: 18px 26px 30px;
+    }
+
+    .connector-svg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .connector-line {
+      fill: none;
+      stroke: rgba(82, 242, 184, 0.42);
+      stroke-width: 2.25;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 5px rgba(82, 242, 184, 0.16));
+    }
+
+    .connector-line.placeholder-line {
+      stroke: rgba(255, 255, 255, 0.18);
+      stroke-dasharray: 6 7;
+      filter: none;
     }
 
     .round {
-      min-width: 260px;
+      position: relative;
+      z-index: 1;
+      min-width: 280px;
       padding: 14px;
       border: 1px solid var(--line);
       border-radius: var(--radius-xl);
-      background: rgba(255, 255, 255, 0.045);
+      background: rgba(7, 19, 34, 0.88);
+      scroll-snap-align: start;
     }
 
     .round-header {
       position: sticky;
-      top: 114px;
+      top: 0;
       z-index: 2;
       margin: -14px -14px 12px;
       padding: 14px;
       border-bottom: 1px solid var(--line);
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-      background: rgba(8, 19, 34, 0.9);
+      background: rgba(8, 19, 34, 0.94);
       backdrop-filter: blur(12px);
     }
 
@@ -536,32 +605,34 @@
 
     .match-list {
       display: grid;
-      gap: 12px;
+      gap: 14px;
     }
 
     .round[data-round="round-of-32"] .match-list {
-      padding-top: 12px;
       gap: 14px;
     }
 
     .round[data-round="round-of-16"] .match-list {
-      padding-top: 18px;
-      gap: 18px;
+      padding-top: 40px;
+      gap: 56px;
     }
 
     .round[data-round="quarterfinals"] .match-list {
-      padding-top: 34px;
-      gap: 28px;
+      padding-top: 112px;
+      gap: 138px;
     }
 
     .round[data-round="semifinals"] .match-list {
-      padding-top: 62px;
-      gap: 44px;
+      padding-top: 258px;
+      gap: 305px;
     }
 
-    .round[data-round="third-place"] .match-list,
     .round[data-round="final"] .match-list {
-      padding-top: 92px;
+      padding-top: 574px;
+    }
+
+    .round[data-round="third-place"] .match-list {
+      padding-top: 574px;
     }
 
     .match-card {
@@ -581,8 +652,11 @@
     }
 
     .match-card.placeholder {
-      opacity: 0.78;
+      opacity: 0.82;
       border-style: dashed;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.035)),
+        rgba(11, 23, 40, 0.78);
     }
 
     .match-top {
@@ -811,25 +885,23 @@
         grid-template-columns: 1fr;
       }
 
-      .bracket {
+      .bracket-board-head {
         display: block;
-        overflow: visible;
-        padding-bottom: 8px;
+      }
+
+      .bracket-hint {
+        display: block;
+        margin-top: 5px;
+      }
+
+      .bracket-surface {
+        grid-auto-columns: minmax(286px, 286px);
+        gap: 58px;
+        padding: 14px 18px 24px;
       }
 
       .round {
-        min-width: 0;
-        margin-bottom: 12px;
-      }
-
-      .round-header {
-        position: sticky;
-        top: 0;
-      }
-
-      .round[data-round] .match-list {
-        padding-top: 0;
-        gap: 12px;
+        min-width: 286px;
       }
 
       .team {
@@ -860,7 +932,7 @@
         <h1>Group Stage + Knockout Bracket</h1>
         <p class="subhead">
           A mobile-friendly live view using ESPN scoreboard data. Group tables update from match results,
-          and knockout slots like 1A, 2B, and 3C/D/E are replaced with the current projected team whenever possible.
+          and the knockout bracket can be swiped sideways like a real bracket board.
         </p>
       </div>
 
@@ -897,16 +969,28 @@
       <div class="section-head">
         <div>
           <div class="section-kicker">Knockout Stage</div>
-          <h2 class="section-title">Live bracket</h2>
+          <h2 class="section-title">Side-scrolling bracket board</h2>
           <p class="section-copy">
-            Bracket placeholders resolve from the current group tables. Composite third-place slots are useful projections until the official allocation is confirmed.
+            Swipe sideways to move through the bracket. Bracket placeholders like 1A, 2B, and 3C/D/E resolve from the current group tables when possible.
           </p>
         </div>
         <div class="summary-stats" id="bracketSummary"></div>
       </div>
 
       <nav class="round-tabs" id="roundTabs" aria-label="Bracket rounds"></nav>
-      <section class="bracket" id="bracket" aria-live="polite"></section>
+
+      <div class="bracket-board">
+        <div class="bracket-board-head">
+          <span>Knockout bracket map</span>
+          <span class="bracket-hint">Swipe / scroll sideways →</span>
+        </div>
+
+        <div class="bracket-scroll" id="bracketScroll" tabindex="0" aria-label="Horizontally scrollable bracket">
+          <section class="bracket-surface" id="bracketSurface" aria-live="polite">
+            <svg class="connector-svg" id="connectorSvg" aria-hidden="true"></svg>
+          </section>
+        </div>
+      </div>
     </section>
 
     <details class="notes">
@@ -945,8 +1029,17 @@
       "round-of-16": 6,
       quarterfinals: 5,
       semifinals: 5,
-      "third-place": 2,
-      final: 14
+      final: 14,
+      "third-place": 2
+    };
+
+    const EXPECTED_MATCH_COUNTS = {
+      "round-of-32": 16,
+      "round-of-16": 8,
+      quarterfinals: 4,
+      semifinals: 2,
+      final: 1,
+      "third-place": 1
     };
 
     const VIEW_TABS = [
@@ -985,19 +1078,26 @@
         aliases: ["semifinal", "semifinals", "semi-finals", "semi finals"]
       },
       {
-        key: "third-place",
-        label: "3rd Place",
-        short: "3rd",
-        order: 5,
-        aliases: ["3rd-place", "3rd place", "third-place", "third place", "3rd-place match"]
-      },
-      {
         key: "final",
         label: "Final",
         short: "Final",
-        order: 6,
+        order: 5,
         aliases: ["final"]
+      },
+      {
+        key: "third-place",
+        label: "3rd Place",
+        short: "3rd",
+        order: 6,
+        aliases: ["3rd-place", "3rd place", "third-place", "third place", "3rd-place match"]
       }
+    ];
+
+    const CONNECTOR_PAIRS = [
+      ["round-of-32", "round-of-16"],
+      ["round-of-16", "quarterfinals"],
+      ["quarterfinals", "semifinals"],
+      ["semifinals", "final"]
     ];
 
     const FALLBACK_GROUP_ENTRIES = [
@@ -1041,18 +1141,18 @@
         endDate: "2026-07-19T06:59:00Z"
       },
       {
-        label: "3rd-Place Match",
-        detail: "Jul 18",
-        value: "6",
-        startDate: "2026-07-18T07:00:00Z",
-        endDate: "2026-07-19T06:59:00Z"
-      },
-      {
         label: "Final",
         detail: "Jul 19",
         value: "7",
         startDate: "2026-07-19T07:00:00Z",
         endDate: "2026-08-01T06:59:00Z"
+      },
+      {
+        label: "3rd-Place Match",
+        detail: "Jul 18",
+        value: "6",
+        startDate: "2026-07-18T07:00:00Z",
+        endDate: "2026-07-19T06:59:00Z"
       }
     ];
 
@@ -1065,9 +1165,11 @@
       knockoutEvents: [],
       groupTables: new Map(),
       matches: [],
+      displayMatchesByRound: new Map(),
       isLoading: false,
       lastUpdated: null,
-      refreshTimer: null
+      refreshTimer: null,
+      resizeTimer: null
     };
 
     const els = {
@@ -1076,7 +1178,9 @@
       groupGrid: document.getElementById("groupGrid"),
       groupSummary: document.getElementById("groupSummary"),
       bracketSummary: document.getElementById("bracketSummary"),
-      bracket: document.getElementById("bracket"),
+      bracketSurface: document.getElementById("bracketSurface"),
+      bracketScroll: document.getElementById("bracketScroll"),
+      connectorSvg: document.getElementById("connectorSvg"),
       roundTabs: document.getElementById("roundTabs"),
       groupSection: document.getElementById("groupSection"),
       bracketSection: document.getElementById("bracketSection"),
@@ -1102,6 +1206,11 @@
         if (!document.hidden) {
           loadTournament({ silent: true });
         }
+      });
+
+      window.addEventListener("resize", () => {
+        window.clearTimeout(appState.resizeTimer);
+        appState.resizeTimer = window.setTimeout(drawBracketConnectors, 120);
       });
 
       loadTournament({ silent: false });
@@ -1163,7 +1272,7 @@
         const liveEvents = countLiveEvents([...groupEvents, ...knockoutEvents]);
 
         if (totalGroupMatches === 0 && matches.length === 0) {
-          setStatus("ESPN responded, but no World Cup fixtures were found yet.", "warn");
+          setStatus("ESPN responded, but no World Cup fixtures were found yet. The bracket shell is ready.", "warn");
         } else if (resolvedSlots > 0) {
           setStatus(
             `Loaded ${totalGroupMatches} group match${totalGroupMatches === 1 ? "" : "es"}, ${matches.length} knockout match${matches.length === 1 ? "" : "es"}, and resolved ${resolvedSlots} bracket slot${resolvedSlots === 1 ? "" : "s"}.`,
@@ -1541,7 +1650,8 @@
         broadcasts: formatBroadcasts(competition.broadcasts),
         link: findEventLink(event),
         teams,
-        isDemo: false
+        isDemo: false,
+        isPlaceholder: false
       };
     }
 
@@ -1743,14 +1853,7 @@
       const competition = event?.competitions?.[0] || {};
       const seasonSlug = String(event?.season?.slug || "").toLowerCase();
 
-      /*
-        This is the important fix.
-
-        Only true group-stage matches should contribute to group tables.
-        Knockout placeholder text like "Winner Group A" or "Runner-up Group B"
-        can mention groups, but those are not group-stage matches.
-      */
-      if (seasonSlug !== "group-stage") {
+      if (!seasonSlug.includes("group-stage")) {
         return false;
       }
 
@@ -1760,17 +1863,10 @@
     function extractGroupLetter(event, competition) {
       const seasonSlug = String(event?.season?.slug || "").toLowerCase();
 
-      /*
-        This prevents knockout placeholders from being treated as group-stage data.
-      */
-      if (seasonSlug !== "group-stage") {
+      if (!seasonSlug.includes("group-stage")) {
         return "";
       }
 
-      /*
-        ESPN usually puts the actual group here, such as:
-        "FIFA World Cup, Group F"
-      */
       const reliableGroupText = [
         competition?.altGameNote,
         competition?.note
@@ -1925,6 +2021,7 @@
     function renderSectionVisibility() {
       els.groupSection.classList.toggle("hidden", appState.selectedView === "bracket");
       els.bracketSection.classList.toggle("hidden", appState.selectedView === "groups");
+      scheduleDrawBracketConnectors();
     }
 
     function renderGroupSummary() {
@@ -2117,30 +2214,102 @@
         : ROUND_META.filter((round) => round.key === appState.selectedRound);
 
       const grouped = groupBy(appState.matches, (match) => match.roundKey);
+      const displayMatchesByRound = new Map();
 
-      els.bracket.innerHTML = selectedRounds.map((round) => {
-        const matches = grouped.get(round.key) || [];
+      const roundsHtml = selectedRounds.map((round) => {
+        const actualMatches = grouped.get(round.key) || [];
+        const matches = getDisplayMatchesForRound(round, actualMatches);
+        displayMatchesByRound.set(round.key, matches);
 
         return `
-          <section class="round" data-round="${escapeHtml(round.key)}" aria-labelledby="heading-${escapeHtml(round.key)}">
+          <section class="round" data-round="${escapeHtml(round.key)}">
             <header class="round-header">
               <div class="round-kicker">${escapeHtml(round.short)}</div>
               <div class="round-title">
-                <h3 id="heading-${escapeHtml(round.key)}">${escapeHtml(round.label)}</h3>
-                <span class="match-count">${matches.length} match${matches.length === 1 ? "" : "es"}</span>
+                <h3>${escapeHtml(round.label)}</h3>
+                <span class="match-count">${actualMatches.length}/${EXPECTED_MATCH_COUNTS[round.key] || actualMatches.length} set</span>
               </div>
             </header>
 
             <div class="match-list">
-              ${matches.length ? matches.map(renderMatchCard).join("") : renderEmptyRound(round)}
+              ${matches.map((match, index) => renderMatchCard(match, index)).join("")}
             </div>
           </section>
         `;
       }).join("");
+
+      appState.displayMatchesByRound = displayMatchesByRound;
+
+      els.bracketSurface.innerHTML = `
+        <svg class="connector-svg" id="connectorSvg" aria-hidden="true"></svg>
+        ${roundsHtml}
+      `;
+
+      els.connectorSvg = document.getElementById("connectorSvg");
+
+      scheduleDrawBracketConnectors();
     }
 
-    function renderMatchCard(match) {
-      const stateClass = match.isDemo
+    function getDisplayMatchesForRound(round, actualMatches) {
+      const expectedCount = EXPECTED_MATCH_COUNTS[round.key] || actualMatches.length;
+
+      if (actualMatches.length >= expectedCount) {
+        return actualMatches;
+      }
+
+      const placeholders = Array.from(
+        { length: expectedCount - actualMatches.length },
+        (_, index) => makePlaceholderMatch(round, actualMatches.length + index + 1)
+      );
+
+      return [...actualMatches, ...placeholders];
+    }
+
+    function makePlaceholderMatch(round, slotNumber) {
+      return {
+        id: `placeholder-${round.key}-${slotNumber}`,
+        roundKey: round.key,
+        date: "",
+        name: `${round.label} Slot ${slotNumber}`,
+        shortName: `${round.short} Slot ${slotNumber}`,
+        state: "pre",
+        completed: false,
+        statusText: "Waiting",
+        displayClock: "",
+        venue: "Fixture pending",
+        broadcasts: "",
+        link: "",
+        teams: [
+          {
+            name: "TBD",
+            abbr: "",
+            logo: "",
+            score: "",
+            winner: false,
+            shootoutScore: "",
+            seedLabel: "",
+            seedResolved: false,
+            seedDetail: ""
+          },
+          {
+            name: "TBD",
+            abbr: "",
+            logo: "",
+            score: "",
+            winner: false,
+            shootoutScore: "",
+            seedLabel: "",
+            seedResolved: false,
+            seedDetail: ""
+          }
+        ],
+        isDemo: false,
+        isPlaceholder: true
+      };
+    }
+
+    function renderMatchCard(match, index) {
+      const stateClass = match.isDemo || match.isPlaceholder
         ? "placeholder"
         : match.state === "in"
           ? "live"
@@ -2149,10 +2318,15 @@
             : "scheduled";
 
       const badge = renderStatusBadge(match);
-      const timeText = match.isDemo ? "Bracket slot" : formatKickoff(match.date);
+      const timeText = match.isDemo || match.isPlaceholder ? "Bracket slot" : formatKickoff(match.date);
 
       return `
-        <article class="match-card ${escapeHtml(stateClass)}">
+        <article
+          class="match-card ${escapeHtml(stateClass)}"
+          data-round-key="${escapeHtml(match.roundKey)}"
+          data-match-index="${escapeHtml(index)}"
+          data-placeholder="${match.isPlaceholder || match.isDemo ? "true" : "false"}"
+        >
           <div class="match-top">
             <span>${escapeHtml(timeText)}</span>
             ${badge}
@@ -2167,13 +2341,13 @@
             <div class="footer-row">
               <span class="venue" title="${escapeHtml(match.venue)}">${escapeHtml(match.venue || "Venue TBD")}</span>
               ${
-                match.link && !match.isDemo
+                match.link && !match.isDemo && !match.isPlaceholder
                   ? `<a class="espn-link" href="${escapeHtml(match.link)}" target="_blank" rel="noopener noreferrer">Gamecast</a>`
                   : `<span>${escapeHtml(match.broadcasts || "")}</span>`
               }
             </div>
 
-            ${match.broadcasts && match.link && !match.isDemo ? `<div>${escapeHtml(match.broadcasts)}</div>` : ""}
+            ${match.broadcasts && match.link && !match.isDemo && !match.isPlaceholder ? `<div>${escapeHtml(match.broadcasts)}</div>` : ""}
           </footer>
         </article>
       `;
@@ -2210,7 +2384,7 @@
     }
 
     function displayScore(team, match) {
-      if (match.isDemo) return "-";
+      if (match.isDemo || match.isPlaceholder) return "-";
 
       const score = team.score === "" || team.score === null || team.score === undefined
         ? "-"
@@ -2224,7 +2398,7 @@
     }
 
     function renderStatusBadge(match) {
-      if (match.isDemo) {
+      if (match.isDemo || match.isPlaceholder) {
         return `<span class="badge scheduled">Waiting</span>`;
       }
 
@@ -2244,13 +2418,77 @@
       return `<span class="badge scheduled">${escapeHtml(statusText || "Scheduled")}</span>`;
     }
 
-    function renderEmptyRound(round) {
-      return `
-        <div class="empty-box">
-          No ESPN fixtures found yet for ${escapeHtml(round.label)}.
-          This round will fill in automatically when ESPN publishes games.
-        </div>
-      `;
+    function scheduleDrawBracketConnectors() {
+      window.requestAnimationFrame(() => {
+        drawBracketConnectors();
+        window.setTimeout(drawBracketConnectors, 140);
+        window.setTimeout(drawBracketConnectors, 450);
+      });
+    }
+
+    function drawBracketConnectors() {
+      const surface = els.bracketSurface;
+      const svg = els.connectorSvg;
+
+      if (!surface || !svg || appState.selectedRound !== "all") {
+        if (svg) svg.innerHTML = "";
+        return;
+      }
+
+      if (appState.selectedView === "groups") {
+        svg.innerHTML = "";
+        return;
+      }
+
+      const surfaceRect = surface.getBoundingClientRect();
+      const width = Math.max(surface.scrollWidth, surfaceRect.width);
+      const height = Math.max(surface.scrollHeight, surfaceRect.height);
+
+      svg.setAttribute("width", width);
+      svg.setAttribute("height", height);
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      svg.innerHTML = "";
+
+      const namespace = "http://www.w3.org/2000/svg";
+
+      for (const [fromRound, toRound] of CONNECTOR_PAIRS) {
+        const sourceCards = Array.from(surface.querySelectorAll(`[data-round-key="${fromRound}"]`));
+        const targetCards = Array.from(surface.querySelectorAll(`[data-round-key="${toRound}"]`));
+
+        sourceCards.forEach((sourceCard, sourceIndex) => {
+          const targetIndex = Math.floor(sourceIndex / 2);
+          const targetCard = targetCards[targetIndex];
+
+          if (!targetCard) return;
+
+          const source = getCardPoint(sourceCard, surfaceRect, "right");
+          const target = getCardPoint(targetCard, surfaceRect, "left");
+
+          const midX = source.x + Math.max(28, (target.x - source.x) / 2);
+          const d = `M ${source.x} ${source.y} H ${midX} V ${target.y} H ${target.x}`;
+
+          const path = document.createElementNS(namespace, "path");
+          path.setAttribute("d", d);
+
+          const isPlaceholder =
+            sourceCard.dataset.placeholder === "true" ||
+            targetCard.dataset.placeholder === "true";
+
+          path.setAttribute("class", `connector-line ${isPlaceholder ? "placeholder-line" : ""}`);
+          svg.appendChild(path);
+        });
+      }
+    }
+
+    function getCardPoint(card, surfaceRect, side) {
+      const rect = card.getBoundingClientRect();
+
+      return {
+        x: side === "right"
+          ? rect.right - surfaceRect.left
+          : rect.left - surfaceRect.left,
+        y: rect.top - surfaceRect.top + rect.height / 2
+      };
     }
 
     function updateHeaderMeta() {
@@ -2311,17 +2549,8 @@
     }
 
     function makeDemoMatches() {
-      const matchCounts = {
-        "round-of-32": 16,
-        "round-of-16": 8,
-        quarterfinals: 4,
-        semifinals: 2,
-        "third-place": 1,
-        final: 1
-      };
-
       return ROUND_META.flatMap((round) => {
-        const count = matchCounts[round.key] || 0;
+        const count = EXPECTED_MATCH_COUNTS[round.key] || 0;
 
         return Array.from({ length: count }, (_, index) => ({
           id: `demo-${round.key}-${index + 1}`,
@@ -2360,7 +2589,8 @@
               seedDetail: ""
             }
           ],
-          isDemo: true
+          isDemo: true,
+          isPlaceholder: false
         }));
       });
     }
