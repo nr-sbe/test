@@ -467,6 +467,78 @@
       min-width: 0;
     }
 
+    .goals-list {
+      display: grid;
+      gap: 6px;
+      margin: 4px 10px 10px;
+      padding: 9px;
+      border: 1px solid rgba(82, 242, 184, 0.16);
+      border-radius: 14px;
+      background: rgba(82, 242, 184, 0.055);
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.25;
+    }
+
+    .daily-card .goals-list,
+    .group-match .goals-list {
+      margin: 0;
+    }
+
+    .goals-title {
+      color: var(--accent);
+      font-size: 0.68rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .goal-row {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      gap: 7px;
+      align-items: start;
+    }
+
+    .goal-minute {
+      min-width: 34px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(82, 242, 184, 0.1);
+      font-weight: 950;
+      text-align: center;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .goal-text {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .goal-player {
+      color: var(--text);
+      font-weight: 850;
+    }
+
+    .goal-meta {
+      color: var(--soft);
+      font-size: 0.72rem;
+    }
+
+    .goal-tag {
+      display: inline-flex;
+      margin-left: 4px;
+      padding: 1px 5px;
+      border-radius: 999px;
+      color: #06111f;
+      background: var(--warn);
+      font-size: 0.62rem;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
     .group-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(min(100%, 370px), 1fr));
@@ -1144,7 +1216,7 @@
 
         <h1>World Cup Live View</h1>
         <p class="subhead">
-          Daily match schedule, group tables, and a side-scrolling knockout bracket using ESPN scoreboard data.
+          Daily match schedule, group tables, scorer timelines, and a side-scrolling knockout bracket using ESPN scoreboard data.
           Use the Daily Matches tab to jump backward or forward by date.
         </p>
       </div>
@@ -1237,6 +1309,7 @@
         This page uses ESPN's public scoreboard feed directly from the browser. For the most reliable mobile experience,
         put your own small backend/cache in front of ESPN and set <code>CORS_PROXY</code> in the script.
         The daily date picker can fetch dates outside the initially loaded tournament calendar as needed.
+        Goal timelines appear when ESPN includes recorded scoring-play details for the match.
       </p>
     </details>
   </main>
@@ -1498,7 +1571,7 @@
       els.refresh.disabled = true;
 
       setStatus(
-        silent ? "Refreshing daily matches, group stage, and bracket data..." : "Loading ESPN tournament data...",
+        silent ? "Refreshing daily matches, group stage, bracket, and scorer data..." : "Loading ESPN tournament data...",
         "normal"
       );
 
@@ -1991,6 +2064,7 @@
         venue: formatVenue(competition.venue),
         broadcasts: formatBroadcasts(competition.broadcasts),
         link: findEventLink(event),
+        goals: extractGoalScorers(event),
         teams,
         isDemo: false,
         isPlaceholder: false
@@ -2390,6 +2464,151 @@
       return titleCase(String(note).replace(/-/g, " "));
     }
 
+    function extractGoalScorers(event) {
+      const competition = event?.competitions?.[0] || {};
+      const details = competition.details || event?.details || [];
+      const teamMap = buildTeamMap(event);
+
+      return details
+        .filter((detail) => isGoalDetail(detail))
+        .map((detail) => {
+          const athlete = Array.isArray(detail.athletesInvolved)
+            ? detail.athletesInvolved[0]
+            : null;
+
+          const playerName =
+            athlete?.displayName ||
+            athlete?.fullName ||
+            athlete?.shortName ||
+            detail?.athlete?.displayName ||
+            detail?.athlete?.fullName ||
+            "Unknown scorer";
+
+          const teamId = String(detail?.team?.id || athlete?.team?.id || "");
+          const scoringTeam = teamMap.get(teamId) || null;
+
+          const athleteTeamId = String(athlete?.team?.id || "");
+          const athleteTeam = teamMap.get(athleteTeamId) || null;
+
+          return {
+            minute: formatGoalMinute(detail),
+            minuteSort: Number(detail?.clock?.value ?? 0),
+            player: cleanPlayerName(playerName),
+            scoringTeamName: scoringTeam?.name || "",
+            scoringTeamAbbr: scoringTeam?.abbr || "",
+            athleteTeamName: athleteTeam?.name || "",
+            type: formatGoalTag(detail),
+            description: detail?.type?.text || ""
+          };
+        })
+        .sort((a, b) => a.minuteSort - b.minuteSort);
+    }
+
+    function isGoalDetail(detail) {
+      const text = String(detail?.type?.text || "").toLowerCase();
+
+      if (detail?.shootout) {
+        return false;
+      }
+
+      return Boolean(
+        detail?.scoringPlay ||
+        detail?.ownGoal ||
+        text.includes("goal")
+      );
+    }
+
+    function buildTeamMap(event) {
+      const map = new Map();
+
+      for (const competitor of getCompetitors(event)) {
+        const team = normalizeRawTeam(competitor);
+
+        if (team.id) {
+          map.set(String(team.id), team);
+        }
+      }
+
+      return map;
+    }
+
+    function formatGoalMinute(detail) {
+      const displayValue = detail?.clock?.displayValue;
+
+      if (displayValue) {
+        return String(displayValue).replace(/\s+/g, "");
+      }
+
+      const seconds = Number(detail?.clock?.value);
+
+      if (Number.isFinite(seconds) && seconds >= 0) {
+        return `${Math.floor(seconds / 60) + 1}'`;
+      }
+
+      return "-";
+    }
+
+    function cleanPlayerName(value) {
+      return String(value || "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function formatGoalTag(detail) {
+      const text = String(detail?.type?.text || "").toLowerCase();
+
+      if (detail?.ownGoal || text.includes("own goal")) {
+        return "OG";
+      }
+
+      if (detail?.penaltyKick || text.includes("penalty")) {
+        return "PEN";
+      }
+
+      if (text.includes("free-kick") || text.includes("free kick")) {
+        return "FK";
+      }
+
+      return "";
+    }
+
+    function renderGoalList(goals) {
+      if (!goals || goals.length === 0) {
+        return "";
+      }
+
+      return `
+        <div class="goals-list">
+          <div class="goals-title">Goals</div>
+          ${goals.map(renderGoalRow).join("")}
+        </div>
+      `;
+    }
+
+    function renderGoalRow(goal) {
+      const teamLabel = goal.scoringTeamAbbr || goal.scoringTeamName || "";
+      const tag = goal.type
+        ? `<span class="goal-tag">${escapeHtml(goal.type)}</span>`
+        : "";
+
+      const metaParts = [
+        teamLabel,
+        goal.type === "OG" && goal.athleteTeamName && goal.athleteTeamName !== goal.scoringTeamName
+          ? `own goal by ${goal.athleteTeamName}`
+          : ""
+      ].filter(Boolean);
+
+      return `
+        <div class="goal-row">
+          <span class="goal-minute">${escapeHtml(goal.minute)}</span>
+          <span class="goal-text">
+            <span class="goal-player">${escapeHtml(goal.player)}</span>${tag}
+            ${metaParts.length ? `<span class="goal-meta"> · ${escapeHtml(metaParts.join(" · "))}</span>` : ""}
+          </span>
+        </div>
+      `;
+    }
+
     function compareEventsByDate(a, b) {
       const dateA = new Date(a?.date || a?.competitions?.[0]?.date || 0).getTime() || 0;
       const dateB = new Date(b?.date || b?.competitions?.[0]?.date || 0).getTime() || 0;
@@ -2592,6 +2811,7 @@
       const teams = [normalizeRawTeam(competitors[0]), normalizeRawTeam(competitors[1])];
       const link = findEventLink(event);
       const stage = getEventStageLabel(event);
+      const goals = extractGoalScorers(event);
 
       return `
         <article class="daily-card ${isLive ? "live" : ""}">
@@ -2606,6 +2826,8 @@
             ${renderDailyTeam(teams[0], competitors[0], statusType)}
             ${renderDailyTeam(teams[1], competitors[1], statusType)}
           </div>
+
+          ${renderGoalList(goals)}
 
           <div class="daily-card-footer">
             <span class="venue" title="${escapeHtml(formatVenue(competition.venue))}">
@@ -2759,6 +2981,7 @@
       const statusText = statusType.shortDetail || statusType.detail || statusType.description || "Scheduled";
       const link = findEventLink(event);
       const teams = [normalizeRawTeam(competitors[0]), normalizeRawTeam(competitors[1])];
+      const goals = extractGoalScorers(event);
 
       return `
         <article class="group-match ${isLive ? "live" : ""}">
@@ -2771,6 +2994,8 @@
             ${renderMiniTeam(teams[0], competitors[0], statusType)}
             ${renderMiniTeam(teams[1], competitors[1], statusType)}
           </div>
+
+          ${renderGoalList(goals)}
 
           <div class="footer-row">
             <span class="venue" title="${escapeHtml(formatVenue(competition.venue))}">
@@ -2903,6 +3128,7 @@
         venue: "Fixture pending",
         broadcasts: "",
         link: "",
+        goals: [],
         teams: [
           {
             name: "TBD",
@@ -2960,6 +3186,8 @@
             ${renderTeamRow(match.teams[0], match)}
             ${renderTeamRow(match.teams[1], match)}
           </div>
+
+          ${renderGoalList(match.goals || [])}
 
           <footer class="match-footer">
             <div class="footer-row">
@@ -3189,6 +3417,7 @@
           venue: "ESPN data pending",
           broadcasts: "",
           link: "",
+          goals: [],
           teams: [
             {
               name: "TBD",
